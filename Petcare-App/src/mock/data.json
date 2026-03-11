@@ -1,0 +1,121 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "avatar": "https://i.pravatar.cc/150?u=jane",
+      "phone": "+1234567890",
+      "location": "San Francisco, CA"
+    }
+  ],
+  "pets": [
+    {
+      "id": "p1",
+      "ownerId": "u1",
+      "name": "Bruno",
+      "type": "Dog",
+      "breed": "Golden Retriever",
+      "age": 3,
+      "weight": "25 kg",
+      "gender": "Male",
+      "image": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=400"
+    },
+    {
+      "id": "p2",
+      "ownerId": "u1",
+      "name": "Luna",
+      "type": "Cat",
+      "breed": "Persian",
+      "age": 2,
+      "weight": "4 kg",
+      "gender": "Female",
+      "image": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=400"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "a1",
+      "petId": "p1",
+      "vetId": "v1",
+      "date": "2026-03-15",
+      "time": "10:00 AM",
+      "reason": "Annual Checkup",
+      "status": "upcoming"
+    }
+  ],
+  "vets": [
+    {
+      "id": "v1",
+      "name": "Dr. Sarah Jenkins",
+      "specialty": "General Practitioner",
+      "rating": 4.8,
+      "reviews": 124,
+      "image": "https://i.pravatar.cc/150?u=vet1",
+      "clinicName": "Paws & Care Clinic",
+      "distance": "2.5 km away",
+      "about": "Dr. Sarah specializes in canine and feline general medicine."
+    },
+    {
+      "id": "v2",
+      "name": "Dr. Mark Ruffles",
+      "specialty": "Surgery & Orthopedics",
+      "rating": 4.9,
+      "reviews": 89,
+      "image": "https://i.pravatar.cc/150?u=vet2",
+      "clinicName": "City Animal Hospital",
+      "distance": "5.1 km away",
+      "about": "Expert in complex surgical procedures and orthopedics."
+    }
+  ],
+  "adoptions": [
+    {
+      "id": "ad1",
+      "name": "Max",
+      "type": "Dog",
+      "breed": "Beagle Mix",
+      "age": "1 Year",
+      "gender": "Male",
+      "shelter": "Happy Tails Rescue",
+      "image": "https://images.unsplash.com/photo-1537151608804-ea2f1ea14a15?auto=format&fit=crop&q=80&w=400",
+      "description": "Friendly and energetic puppy looking for a loving home."
+    },
+    {
+      "id": "ad2",
+      "name": "Mittens",
+      "type": "Cat",
+      "breed": "Domestic Shorthair",
+      "age": "3 Months",
+      "gender": "Female",
+      "shelter": "City Kitty Shelter",
+      "image": "https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&q=80&w=400",
+      "description": "Sweet kitten who loves to cuddle."
+    }
+  ],
+  "posts": [
+    {
+      "id": "po1",
+      "userId": "u1",
+      "userName": "Jane Doe",
+      "userAvatar": "https://i.pravatar.cc/150?u=jane",
+      "image": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400",
+      "content": "Bruno had a great time at the park today! 🐾🌳",
+      "likes": 42,
+      "comments": 5,
+      "timeAgo": "2 hours ago"
+    }
+  ],
+  "lostAndFound": [
+    {
+      "id": "lf1",
+      "type": "lost",
+      "petName": "Buddy",
+      "breed": "Labrador",
+      "date": "2026-03-09",
+      "location": "Downtown Park area",
+      "contact": "+1234567890",
+      "image": "https://images.unsplash.com/photo-1554692919-0ce9b1f730c4?auto=format&fit=crop&q=80&w=400",
+      "description": "Wearing a red collar with no tag."
+    }
+  ]
+}

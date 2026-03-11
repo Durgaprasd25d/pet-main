@@ -1,0 +1,76 @@
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { COLORS, SPACING, SIZES } from '../theme/theme';
+import { Platform } from 'react-native';
+
+// Screens
+import { HomeDashboardScreen } from '../screens/Main/HomeDashboardScreen';
+import { PetsListScreen } from '../screens/Pets/PetsListScreen';
+import { AppointmentListScreen } from '../screens/Veterinary/AppointmentListScreen';
+import { CommunityFeedScreen } from '../screens/Community/CommunityFeedScreen';
+import { UserProfileScreen } from '../screens/Main/UserProfileScreen';
+
+export type MainTabParamList = {
+  HomeTab: undefined;
+  PetsTab: undefined;
+  AppointmentsTab: undefined;
+  CommunityTab: undefined;
+  ProfileTab: undefined;
+};
+
+const Tab = createBottomTabNavigator<MainTabParamList>();
+
+export const MainTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: any = 'home-variant';
+
+          if (route.name === 'HomeTab') {
+            iconName = focused ? 'home-variant' : 'home-variant-outline';
+          } else if (route.name === 'PetsTab') {
+            iconName = focused ? 'paw' : 'paw-outline';
+          } else if (route.name === 'AppointmentsTab') {
+            iconName = focused ? 'calendar-check' : 'calendar-check-outline';
+          } else if (route.name === 'CommunityTab') {
+            iconName = focused ? 'account-group' : 'account-group-outline';
+          } else if (route.name === 'ProfileTab') {
+            iconName = focused ? 'account-circle' : 'account-circle-outline';
+          }
+
+          return <MaterialDesignIcons name={iconName} size={28} color={color} />;
+        },
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textLight,
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '700',
+          marginBottom: Platform.OS === 'ios' ? 0 : 4,
+        },
+        tabBarStyle: {
+          backgroundColor: COLORS.surface,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.border + '50',
+          height: Platform.OS === 'ios' ? 88 : 65,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          paddingTop: 10,
+          elevation: 20,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 10,
+        },
+      })}
+    >
+      <Tab.Screen name="HomeTab" component={HomeDashboardScreen} options={{ tabBarLabel: 'Home' }} />
+      <Tab.Screen name="PetsTab" component={PetsListScreen} options={{ tabBarLabel: 'My Pets' }} />
+      <Tab.Screen name="AppointmentsTab" component={AppointmentListScreen} options={{ tabBarLabel: 'Visits' }} />
+      <Tab.Screen name="CommunityTab" component={CommunityFeedScreen} options={{ tabBarLabel: 'Talk' }} />
+      <Tab.Screen name="ProfileTab" component={UserProfileScreen} options={{ tabBarLabel: 'Profile' }} />
+    </Tab.Navigator>
+  );
+};

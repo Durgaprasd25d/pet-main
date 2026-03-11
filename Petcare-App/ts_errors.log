@@ -1,0 +1,150 @@
+src/components/cards/AdoptionCard.tsx(5,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/cards/AppointmentCard.tsx(5,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/cards/PetCard.tsx(5,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/cards/PostCard.tsx(5,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/cards/VetCard.tsx(5,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/layout/Header.tsx(4,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/ui/Avatar.tsx(4,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/ui/Avatar.tsx(20,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: ImageProps): Image', gave the following error.
+    Type 'ViewStyle | undefined' is not assignable to type 'ImageStyle | Falsy | RecursiveArray<ImageStyle | Falsy> | readonly (ImageStyle | Falsy)[]'.
+      Type 'ViewStyle' is not assignable to type 'ImageStyle | Falsy | RecursiveArray<ImageStyle | Falsy> | readonly (ImageStyle | Falsy)[]'.
+        Type 'ViewStyle' is not assignable to type 'ImageStyle'.
+          Types of property 'overflow' are incompatible.
+            Type '"visible" | "hidden" | "scroll" | undefined' is not assignable to type '"visible" | "hidden" | undefined'.
+              Type '"scroll"' is not assignable to type '"visible" | "hidden" | undefined'.
+  Overload 2 of 2, '(props: ImageProps, context: any): Image', gave the following error.
+    Type 'ViewStyle | undefined' is not assignable to type 'ImageStyle | Falsy | RecursiveArray<ImageStyle | Falsy> | readonly (ImageStyle | Falsy)[]'.
+      Type 'ViewStyle' is not assignable to type 'ImageStyle | Falsy | RecursiveArray<ImageStyle | Falsy> | readonly (ImageStyle | Falsy)[]'.
+        Type 'ViewStyle' is not assignable to type 'ImageStyle'.
+          Types of property 'overflow' are incompatible.
+            Type '"visible" | "hidden" | "scroll" | undefined' is not assignable to type '"visible" | "hidden" | undefined'.
+              Type '"scroll"' is not assignable to type '"visible" | "hidden" | undefined'.
+src/components/ui/Button.tsx(4,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/components/ui/Input.tsx(4,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/navigation/MainTabNavigator.tsx(3,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Adoption/AdoptionDetailsScreen.tsx(7,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Adoption/AdoptionDetailsScreen.tsx(72,51): error TS2339: Property 'weight' does not exist on type 'Adoption'.
+src/screens/Adoption/AdoptionHomeScreen.tsx(7,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Adoption/ApplicationSuccessScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Auth/SplashScreen.tsx(4,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Community/CommentsScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Community/CommunityFeedScreen.tsx(18,53): error TS2339: Property 'timestamp' does not exist on type 'Post'.
+src/screens/Community/CommunityFeedScreen.tsx(18,87): error TS2339: Property 'timestamp' does not exist on type 'Post'.
+src/screens/Community/CommunityFeedScreen.tsx(42,13): error TS2322: Type '{ key: string; post: Post; onPress: () => any; onUserPress: () => any; }' is not assignable to type 'IntrinsicAttributes & PostCardProps'.
+  Property 'onPress' does not exist on type 'IntrinsicAttributes & PostCardProps'.
+src/screens/Community/CreatePostScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Community/PostDetailsScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Community/PostDetailsScreen.tsx(36,39): error TS2339: Property 'timestamp' does not exist on type 'Post'.
+src/screens/Community/PostDetailsScreen.tsx(36,93): error TS2339: Property 'timestamp' does not exist on type 'Post'.
+src/screens/Community/UserCommunityProfileScreen.tsx(22,59): error TS2339: Property 'timestamp' does not exist on type 'Post'.
+src/screens/Community/UserCommunityProfileScreen.tsx(22,93): error TS2339: Property 'timestamp' does not exist on type 'Post'.
+src/screens/Community/UserCommunityProfileScreen.tsx(85,13): error TS2322: Type '{ key: string; post: Post; onPress: () => any; onUserPress: () => void; }' is not assignable to type 'IntrinsicAttributes & PostCardProps'.
+  Property 'onPress' does not exist on type 'IntrinsicAttributes & PostCardProps'.
+src/screens/Emergency/EmergencyContactScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Emergency/EmergencySOSScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Emergency/NearbyVetClinicsScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Emergency/NearbyVetClinicsScreen.tsx(59,50): error TS2339: Property 'address' does not exist on type 'Vet'.
+src/screens/Emergency/NearbyVetClinicsScreen.tsx(63,53): error TS2339: Property 'contactNumber' does not exist on type 'Vet'.
+src/screens/LostFound/FoundPetDetailsScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/LostFound/FoundPetDetailsScreen.tsx(87,54): error TS2339: Property 'reportedBy' does not exist on type 'LostAndFound'.
+src/screens/LostFound/FoundPetDetailsScreen.tsx(101,11): error TS2322: Type '{ title: string; onPress: () => void; color: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps'.
+  Property 'color' does not exist on type 'IntrinsicAttributes & ButtonProps'.
+src/screens/LostFound/LostFoundHomeScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/LostFound/LostFoundHomeScreen.tsx(28,38): error TS2339: Property 'status' does not exist on type 'LostAndFound'.
+src/screens/LostFound/LostFoundHomeScreen.tsx(35,47): error TS2339: Property 'status' does not exist on type 'LostAndFound'.
+src/screens/LostFound/LostFoundHomeScreen.tsx(39,60): error TS2339: Property 'status' does not exist on type 'LostAndFound'.
+src/screens/LostFound/LostFoundHomeScreen.tsx(40,17): error TS2339: Property 'status' does not exist on type 'LostAndFound'.
+src/screens/LostFound/LostPetDetailsScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/LostFound/LostPetDetailsScreen.tsx(87,54): error TS2339: Property 'reportedBy' does not exist on type 'LostAndFound'.
+src/screens/LostFound/LostPetDetailsScreen.tsx(101,11): error TS2322: Type '{ title: string; onPress: () => void; color: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps'.
+  Property 'color' does not exist on type 'IntrinsicAttributes & ButtonProps'.
+src/screens/LostFound/ReportFoundPetScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/LostFound/ReportFoundPetScreen.tsx(68,11): error TS2322: Type '{ title: string; onPress: () => void; style: { marginTop: number; }; color: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps'.
+  Property 'color' does not exist on type 'IntrinsicAttributes & ButtonProps'.
+src/screens/LostFound/ReportLostPetScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/LostFound/ReportLostPetScreen.tsx(70,11): error TS2322: Type '{ title: string; onPress: () => void; style: { marginTop: number; }; color: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps'.
+  Property 'color' does not exist on type 'IntrinsicAttributes & ButtonProps'.
+src/screens/Main/EditProfileScreen.tsx(10,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Main/EditProfileScreen.tsx(37,31): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/screens/Main/HomeDashboardScreen.tsx(10,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Main/NotificationsScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Main/SettingsScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Main/UserProfileScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Main/UserProfileScreen.tsx(30,29): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/screens/Pets/AddPetScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Pets/EditPetScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Pets/MedicalHistoryScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Pets/PetHealthCardScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Pets/PetProfileScreen.tsx(9,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Pets/VaccinationRecordsScreen.tsx(7,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Utility/AboutAppScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Utility/HelpSupportScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Utility/ReminderCenterScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Utility/SearchScreen.tsx(6,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Veterinary/AppointmentConfirmationScreen.tsx(7,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Veterinary/AppointmentDetailsScreen.tsx(8,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Veterinary/AppointmentDetailsScreen.tsx(61,47): error TS2322: Type '"default" | "success" | "warning" | "error"' is not assignable to type '"primary" | "secondary" | "success" | "warning" | "error" | "neutral" | undefined'.
+  Type '"default"' is not assignable to type '"primary" | "secondary" | "success" | "warning" | "error" | "neutral" | undefined'.
+src/screens/Veterinary/AppointmentDetailsScreen.tsx(104,8): error TS2367: This comparison appears to be unintentional because the types '"upcoming" | "completed" | "cancelled"' and '"Confirmed"' have no overlap.
+src/screens/Veterinary/AppointmentDetailsScreen.tsx(104,46): error TS2367: This comparison appears to be unintentional because the types '"upcoming" | "completed" | "cancelled"' and '"Pending"' have no overlap.
+src/screens/Veterinary/AppointmentDetailsScreen.tsx(109,13): error TS2322: Type '({ flex: number; } | { marginRight: number; })[]' is not assignable to type 'ViewStyle'.
+  Types of property 'filter' are incompatible.
+    Type '{ <S extends { flex: number; } | { marginRight: number; }>(predicate: (value: { flex: number; } | { marginRight: number; }, index: number, array: ({ flex: number; } | { marginRight: number; })[]) => value is S, thisArg?: any): S[]; (predicate: (value: { ...; } | { ...; }, index: number, array: ({ ...; } | { ...; })[...' is not assignable to type 'string | readonly FilterFunction[] | undefined'.
+src/screens/Veterinary/AppointmentDetailsScreen.tsx(114,13): error TS2322: Type '({ flex: number; } | { backgroundColor: string; })[]' is not assignable to type 'ViewStyle'.
+  Types of property 'filter' are incompatible.
+    Type '{ <S extends { flex: number; } | { backgroundColor: string; }>(predicate: (value: { flex: number; } | { backgroundColor: string; }, index: number, array: ({ flex: number; } | { backgroundColor: string; })[]) => value is S, thisArg?: any): S[]; (predicate: (value: { ...; } | { ...; }, index: number, array: ({ ...; } ...' is not assignable to type 'string | readonly FilterFunction[] | undefined'.
+src/screens/Veterinary/AppointmentListScreen.tsx(36,50): error TS2367: This comparison appears to be unintentional because the types '"upcoming" | "completed" | "cancelled"' and '"Confirmed"' have no overlap.
+src/screens/Veterinary/AppointmentListScreen.tsx(36,78): error TS2367: This comparison appears to be unintentional because the types '"upcoming" | "completed" | "cancelled"' and '"Pending"' have no overlap.
+src/screens/Veterinary/AppointmentListScreen.tsx(37,46): error TS2367: This comparison appears to be unintentional because the types '"upcoming" | "completed" | "cancelled"' and '"Completed"' have no overlap.
+src/screens/Veterinary/AppointmentListScreen.tsx(37,74): error TS2367: This comparison appears to be unintentional because the types '"upcoming" | "completed" | "cancelled"' and '"Cancelled"' have no overlap.
+src/screens/Veterinary/BookAppointmentScreen.tsx(11,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/screens/Veterinary/VetProfileScreen.tsx(9,18): error TS7016: Could not find a declaration file for module 'react-native-vector-icons/MaterialCommunityIcons'. '/home/durga/React/Pet Care/Petcare-App/node_modules/react-native-vector-icons/MaterialCommunityIcons.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-native-vector-icons` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-native-vector-icons/MaterialCommunityIcons';`
+src/services/dataService.ts(5,71): error TS2345: Argument of type '(value: unknown) => void' is not assignable to parameter of type '() => void'.
+  Target signature provides too few arguments. Expected 1 or more, but got 0.
