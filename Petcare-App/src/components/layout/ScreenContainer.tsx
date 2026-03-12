@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../../theme/theme';
 
 interface ScreenContainerProps {
@@ -16,11 +16,13 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
 }) => {
   const content = <View style={[styles.container, style]}>{children}</View>;
 
+  const insets = useSafeAreaInsets();
+
   if (withSafeArea) {
     return (
-      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <View style={[styles.safeArea, { paddingTop: insets.top }]}>
         {content}
-      </SafeAreaView>
+      </View>
     );
   }
 

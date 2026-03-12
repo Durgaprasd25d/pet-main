@@ -38,6 +38,8 @@ const adoptionRoutes = require("./routes/adoptionRoutes");
 const lostPetRoutes = require("./routes/lostPetRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const emergencyRoutes = require("./routes/emergencyRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 // Mount routes
 app.use("/api/auth", authRoutes);
@@ -49,6 +51,8 @@ app.use("/api/adoptions", adoptionRoutes);
 app.use("/api/lostpets", lostPetRoutes);
 app.use("/api/community", communityRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/emergency", emergencyRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/", (req, res) => {
   res.send("Pet Care API is running...");

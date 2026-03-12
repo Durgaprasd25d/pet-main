@@ -31,13 +31,19 @@ export const HelpSupportScreen = ({ navigation }: any) => {
           <Text style={styles.sectionTitle}>Need Immediate Help?</Text>
           <Text style={styles.supportText}>Our team is available 24/7 to assist you with any concerns.</Text>
           <View style={styles.supportActions}>
-            <TouchableOpacity style={styles.supportBtn}>
-              <MaterialDesignIcons name="chat" size={24} color={COLORS.primary} />
-              <Text style={styles.supportBtnText}>Live Chat</Text>
+            <TouchableOpacity 
+              style={styles.supportBtn} 
+              onPress={() => navigation.navigate('PetAIChat')}
+            >
+              <MaterialDesignIcons name="robot" size={24} color={COLORS.primary} />
+              <Text style={styles.supportBtnText}>AI Chat</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.supportBtn}>
+            <TouchableOpacity 
+              style={styles.supportBtn}
+              onPress={() => {}} 
+            >
               <MaterialDesignIcons name="email" size={24} color={COLORS.primary} />
-              <Text style={styles.supportBtnText}>Email Us</Text>
+              <Text style={styles.supportBtnText}>Email</Text>
             </TouchableOpacity>
           </View>
         </View>

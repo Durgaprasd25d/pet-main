@@ -42,16 +42,16 @@ export const UserProfileScreen = ({ navigation }: any) => {
             <View style={styles.divider} />
             {renderMenuItem('bell-outline', 'Notifications', () => navigation.navigate('Notifications'))}
             <View style={styles.divider} />
-            {renderMenuItem('shield-account-outline', 'Privacy & Security', () => {})}
+            {renderMenuItem('shield-account-outline', 'Privacy & Security', () => navigation.navigate('PrivacySecurity'))}
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support</Text>
           <View style={styles.card}>
-            {renderMenuItem('help-circle-outline', 'Help & Support', () => {})}
+            {renderMenuItem('help-circle-outline', 'Help & Support', () => navigation.navigate('HelpSupport'))}
             <View style={styles.divider} />
-            {renderMenuItem('information-outline', 'About App', () => {})}
+            {renderMenuItem('information-outline', 'About App', () => navigation.navigate('AboutApp'))}
           </View>
         </View>
 

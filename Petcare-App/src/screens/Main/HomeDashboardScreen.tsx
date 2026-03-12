@@ -84,6 +84,25 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
 
+        <TouchableOpacity 
+          style={styles.aiBanner} 
+          onPress={() => navigation.navigate('PetAIChat')}
+          activeOpacity={0.9}
+        >
+          <View style={styles.aiBannerContent}>
+            <View style={styles.aiBannerText}>
+              <Text style={styles.aiBannerTitle}>Pet AI Assistant</Text>
+              <Text style={styles.aiBannerDesc}>Instant answers for your pet's health & behavior.</Text>
+            </View>
+            <View style={styles.aiIconContainer}>
+              <MaterialDesignIcons name="robot" size={32} color="#fff" />
+            </View>
+          </View>
+          <View style={styles.aiBannerBadge}>
+            <Text style={styles.aiBadgeText}>BETA</Text>
+          </View>
+        </TouchableOpacity>
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>My Family</Text>
@@ -227,5 +246,56 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.text,
+  },
+  aiBanner: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
+    ...SHADOWS.medium,
+    overflow: 'hidden',
+  },
+  aiBannerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+  },
+  aiBannerText: {
+    flex: 1,
+    marginRight: SPACING.md,
+  },
+  aiBannerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  aiBannerDesc: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 18,
+  },
+  aiIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  aiBannerBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  aiBadgeText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.primary,
   },
 });

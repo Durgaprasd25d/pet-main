@@ -82,3 +82,18 @@ export interface LostAndFound {
   reportedBy?: string;
   status?: 'Lost' | 'Found' | 'Resolved';
 }
+
+export interface Emergency {
+  id: string;
+  userId: string;
+  petId?: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+  status: 'pending' | 'accepted' | 'resolved' | 'cancelled';
+  description?: string;
+  emergencyType?: string;
+  createdAt: string;
+}

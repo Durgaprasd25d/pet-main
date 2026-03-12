@@ -31,20 +31,23 @@ export const AboutAppScreen = ({ navigation }: any) => {
           <View style={styles.logoContainer}>
             <MaterialDesignIcons name="paw" size={60} color={COLORS.surface} />
           </View>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>HACKATHON EDITION</Text>
+          </View>
           <Text style={styles.appName}>PetCare Super App</Text>
-          <Text style={styles.versionText}>Version 1.0.0</Text>
+          <Text style={styles.versionText}>Built with ❤️ for InnovateX 5.0</Text>
         </View>
 
         <View style={styles.descriptionBox}>
           <Text style={styles.description}>
-            PetCare Super App is your all-in-one platform for managing your pet's life. From medical records and vet appointments to community discussions and emergency SOS, we strive to make pet parenting as easy and joyful as possible.
+            PetCare is a next-generation ecosystem designed to revolutionize pet parenting. By integrating AI-driven insights, real-time emergency services, and a vibrant community, we ensure every pet lives their best life.
           </Text>
         </View>
 
         <View style={styles.linksContainer}>
-          {renderLinkRow('file-document-outline', 'Terms of Service', () => handleLink('https://example.com/terms'))}
-          {renderLinkRow('shield-check-outline', 'Privacy Policy', () => handleLink('https://example.com/privacy'))}
-          {renderLinkRow('information-outline', 'Open Source Libraries', () => handleLink('https://example.com/licenses'))}
+          {renderLinkRow('file-document-outline', 'Terms of Service', () => navigation.navigate('TermsOfService'))}
+          {renderLinkRow('shield-check-outline', 'Privacy Policy', () => navigation.navigate('PrivacyPolicy'))}
+          {renderLinkRow('information-outline', 'Open Source Libraries', () => navigation.navigate('OpenSourceLibraries'))}
         </View>
 
         <View style={styles.socialRow}>
@@ -91,6 +94,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.text,
+  },
+  badge: {
+    backgroundColor: COLORS.primary + '15',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: RADIUS.round,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.primary + '30',
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    letterSpacing: 1,
   },
   versionText: {
     fontSize: 14,

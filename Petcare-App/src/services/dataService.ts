@@ -1,13 +1,10 @@
 import data from '../mock/data.json';
-import { User, Pet, Appointment, Vet, Adoption, Post, LostAndFound } from '../types';
+import { User, Pet, Appointment, Vet, Adoption, Post, LostAndFound, Emergency } from '../types';
 
 import { API_URL as ENV_API_URL } from '@env';
 
 const API_URL = ENV_API_URL || 'http://10.78.10.236:5000/api';
 console.log('[DataService] Using API_URL:', API_URL);
-
-
-
 
 export const dataService = {
   // Auth
@@ -43,7 +40,6 @@ export const dataService = {
     });
     return response.json();
   },
-
 
   // Pets
   getPets: async (token: string): Promise<Pet[]> => {
@@ -126,7 +122,6 @@ export const dataService = {
     });
   },
 
-
   // Adoption (Phase 2)
   getAdoptions: async (): Promise<Adoption[]> => {
     const response = await fetch(`${API_URL}/adoptions`);
@@ -191,6 +186,37 @@ export const dataService = {
       body: JSON.stringify(reportData)
     });
     return response.json();
+  },
+
+  // Emergency SOS
+  triggerSOS: async (sosData: any, token: string): Promise<Emergency> => {
+    const response = await fetch(`${API_URL}/emergency`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(sosData)
+    });
+    return response.json();
+  },
+  getEmergenciesByToken: async (token: string): Promise<Emergency[]> => {
+    const response = await fetch(`${API_URL}/emergency`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+  },
+
+  // AI Chat
+  chatWithAI: async (message: string, history: any[], token: string) => {
+    const response = await fetch(`${API_URL}/ai/chat`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ message, history })
+    });
+    return response.json();
   }
 };
-

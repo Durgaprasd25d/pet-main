@@ -55,6 +55,11 @@ import { ReminderCenterScreen } from '../screens/Utility/ReminderCenterScreen';
 import { VaccinationReminderScreen } from '../screens/Utility/VaccinationReminderScreen';
 import { HelpSupportScreen } from '../screens/Utility/HelpSupportScreen';
 import { AboutAppScreen } from '../screens/Utility/AboutAppScreen';
+import { PrivacySecurityScreen } from '../screens/Utility/PrivacySecurityScreen';
+import { TermsOfServiceScreen } from '../screens/Utility/TermsOfServiceScreen';
+import { PrivacyPolicyScreen } from '../screens/Utility/PrivacyPolicyScreen';
+import { OpenSourceLibrariesScreen } from '../screens/Utility/OpenSourceLibrariesScreen';
+import { PetAIChatScreen } from '../screens/Utility/PetAIChatScreen';
 
 export type AppStackParamList = {
   MainTabs: undefined;
@@ -96,6 +101,11 @@ export type AppStackParamList = {
   VaccinationReminder: undefined;
   HelpSupport: undefined;
   AboutApp: undefined;
+  PrivacySecurity: undefined;
+  TermsOfService: undefined;
+  PrivacyPolicy: undefined;
+  OpenSourceLibraries: undefined;
+  PetAIChat: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -149,6 +159,11 @@ export const AppStack = () => {
       <Stack.Screen name="VaccinationReminder" component={VaccinationReminderScreen} />
       <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
       <Stack.Screen name="AboutApp" component={AboutAppScreen} />
+      <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
+      <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+      <Stack.Screen name="OpenSourceLibraries" component={OpenSourceLibrariesScreen} />
+      <Stack.Screen name="PetAIChat" component={PetAIChatScreen} />
     </Stack.Navigator>
   );
 };
