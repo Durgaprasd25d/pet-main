@@ -6,24 +6,22 @@ import { PetCard } from '../../components/cards/PetCard';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING } from '../../theme/theme';
 import { useAppStore } from '../../store/useAppStore';
-import { dataService } from '../../services/dataService';
+import { usePetStore } from '../../store/usePetStore';
+
 import { Pet } from '../../types';
 
 export const PetsListScreen = ({ navigation }: any) => {
-  const { user } = useAppStore();
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const loadData = async () => {
-    setRefreshing(true);
-    const fetchedPets = await dataService.getPets();
-    setPets(fetchedPets.filter(p => p.ownerId === user?.id));
-    setRefreshing(false);
-  };
+  const { token } = useAppStore();
+  const { pets, loading, fetchPets } = usePetStore();
 
   useEffect(() => {
-    loadData();
-  }, [user]);
+    if (token) fetchPets(token);
+  }, [token]);
+
+  const onRefresh = () => {
+    if (token) fetchPets(token);
+  };
+
 
   return (
     <ScreenContainer>
@@ -34,7 +32,7 @@ export const PetsListScreen = ({ navigation }: any) => {
       />
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}
       >
         {pets.length > 0 ? (
           pets.map((pet, index) => (

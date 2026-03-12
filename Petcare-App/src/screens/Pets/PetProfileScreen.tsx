@@ -7,20 +7,24 @@ import { COLORS, SPACING, RADIUS, SHADOWS, wp, hp, SIZES } from '../../theme/the
 import { dataService } from '../../services/dataService';
 import { Pet } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useAppStore } from '../../store/useAppStore';
+
+import { usePetStore } from '../../store/usePetStore';
 
 export const PetProfileScreen = ({ route, navigation }: any) => {
   const { petId } = route.params;
-  const [pet, setPet] = useState<Pet | null>(null);
+  const { pets, fetchPets } = usePetStore();
+  
+  const pet = pets.find(p => p.id === petId);
 
   useEffect(() => {
-    const fetchPet = async () => {
-      const p = await dataService.getPetById(petId);
-      if (p) {
-        setPet(p);
-      }
-    };
-    fetchPet();
+    if (!pet) {
+      // In case we navigated directly or store is empty
+      const { token } = useAppStore.getState();
+      if (token) fetchPets(token);
+    }
   }, [petId]);
+
 
   if (!pet) {
     return (

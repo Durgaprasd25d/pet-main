@@ -5,21 +5,13 @@ import { Header } from '../../components/layout/Header';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
-import { dataService } from '../../services/dataService';
-import { Adoption } from '../../types';
+import { useAdoptionStore } from '../../store/useAdoptionStore';
 
 export const AdoptionDetailsScreen = ({ route, navigation }: any) => {
   const { adoptionId } = route.params;
-  const [pet, setPet] = useState<Adoption | null>(null);
+  const { adoptions } = useAdoptionStore();
+  const pet = adoptions.find(a => a.id === adoptionId);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const adoptions = await dataService.getAdoptions();
-      const a = adoptions.find(ad => ad.id === adoptionId);
-      if (a) setPet(a);
-    };
-    fetchData();
-  }, [adoptionId]);
 
   if (!pet) {
     return (

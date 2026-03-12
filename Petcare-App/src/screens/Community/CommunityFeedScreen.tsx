@@ -4,24 +4,18 @@ import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { PostCard } from '../../components/cards/PostCard';
 import { SPACING, COLORS, SHADOWS, RADIUS } from '../../theme/theme';
-import { dataService } from '../../services/dataService';
 import { Post } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
-export const CommunityFeedScreen = ({ navigation }: any) => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+import { useCommunityStore } from '../../store/useCommunityStore';
 
-  const loadData = async () => {
-    setRefreshing(true);
-    const fetchedPosts = await dataService.getPosts();
-    setPosts(fetchedPosts.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()));
-    setRefreshing(false);
-  };
+export const CommunityFeedScreen = ({ navigation }: any) => {
+  const { posts, loading, fetchPosts } = useCommunityStore();
 
   useEffect(() => {
-    loadData();
+    fetchPosts();
   }, []);
+
 
   return (
     <ScreenContainer>
@@ -37,8 +31,8 @@ export const CommunityFeedScreen = ({ navigation }: any) => {
         contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl 
-            refreshing={refreshing} 
-            onRefresh={loadData} 
+            refreshing={loading} 
+            onRefresh={fetchPosts} 
             colors={[COLORS.primary]} 
             tintColor={COLORS.primary}
           />

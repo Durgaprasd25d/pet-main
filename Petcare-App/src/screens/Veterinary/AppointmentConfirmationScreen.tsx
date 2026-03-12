@@ -5,28 +5,48 @@ import { Header } from '../../components/layout/Header';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useAppointmentStore } from '../../store/useAppointmentStore';
+import { usePetStore } from '../../store/usePetStore';
+import { useAppStore } from '../../store/useAppStore';
 import { dataService } from '../../services/dataService';
-import { Vet, Pet } from '../../types';
+import { Vet } from '../../types';
+
 
 export const AppointmentConfirmationScreen = ({ route, navigation }: any) => {
   const { vetId, petId, reason, date, time } = route.params;
+  const { token } = useAppStore();
+  const { pets } = usePetStore();
+  const { bookAppointment, loading } = useAppointmentStore();
+  
   const [vet, setVet] = useState<Vet | null>(null);
-  const [pet, setPet] = useState<Pet | null>(null);
+  const pet = pets.find(p => p.id === petId);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const v = await dataService.getVets().then(vets => vets.find(v => v.id === vetId));
-      const p = await dataService.getPetById(petId);
+    const fetchVet = async () => {
+      const vets = await dataService.getVets();
+      const v = vets.find(v => v.id === vetId);
       if (v) setVet(v);
-      if (p) setPet(p);
     };
-    fetchData();
-  }, [vetId, petId]);
+    fetchVet();
+  }, [vetId]);
 
-  const handleConfirm = () => {
-    // Navigate to a success screen or back to dashboard
-    navigation.navigate('MainTabs', { screen: 'AppointmentsTab' });
+  const handleConfirm = async () => {
+    if (!token) return;
+    try {
+      await bookAppointment({
+        petId,
+        vetId,
+        date,
+        time,
+        reason,
+        status: 'upcoming'
+      }, token);
+      navigation.navigate('MainTabs', { screen: 'AppointmentsTab' });
+    } catch (error) {
+      console.error('Booking failed:', error);
+    }
   };
+
 
   return (
     <ScreenContainer>

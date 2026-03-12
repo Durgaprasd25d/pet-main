@@ -8,18 +8,20 @@ import { dataService } from '../../services/dataService';
 import { Vet } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
+import { useVetStore } from '../../store/useVetStore';
+
 export const VetProfileScreen = ({ route, navigation }: any) => {
   const { vetId } = route.params;
-  const [vet, setVet] = useState<Vet | null>(null);
+  const { vets, fetchVets } = useVetStore();
+  
+  const vet = vets.find(v => v.id === vetId);
 
   useEffect(() => {
-    const fetchVet = async () => {
-      const vets = await dataService.getVets();
-      const v = vets.find(v => v.id === vetId);
-      if (v) setVet(v);
-    };
-    fetchVet();
+    if (!vet) {
+      fetchVets();
+    }
   }, [vetId]);
+
 
   const handleShare = async () => {
     try {

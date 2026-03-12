@@ -1,20 +1,43 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, SIZES, RADIUS } from '../../theme/theme';
+import { dataService } from '../../services/dataService';
 
 export const RegisterScreen = ({ navigation }: any) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    navigation.navigate('OTPVerification');
+  const handleRegister = async () => {
+    if (!name || !email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const result = await dataService.register({ name, email, password });
+      if (result.email) {
+        navigation.navigate('OTPVerification', { email: result.email });
+      } else {
+        Alert.alert('Registration Failed', result.message || 'Something went wrong');
+      }
+    } catch (error) {
+      console.error('Registration error details:', error);
+      Alert.alert('Network Error', 'Could not connect to the server. Please check your internet and if the server is running.');
+    } finally {
+      setLoading(false);
+    }
+
   };
+
+
 
   return (
     <ScreenContainer>
@@ -67,7 +90,10 @@ export const RegisterScreen = ({ navigation }: any) => {
               title="Sign Up"
               onPress={handleRegister}
               style={styles.registerButton}
+              loading={loading}
+              disabled={loading}
             />
+
           </View>
 
           <View style={styles.footerContainer}>

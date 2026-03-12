@@ -10,20 +10,21 @@ import { dataService } from '../../services/dataService';
 import { Pet } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
+import { usePetStore } from '../../store/usePetStore';
+
 export const BookAppointmentScreen = ({ route, navigation }: any) => {
   const { vetId } = route.params;
-  const { user } = useAppStore();
-  const [pets, setPets] = useState<Pet[]>([]);
+  const { token } = useAppStore();
+  const { pets, fetchPets } = usePetStore();
   const [selectedPet, setSelectedPet] = useState<string | null>(null);
   const [reason, setReason] = useState('');
 
   useEffect(() => {
-    const fetchPets = async () => {
-      const allPets = await dataService.getPets();
-      setPets(allPets.filter(p => p.ownerId === user?.id));
-    };
-    fetchPets();
-  }, [user]);
+    if (token) {
+      fetchPets(token);
+    }
+  }, [token]);
+
 
   const handleNext = () => {
     if (selectedPet && reason) {

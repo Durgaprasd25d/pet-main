@@ -5,18 +5,34 @@ import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
+import { useAdoptionStore } from '../../store/useAdoptionStore';
+import { useAppStore } from '../../store/useAppStore';
+
 
 export const AdoptionApplicationScreen = ({ route, navigation }: any) => {
   const { adoptionId } = route.params;
+  const { applyForAdoption } = useAdoptionStore();
+  const { token } = useAppStore();
 
   const [experience, setExperience] = useState('');
   const [homeType, setHomeType] = useState('');
   const [otherPets, setOtherPets] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    // Navigate to success screen
-    navigation.navigate('ApplicationSuccess');
+  const handleSubmit = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const message = `Experience: ${experience}\nHome Type: ${homeType}\nOther Pets: ${otherPets}`;
+      await applyForAdoption(adoptionId, message, token);
+      navigation.navigate('ApplicationSuccess');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <ScreenContainer>
@@ -69,7 +85,8 @@ export const AdoptionApplicationScreen = ({ route, navigation }: any) => {
         <Button 
           title="Submit Application" 
           onPress={handleSubmit} 
-          disabled={!experience || !homeType}
+          disabled={!experience || !homeType || loading}
+          loading={loading}
         />
       </View>
     </ScreenContainer>

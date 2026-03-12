@@ -6,21 +6,13 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
-import { dataService } from '../../services/dataService';
-import { LostAndFound } from '../../types';
+import { useLostPetStore } from '../../store/useLostPetStore';
 
 export const LostPetDetailsScreen = ({ route, navigation }: any) => {
   const { itemId } = route.params;
-  const [item, setItem] = useState<LostAndFound | null>(null);
+  const { reports } = useLostPetStore();
+  const item = reports.find(r => r.id === itemId);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await dataService.getLostAndFound();
-      const i = data.find(d => d.id === itemId);
-      if (i) setItem(i);
-    };
-    fetchData();
-  }, [itemId]);
 
   if (!item) {
     return (

@@ -4,29 +4,29 @@ import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
-import { dataService } from '../../services/dataService';
 import { LostAndFound } from '../../types';
 
+
+import { useLostPetStore } from '../../store/useLostPetStore';
+
 export const LostFoundHomeScreen = ({ navigation }: any) => {
-  const [items, setItems] = useState<LostAndFound[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const { reports, loading, fetchReports } = useLostPetStore();
   const [filter, setFilter] = useState<'All' | 'Lost' | 'Found'>('All');
 
-  const loadData = async () => {
-    setRefreshing(true);
-    const fetchedItems = await dataService.getLostAndFound();
-    setItems(fetchedItems);
-    setRefreshing(false);
-  };
-
   useEffect(() => {
-    loadData();
+    fetchReports();
   }, []);
 
+
   const getFilteredItems = () => {
-    if (filter === 'All') return items;
-    return items.filter(item => item.status === filter);
+    if (filter === 'All') return reports;
+    return reports.filter((item: LostAndFound) => item.status === filter);
   };
+
+  const onRefresh = () => {
+    fetchReports();
+  };
+
 
   const renderCard = (item: LostAndFound) => (
     <TouchableOpacity 
@@ -87,7 +87,7 @@ export const LostFoundHomeScreen = ({ navigation }: any) => {
 
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}
       >
         <View style={styles.grid}>
           {getFilteredItems().map(renderCard)}

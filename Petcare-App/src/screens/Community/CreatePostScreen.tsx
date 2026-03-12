@@ -6,17 +6,35 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useCommunityStore } from '../../store/useCommunityStore';
 import { useAppStore } from '../../store/useAppStore';
 
 export const CreatePostScreen = ({ navigation }: any) => {
-  const { user } = useAppStore();
+
+  const { user, token } = useAppStore();
+  const { createPost } = useCommunityStore();
+  
   const [content, setContent] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handlePost = () => {
-    // In a real app, send data to backend
-    navigation.goBack();
+  const handlePost = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      await createPost({
+        content,
+        images: imageUri ? [imageUri] : [],
+        category: 'General'
+      }, token);
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <ScreenContainer>
@@ -64,7 +82,8 @@ export const CreatePostScreen = ({ navigation }: any) => {
         <Button 
           title="Post" 
           onPress={handlePost} 
-          disabled={!content.trim() && !imageUri}
+          disabled={(!content.trim() && !imageUri) || loading}
+          loading={loading}
         />
       </View>
     </ScreenContainer>

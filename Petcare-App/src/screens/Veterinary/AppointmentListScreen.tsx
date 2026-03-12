@@ -8,40 +8,38 @@ import { useAppStore } from '../../store/useAppStore';
 import { dataService } from '../../services/dataService';
 import { Appointment, Pet } from '../../types';
 
-export const AppointmentListScreen = ({ navigation }: any) => {
-  const { user } = useAppStore();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+import { useAppointmentStore } from '../../store/useAppointmentStore';
+import { usePetStore } from '../../store/usePetStore';
 
-  const loadData = async () => {
-    setRefreshing(true);
-    const fetchedPets = await dataService.getPets();
-    const fetchedAppts = await dataService.getAppointments();
-    
-    const userPets = fetchedPets.filter(p => p.ownerId === user?.id);
-    setPets(userPets);
-    
-    // Filter appointments for user's pets
-    const userAppts = fetchedAppts.filter(a => userPets.some(p => p.id === a.petId));
-    setAppointments(userAppts);
-    setRefreshing(false);
-  };
+export const AppointmentListScreen = ({ navigation }: any) => {
+  const { token } = useAppStore();
+  const { appointments, loading, fetchAppointments } = useAppointmentStore();
+  const { pets, fetchPets } = usePetStore();
 
   useEffect(() => {
-    loadData();
-  }, [user]);
+    if (token) {
+      fetchAppointments(token);
+      fetchPets(token);
+    }
+  }, [token]);
 
-  // Split into Upcoming and Past appointments (mock logic: index filtering)
+  const onRefresh = () => {
+    if (token) {
+      fetchAppointments(token);
+      fetchPets(token);
+    }
+  };
+
   const upcomingAppts = appointments.filter(a => a.status === 'upcoming');
   const pastAppts = appointments.filter(a => a.status === 'completed' || a.status === 'cancelled');
+
 
   return (
     <ScreenContainer>
       <Header title="Appointments" rightIcon="plus" onRightPress={() => navigation.navigate('VetList')} />
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />}
       >
         
         <View style={styles.section}>

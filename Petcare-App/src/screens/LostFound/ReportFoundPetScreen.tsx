@@ -7,17 +7,41 @@ import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
+import { useLostPetStore } from '../../store/useLostPetStore';
+import { useAppStore } from '../../store/useAppStore';
+
 export const ReportFoundPetScreen = ({ navigation }: any) => {
+  const { reportPet } = useLostPetStore();
+  const { token } = useAppStore();
+  const [loading, setLoading] = useState(false);
+
   const [type, setType] = useState('Dog');
   const [breed, setBreed] = useState('');
   const [location, setLocation] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleReport = () => {
-    // Submit logic
-    navigation.goBack();
+  const handleReport = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      await reportPet({
+        type,
+        breed,
+        location,
+        date,
+        description,
+        status: 'Found',
+        image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=400' // Placeholder
+      }, token);
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const renderTypeSelector = (label: string, icon: string) => (
     <TouchableOpacity 
@@ -69,6 +93,8 @@ export const ReportFoundPetScreen = ({ navigation }: any) => {
           onPress={handleReport} 
           style={styles.submitBtn}
           color={COLORS.success}
+          loading={loading}
+          disabled={loading || !location}
         />
 
       </ScrollView>

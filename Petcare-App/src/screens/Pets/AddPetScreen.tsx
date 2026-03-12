@@ -6,8 +6,15 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useAppStore } from '../../store/useAppStore';
+import { dataService } from '../../services/dataService';
+
+import { usePetStore } from '../../store/usePetStore';
 
 export const AddPetScreen = ({ navigation }: any) => {
+  const { token } = useAppStore();
+  const { addPet, loading } = usePetStore();
+  
   const [name, setName] = useState('');
   const [type, setType] = useState('Dog');
   const [breed, setBreed] = useState('');
@@ -15,10 +22,25 @@ export const AddPetScreen = ({ navigation }: any) => {
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('Male');
 
-  const handleSave = () => {
-    // In a real app, you would make an API call here.
-    navigation.goBack();
+  const handleSave = async () => {
+    if (!name || !token) return;
+    
+    try {
+      await addPet({
+        name,
+        type,
+        breed,
+        age: parseInt(age) || 0,
+        weight,
+        gender,
+        image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400' // Placeholder
+      }, token);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error saving pet:', error);
+    }
   };
+
 
   const renderTypeSelector = (label: string, icon: string) => (
     <TouchableOpacity 
@@ -79,7 +101,13 @@ export const AddPetScreen = ({ navigation }: any) => {
           <Input label="Weight (kg)" value={weight} onChangeText={setWeight} keyboardType="numeric" containerStyle={{ flex: 1 }} />
         </View>
 
-        <Button title="Save Pet" onPress={handleSave} style={styles.saveButton} />
+        <Button 
+          title="Save Pet" 
+          onPress={handleSave} 
+          style={styles.saveButton} 
+          loading={loading}
+          disabled={!name}
+        />
 
       </ScrollView>
     </ScreenContainer>

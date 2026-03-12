@@ -9,24 +9,32 @@ import { dataService } from '../../services/dataService';
 import { Pet, Appointment } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
+import { usePetStore } from '../../store/usePetStore';
+import { useAppointmentStore } from '../../store/useAppointmentStore';
+
 export const HomeDashboardScreen = ({ navigation }: any) => {
-  const { user } = useAppStore();
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const { user, token } = useAppStore();
+  const { pets, fetchPets, loading: petsLoading } = usePetStore();
+  const { appointments, fetchAppointments, loading: apptsLoading } = useAppointmentStore();
 
   const loadData = async () => {
-    setRefreshing(true);
-    const fetchedPets = await dataService.getPets();
-    const fetchedAppts = await dataService.getAppointments();
-    setPets(fetchedPets.filter(p => p.ownerId === user?.id));
-    setAppointments(fetchedAppts.filter(a => fetchedPets.some(p => p.id === a.petId)));
-    setRefreshing(false);
+    if (!token) return;
+    await Promise.all([
+      fetchPets(token),
+      fetchAppointments(token)
+    ]);
   };
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [token]);
+
+  const refreshing = petsLoading || apptsLoading;
+  
+  // Filter for display
+  const myPets = pets.slice(0, 2);
+  const myAppointments = appointments.filter(a => a.status === 'upcoming').slice(0, 2);
+
 
   return (
     <ScreenContainer>
@@ -83,8 +91,8 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
               <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
           </View>
-          {pets.length > 0 ? (
-            pets.slice(0, 2).map((pet, index) => (
+          {myPets.length > 0 ? (
+            myPets.map((pet, index) => (
               <PetCard 
                 key={pet.id} 
                 pet={pet} 
@@ -107,8 +115,8 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
               <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
           </View>
-          {appointments.length > 0 ? (
-            appointments.slice(0, 2).map((appt, index) => {
+          {myAppointments.length > 0 ? (
+            myAppointments.map((appt, index) => {
               const pet = pets.find(p => p.id === appt.petId);
               return (
                 <AppointmentCard 

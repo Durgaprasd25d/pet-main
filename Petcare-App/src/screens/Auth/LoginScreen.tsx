@@ -1,27 +1,49 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, SIZES, RADIUS } from '../../theme/theme';
 import { useAppStore } from '../../store/useAppStore';
+import { dataService } from '../../services/dataService';
 
 export const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { setUser } = useAppStore();
+  const [loading, setLoading] = useState(false);
+  const { setAuth } = useAppStore();
 
-  const handleLogin = () => {
-    setUser({
-      id: "u1",
-      name: "Jane Doe",
-      email: email || "jane.doe@example.com",
-      avatar: "https://i.pravatar.cc/150?u=jane",
-      phone: "+1234567890",
-      location: "San Francisco, CA"
-    });
+  const handleLogin = async () => {
+    if (!email || !password) return;
+    
+    setLoading(true);
+    try {
+      const data = await dataService.login({ email, password });
+      if (data.token) {
+        setAuth({
+          id: data._id,
+          name: data.name,
+          email: data.email,
+          avatar: data.avatar,
+          phone: data.phone,
+          location: data.location
+        } as any, data.token);
+      } else if (data.email && data.isVerified === false) {
+        Alert.alert('Verification Required', 'Please verify your account');
+        navigation.navigate('OTPVerification', { email: data.email });
+      } else {
+        Alert.alert('Login Failed', data.message || 'Invalid credentials');
+      }
+
+    } catch (error) {
+      console.error('Login error details:', error);
+      Alert.alert('Network Error', 'Could not connect to the server. Please check your internet and if the server is running.');
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   return (
@@ -74,6 +96,8 @@ export const LoginScreen = ({ navigation }: any) => {
               title="Sign In"
               onPress={handleLogin}
               style={styles.loginButton}
+              loading={loading}
+              disabled={!email || !password}
             />
           </View>
 

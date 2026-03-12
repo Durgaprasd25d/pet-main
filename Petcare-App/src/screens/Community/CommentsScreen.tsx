@@ -1,36 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Text, Image, TextInput, TouchableOpacity } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAppStore } from '../../store/useAppStore';
 
-// Mock data for comments
-const MOCK_COMMENTS = [
-  { id: '1', author: 'Jane Doe', avatar: 'https://i.pravatar.cc/150?img=11', text: 'This is so cute! Absolutely adorable.', time: '2h ago' },
-  { id: '2', author: 'Mike Ross', avatar: 'https://i.pravatar.cc/150?img=32', text: 'Great photo. Where was this taken?', time: '5h ago' },
-  { id: '3', author: 'Sarah Smith', avatar: 'https://i.pravatar.cc/150?img=47', text: 'Aww my heart melts! What breed is that?', time: '1d ago' },
-];
 
-export const CommentsScreen = ({ navigation }: any) => {
+export const CommentsScreen = ({ route, navigation }: any) => {
+  const { postId } = route.params;
+  const { comments, loading, fetchComments, addComment } = useCommunityStore();
+  const { token } = useAppStore();
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState(MOCK_COMMENTS);
 
-  const handleSend = () => {
-    if (commentText.trim()) {
-      setComments([
-        ...comments,
-        {
-          id: Date.now().toString(),
-          author: 'You',
-          avatar: 'https://i.pravatar.cc/150?img=68',
-          text: commentText,
-          time: 'Just now'
-        }
-      ]);
+  useEffect(() => {
+    fetchComments(postId);
+  }, [postId]);
+
+  const handleSend = async () => {
+    if (commentText.trim() && token) {
+      await addComment(postId, commentText, token);
       setCommentText('');
     }
   };
+
 
   return (
     <ScreenContainer>

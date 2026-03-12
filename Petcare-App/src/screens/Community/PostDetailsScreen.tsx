@@ -7,19 +7,28 @@ import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-
 import { dataService } from '../../services/dataService';
 import { Post } from '../../types';
 
+import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAppStore } from '../../store/useAppStore';
+
 export const PostDetailsScreen = ({ route, navigation }: any) => {
   const { postId } = route.params;
-  const [post, setPost] = useState<Post | null>(null);
+  const { posts, comments, fetchComments, addComment } = useCommunityStore();
+  const { token } = useAppStore();
   const [commentText, setCommentText] = useState('');
+  
+  const post = posts.find(p => p.id === postId);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      const posts = await dataService.getPosts();
-      const p = posts.find(p => p.id === postId);
-      if (p) setPost(p);
-    };
-    fetchPost();
+    fetchComments(postId);
   }, [postId]);
+
+  const handleSend = async () => {
+    if (commentText.trim() && token) {
+      await addComment(postId, commentText, token);
+      setCommentText('');
+    }
+  };
+
 
   if (!post) {
     return (
@@ -82,28 +91,19 @@ export const PostDetailsScreen = ({ route, navigation }: any) => {
           </View>
         </View>
 
-        {/* Mock Comments Section */}
         <Text style={styles.commentsHeader}>Comments</Text>
-        <View style={styles.commentItem}>
-          <Image source={{ uri: 'https://i.pravatar.cc/150?img=11' }} style={styles.commentAvatar} />
-          <View style={styles.commentContent}>
-            <View style={styles.commentHeader}>
-              <Text style={styles.commentAuthor}>Jane Doe</Text>
-              <Text style={styles.commentTime}>2h ago</Text>
+        {comments.map((c: any) => (
+          <View key={c._id || c.id} style={styles.commentItem}>
+            <Image source={{ uri: c.authorAvatar || 'https://i.pravatar.cc/150?img=68' }} style={styles.commentAvatar} />
+            <View style={styles.commentContent}>
+              <View style={styles.commentHeader}>
+                <Text style={styles.commentAuthor}>{c.authorName}</Text>
+                <Text style={styles.commentTime}>{new Date(c.createdAt).toLocaleDateString()}</Text>
+              </View>
+              <Text style={styles.commentText}>{c.text}</Text>
             </View>
-            <Text style={styles.commentText}>This is so cute! Absolutely adorable.</Text>
           </View>
-        </View>
-        <View style={styles.commentItem}>
-          <Image source={{ uri: 'https://i.pravatar.cc/150?img=32' }} style={styles.commentAvatar} />
-          <View style={styles.commentContent}>
-            <View style={styles.commentHeader}>
-              <Text style={styles.commentAuthor}>Mike Ross</Text>
-              <Text style={styles.commentTime}>5h ago</Text>
-            </View>
-            <Text style={styles.commentText}>Great photo. Where was this taken?</Text>
-          </View>
-        </View>
+        ))}
 
       </ScrollView>
 
@@ -115,7 +115,7 @@ export const PostDetailsScreen = ({ route, navigation }: any) => {
           value={commentText}
           onChangeText={setCommentText}
         />
-        <TouchableOpacity style={styles.sendBtn} disabled={!commentText.trim()}>
+        <TouchableOpacity style={styles.sendBtn} onPress={handleSend} disabled={!commentText.trim()}>
           <MaterialDesignIcons name="send" size={24} color={commentText.trim() ? COLORS.primary : COLORS.border} />
         </TouchableOpacity>
       </View>

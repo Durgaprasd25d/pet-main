@@ -9,21 +9,20 @@ import { dataService } from '../../services/dataService';
 import { Vet } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
+import { useVetStore } from '../../store/useVetStore';
+
 export const VetListScreen = ({ navigation }: any) => {
-  const [vets, setVets] = useState<Vet[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const { vets, loading, fetchVets } = useVetStore();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const loadData = async () => {
-    setRefreshing(true);
-    const fetchedVets = await dataService.getVets();
-    setVets(fetchedVets);
-    setRefreshing(false);
+  useEffect(() => {
+    fetchVets();
+  }, []);
+
+  const onRefresh = () => {
+    fetchVets();
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const filteredVets = vets.filter(v => 
     v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -60,7 +59,7 @@ export const VetListScreen = ({ navigation }: any) => {
 
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} colors={[COLORS.primary]} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} colors={[COLORS.primary]} />}
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.resultsCount}>{filteredVets.length} Vets found in your area</Text>

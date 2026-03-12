@@ -1,0 +1,15 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "javascript",
+    "typescript": "typescript",
+    "typescriptreact": "typescript"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules/.settings": true,
+    "**/.settings": true
+  }
+}

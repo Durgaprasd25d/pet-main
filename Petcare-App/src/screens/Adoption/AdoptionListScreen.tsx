@@ -8,24 +8,19 @@ import { COLORS, SPACING } from '../../theme/theme';
 import { dataService } from '../../services/dataService';
 import { Adoption } from '../../types';
 
+import { useAdoptionStore } from '../../store/useAdoptionStore';
+
 export const AdoptionListScreen = ({ route, navigation }: any) => {
   const initialFilter = route.params?.filter || '';
-  const [pets, setPets] = useState<Adoption[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const { adoptions, loading, fetchAdoptions } = useAdoptionStore();
   const [searchQuery, setSearchQuery] = useState(initialFilter);
 
-  const loadData = async () => {
-    setRefreshing(true);
-    const fetchedAdoptions = await dataService.getAdoptions();
-    setPets(fetchedAdoptions);
-    setRefreshing(false);
-  };
-
   useEffect(() => {
-    loadData();
+    fetchAdoptions();
   }, []);
 
-  const filteredPets = pets.filter(p => 
+
+  const filteredPets = adoptions.filter((p: Adoption) => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.breed.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.type.toLowerCase().includes(searchQuery.toLowerCase())
@@ -47,10 +42,10 @@ export const AdoptionListScreen = ({ route, navigation }: any) => {
 
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchAdoptions} />}
       >
         <View style={styles.grid}>
-          {filteredPets.map((pet, index) => (
+          {filteredPets.map((pet: Adoption, index: number) => (
             <View key={pet.id} style={styles.gridItem}>
               <AdoptionCard 
                 adoption={pet} 
@@ -64,6 +59,7 @@ export const AdoptionListScreen = ({ route, navigation }: any) => {
     </ScreenContainer>
   );
 };
+
 
 const styles = StyleSheet.create({
   searchContainer: {
