@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Switch, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Switch, TouchableOpacity, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
@@ -9,6 +9,17 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [isBiometricEnabled, setIsBiometricEnabled] = useState(true);
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "This action is permanent and cannot be undone. All your pet data will be lost.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete Permanently", style: "destructive", onPress: () => {} }
+      ]
+    );
+  };
 
   const renderSection = (title: string, children: React.ReactNode) => (
     <View style={styles.section}>
@@ -20,7 +31,7 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
   const renderToggle = (icon: string, title: string, description: string, value: boolean, onValueChange: (v: boolean) => void) => (
     <View style={styles.row}>
       <View style={styles.iconBox}>
-        <MaterialDesignIcons name={icon as any} size={24} color={COLORS.primary} />
+        <MaterialDesignIcons name={icon as any} size={22} color={COLORS.primary} />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.rowTitle}>{title}</Text>
@@ -29,16 +40,16 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: COLORS.border, true: COLORS.primary + '50' }}
+        trackColor={{ false: '#cbd5e1', true: COLORS.primary + '50' }}
         thumbColor={value ? COLORS.primary : '#f4f3f4'}
       />
     </View>
   );
 
   const renderLink = (icon: string, title: string, onPress: () => void) => (
-    <TouchableOpacity style={styles.row} onPress={onPress}>
+    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.iconBox}>
-        <MaterialDesignIcons name={icon as any} size={24} color={COLORS.primary} />
+        <MaterialDesignIcons name={icon as any} size={22} color={COLORS.primary} />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.rowTitle}>{title}</Text>
@@ -50,7 +61,7 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
   return (
     <ScreenContainer>
       <Header title="Privacy & Security" onBackPress={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
         {renderSection("Security", (
           <>
@@ -70,7 +81,7 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
               setIsBiometricEnabled
             )}
             <View style={styles.divider} />
-            {renderLink("key-outline", "Change Password", () => {})}
+            {renderLink("key-outline", "Change Password", () => navigation.navigate('ForgotPassword'))}
           </>
         ))}
 
@@ -90,8 +101,13 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
           </>
         ))}
 
-        <TouchableOpacity style={styles.deleteAccount}>
-          <Text style={styles.deleteText}>Delete Account</Text>
+        <TouchableOpacity 
+          style={styles.deleteAccountCard} 
+          activeOpacity={0.8}
+          onPress={handleDeleteAccount}
+        >
+          <MaterialDesignIcons name="account-remove-outline" size={24} color={COLORS.error} />
+          <Text style={styles.deleteText}>Delete My Account</Text>
         </TouchableOpacity>
 
       </ScrollView>
@@ -153,10 +169,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.border,
     marginLeft: 72,
   },
-  deleteAccount: {
-    marginTop: SPACING.md,
+  deleteAccountCard: {
+    backgroundColor: COLORS.surface,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: SPACING.md,
+    borderRadius: RADIUS.lg,
+    marginTop: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.error + '30',
+    gap: 12,
+    ...SHADOWS.small,
   },
   deleteText: {
     color: COLORS.error,

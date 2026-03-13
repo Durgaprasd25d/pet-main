@@ -18,6 +18,7 @@ interface CustomModalProps {
   message: string;
   confirmLabel?: string;
   onConfirm?: () => void;
+  showCancel?: boolean;
   type?: 'info' | 'error' | 'success' | 'warning';
   loading?: boolean;
 }
@@ -29,6 +30,7 @@ export const CustomModal = ({
   message,
   confirmLabel,
   onConfirm,
+  showCancel = true,
   type = 'info',
   loading = false,
 }: CustomModalProps) => {
@@ -67,9 +69,11 @@ export const CustomModal = ({
           <Text style={styles.message}>{message}</Text>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
+            {showCancel && (
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+            )}
 
             {onConfirm && (
               <TouchableOpacity

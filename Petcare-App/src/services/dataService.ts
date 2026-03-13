@@ -3,7 +3,8 @@ import { User, Pet, Appointment, Vet, Adoption, Post, LostAndFound, Emergency } 
 
 import { API_URL as ENV_API_URL } from '@env';
 
-const API_URL = ENV_API_URL || 'http://10.78.10.236:5000/api';
+const API_URL = ENV_API_URL || 'http://192.168.1.3:5000/api'; // Primary (Wi-Fi)
+// const API_URL = ENV_API_URL || 'http://10.31.42.78:5000/api'; // Alternative (Ethernet)
 console.log('[DataService] Using API_URL:', API_URL);
 
 export const dataService = {

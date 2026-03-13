@@ -2,14 +2,15 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Text, Image, TouchableOpacity, Linking } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
+import { CustomModal } from '../../components/ui/CustomModal';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
 export const AboutAppScreen = ({ navigation }: any) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const handleLink = (url: string) => {
-    // In a real app, use Linking.openURL(url)
-    console.log('Opening:', url);
+    setModalVisible(true);
   };
 
   const renderLinkRow = (icon: string, title: string, onPress: () => void) => (
@@ -29,7 +30,11 @@ export const AboutAppScreen = ({ navigation }: any) => {
         
         <View style={styles.headerArea}>
           <View style={styles.logoContainer}>
-            <MaterialDesignIcons name="paw" size={60} color={COLORS.surface} />
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.logo} 
+              resizeMode="contain"
+            />
           </View>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>HACKATHON EDITION</Text>
@@ -65,6 +70,17 @@ export const AboutAppScreen = ({ navigation }: any) => {
         <Text style={styles.copyright}>© {new Date().getFullYear()} PetCare Inc. All rights reserved.</Text>
 
       </ScrollView>
+
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Coming Soon"
+        message="Our team is working hard to establish our presence on social media. We'll be there soon! 🐾"
+        confirmLabel="Got it!"
+        onConfirm={() => setModalVisible(false)}
+        showCancel={false}
+        type="info"
+      />
     </ScreenContainer>
   );
 };
@@ -81,14 +97,20 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    width: 160,
+    height: 160,
+    borderRadius: RADIUS.xl,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.md,
-    ...SHADOWS.small,
+    ...SHADOWS.medium,
+    overflow: 'hidden',
+    padding: 0,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
   },
   appName: {
     fontSize: 24,

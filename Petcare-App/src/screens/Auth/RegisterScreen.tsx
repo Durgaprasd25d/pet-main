@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert, Image } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -52,6 +52,11 @@ export const RegisterScreen = ({ navigation }: any) => {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.headerContainer}>
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.logo} 
+              resizeMode="contain"
+            />
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join our community of pet lovers</Text>
           </View>
@@ -117,6 +122,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     marginTop: SPACING.lg,
     marginBottom: SPACING.xxl,
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: SIZES.isSmallDevice ? 28 : 32,

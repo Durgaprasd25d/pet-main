@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { PetCard } from '../../components/cards/PetCard';
 import { AppointmentCard } from '../../components/cards/AppointmentCard';
@@ -45,9 +45,16 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
         decelerationRate="fast"
       >
         <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>Hello, {user?.name.split(' ')[0]} 👋</Text>
-            <Text style={styles.subtitle}>Your pets are doing great!</Text>
+          <View style={styles.headerLeft}>
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.miniLogo} 
+              resizeMode="contain"
+            />
+            <View>
+              <Text style={styles.greeting}>Hello, {user?.name.split(' ')[0]} 👋</Text>
+              <Text style={styles.subtitle}>Your pets are doing great!</Text>
+            </View>
           </View>
           <TouchableOpacity 
             style={styles.notificationBtn}
@@ -102,6 +109,21 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
             <Text style={styles.aiBadgeText}>BETA</Text>
           </View>
         </TouchableOpacity>
+
+        <View style={styles.rewardsCard}>
+          <View style={styles.rewardsInfo}>
+            <View style={styles.coinIcon}>
+              <MaterialDesignIcons name="paw" size={24} color="#f59e0b" />
+            </View>
+            <View>
+              <Text style={styles.pointsText}>1,240 Paw Points</Text>
+              <Text style={styles.rewardsSub}>You're earning rewards! 🏆</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.redeemBtn}>
+            <Text style={styles.redeemText}>Redeem</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -170,6 +192,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.xl,
     marginTop: SPACING.sm,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  miniLogo: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: COLORS.border + '50',
   },
   greeting: {
     fontSize: 26,
@@ -297,5 +332,55 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '900',
     color: COLORS.primary,
+  },
+  rewardsCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.md,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.xl,
+    borderWidth: 1,
+    borderColor: '#f59e0b30',
+    ...SHADOWS.small,
+  },
+  rewardsInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  coinIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fffbeb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
+    borderWidth: 1,
+    borderColor: '#fef3c7',
+  },
+  pointsText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: COLORS.text,
+  },
+  rewardsSub: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    fontWeight: '600',
+  },
+  redeemBtn: {
+    backgroundColor: '#fffbeb',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: RADIUS.round,
+    borderWidth: 1,
+    borderColor: '#fef3c7',
+  },
+  redeemText: {
+    color: '#d97706',
+    fontSize: 13,
+    fontWeight: '800',
   },
 });
