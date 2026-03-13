@@ -2,6 +2,8 @@ const Pet = require("../models/Pet");
 const Appointment = require("../models/Appointment");
 const Prescription = require("../models/Prescription");
 const Vaccination = require("../models/Vaccination");
+const MedicalRecord = require("../models/MedicalRecord");
+const cloudinary = require("../config/cloudinaryConfig");
 
 // @desc    Get pet medical history (Aggregated)
 // @route   GET /api/pets/:id/history
@@ -11,17 +13,22 @@ exports.getPetHistory = async (req, res) => {
     const petId = req.params.id;
 
     // Fetch all related data
-    const [appointments, prescriptions, vaccinations] = await Promise.all([
-      Appointment.find({ petId }).populate(
-        "vetId",
-        "name clinicName specialty",
-      ),
-      Prescription.find({ petId }).populate(
-        "vetId",
-        "name clinicName specialty",
-      ),
-      Vaccination.find({ petId }),
-    ]);
+    const [appointments, prescriptions, vaccinations, medicalRecords] =
+      await Promise.all([
+        Appointment.find({ petId }).populate(
+          "vetId",
+          "name clinicName specialty",
+        ),
+        Prescription.find({ petId }).populate(
+          "vetId",
+          "name clinicName specialty",
+        ),
+        Vaccination.find({ petId }),
+        MedicalRecord.find({ petId }).populate(
+          "vetId",
+          "name clinicName specialty",
+        ),
+      ]);
 
     // Map and normalize records
     const history = [
@@ -53,6 +60,17 @@ exports.getPetHistory = async (req, res) => {
         vet: v.vetName,
         notes: v.notes,
         nextDue: v.nextDueDate,
+      })),
+      ...medicalRecords.map((m) => ({
+        _id: m._id,
+        type: "medical_record",
+        date: m.recordDate,
+        title: `Diagnosis: ${m.diagnosis}`,
+        medication: m.medication,
+        notes: m.notes,
+        vet: m.vetId?.name,
+        clinic: m.vetId?.clinicName,
+        documentUrl: m.documentUrl,
       })),
     ];
 
@@ -113,6 +131,21 @@ exports.createPet = async (req, res) => {
   const { name, type, breed, age, weight, gender, image } = req.body;
 
   try {
+    let imageUrl = image || "";
+
+    if (req.file) {
+      imageUrl = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { resource_type: "auto", folder: "pet_profiles" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          },
+        );
+        uploadStream.end(req.file.buffer);
+      });
+    }
+
     const pet = new Pet({
       ownerId: req.user._id,
       name,
@@ -121,7 +154,7 @@ exports.createPet = async (req, res) => {
       age,
       weight,
       gender,
-      image,
+      image: imageUrl,
     });
 
     const createdPet = await pet.save();
@@ -145,7 +178,21 @@ exports.updatePet = async (req, res) => {
       pet.age = req.body.age ?? pet.age;
       pet.weight = req.body.weight ?? pet.weight;
       pet.gender = req.body.gender ?? pet.gender;
-      pet.image = req.body.image ?? pet.image;
+
+      if (req.file) {
+        pet.image = await new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { resource_type: "auto", folder: "pet_profiles" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            },
+          );
+          uploadStream.end(req.file.buffer);
+        });
+      } else if (req.body.image) {
+        pet.image = req.body.image;
+      }
 
       const updatedPet = await pet.save();
       res.json(updatedPet);

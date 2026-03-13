@@ -31,6 +31,8 @@ export const EditPetScreen = ({ route, navigation }: any) => {
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('Male');
+  const [microchipId, setMicrochipId] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Sync state with pet data
@@ -43,6 +45,8 @@ export const EditPetScreen = ({ route, navigation }: any) => {
       setAge(pet.age?.toString() || '');
       setWeight(pet.weight || '');
       setGender(pet.gender || 'Male');
+      setMicrochipId(pet.microchipId || '');
+      setBloodGroup(pet.bloodGroup || '');
       setIsInitialized(true);
     } else if (!pet && token) {
       fetchPets(token);
@@ -63,6 +67,8 @@ export const EditPetScreen = ({ route, navigation }: any) => {
         age: parseInt(age) || 0,
         weight: weight.trim(),
         gender,
+        microchipId: microchipId.trim(),
+        bloodGroup: bloodGroup.trim(),
       }, token!);
       
       Alert.alert('Success', 'Pet profile updated successfully');
@@ -193,9 +199,22 @@ export const EditPetScreen = ({ route, navigation }: any) => {
               value={weight} 
               onChangeText={setWeight} 
               placeholder="e.g. 15"
-              containerStyle={{ flex: 1 }} 
             />
           </View>
+
+          <Input 
+            label="Microchip ID" 
+            value={microchipId} 
+            onChangeText={setMicrochipId} 
+            placeholder="e.g. PC-12345678"
+          />
+
+          <Input 
+            label="Blood Group" 
+            value={bloodGroup} 
+            onChangeText={setBloodGroup} 
+            placeholder="e.g. B Positive"
+          />
 
           <Button 
             title="Update Pet Details" 

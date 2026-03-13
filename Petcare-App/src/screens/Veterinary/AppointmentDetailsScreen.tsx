@@ -55,7 +55,7 @@ export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
 
   const getStatusColor = (status: string): "success" | "warning" | "error" | "neutral" => {
     switch (status) {
-      case 'upcoming': return 'success';
+      case 'scheduled': return 'success';
       case 'completed': return 'neutral';
       case 'cancelled': return 'error';
       default: return 'neutral';
@@ -113,7 +113,7 @@ export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
 
       </ScrollView>
 
-      {appointment.status === 'upcoming' ? (
+      {appointment.status === 'scheduled' ? (
         <View style={styles.footer}>
           <Button 
             title="Reschedule" 

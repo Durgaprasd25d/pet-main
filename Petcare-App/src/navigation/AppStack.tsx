@@ -14,6 +14,8 @@ import { EditPetScreen } from '../screens/Pets/EditPetScreen';
 import { PetHealthCardScreen } from '../screens/Pets/PetHealthCardScreen';
 import { VaccinationRecordsScreen } from '../screens/Pets/VaccinationRecordsScreen';
 import { MedicalHistoryScreen } from '../screens/Pets/MedicalHistoryScreen';
+import { AddMedicalRecordScreen } from '../screens/Pets/AddMedicalRecordScreen';
+import { AddVaccinationScreen } from '../screens/Pets/AddVaccinationScreen';
 
 // Vet Screens
 import { VetListScreen } from '../screens/Veterinary/VetListScreen';
@@ -101,6 +103,8 @@ export type AppStackParamList = {
   FilterResults: undefined;
   ReminderCenter: undefined;
   VaccinationReminder: undefined;
+  AddMedicalRecord: { petId: string };
+  AddVaccination: { petId: string };
   HelpSupport: undefined;
   AboutApp: undefined;
   PrivacySecurity: undefined;
@@ -126,6 +130,8 @@ export const AppStack = () => {
       <Stack.Screen name="PetHealthCard" component={PetHealthCardScreen} />
       <Stack.Screen name="VaccinationRecords" component={VaccinationRecordsScreen} />
       <Stack.Screen name="MedicalHistory" component={MedicalHistoryScreen} />
+      <Stack.Screen name="AddMedicalRecord" component={AddMedicalRecordScreen} />
+      <Stack.Screen name="AddVaccination" component={AddVaccinationScreen} />
       
       <Stack.Screen name="VetList" component={VetListScreen} />
       <Stack.Screen name="VetProfile" component={VetProfileScreen} />

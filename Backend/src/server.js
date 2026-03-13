@@ -42,6 +42,7 @@ const emergencyRoutes = require("./routes/emergencyRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const prescriptionRoutes = require("./routes/prescriptionRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const medicalRecordRoutes = require("./routes/medicalRecordRoutes");
 
 // Mount routes
 app.use("/api/auth", authRoutes);
@@ -49,6 +50,7 @@ app.use("/api/pets", petRoutes);
 app.use("/api/vets", vetRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/vaccinations", vaccinationRoutes);
+app.use("/api/medical-records", medicalRecordRoutes);
 app.use("/api/adoptions", adoptionRoutes);
 app.use("/api/lostpets", lostPetRoutes);
 app.use("/api/community", communityRoutes);

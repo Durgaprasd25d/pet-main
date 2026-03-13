@@ -17,6 +17,8 @@ export interface Pet {
   weight: string;
   gender: string;
   image: string;
+  microchipId?: string;
+  bloodGroup?: string;
   medicalHistory?: {
     date: string;
     title: string;
@@ -46,6 +48,7 @@ export interface Vet {
   about: string;
   address?: string;
   contactNumber?: string;
+  availability?: string[];
 }
 
 export interface Adoption {

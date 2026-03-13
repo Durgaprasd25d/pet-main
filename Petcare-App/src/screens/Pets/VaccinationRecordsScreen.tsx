@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Text, ActivityIndicator, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
@@ -13,7 +13,7 @@ export const VaccinationRecordsScreen = ({ route, navigation }: any) => {
   const { petId } = route.params;
   const { token } = useAppStore();
   const { pets } = usePetStore();
-  const { vaccinations, fetchVaccinations, loading } = useHealthStore();
+  const { vaccinations, fetchVaccinations, deleteVaccination, loading } = useHealthStore();
   
   const pet = pets.find(p => p.id === petId);
   const petVaccinations = vaccinations[petId] || [];
@@ -35,13 +35,34 @@ export const VaccinationRecordsScreen = ({ route, navigation }: any) => {
     return new Date(dateString) < new Date();
   };
 
+  const handleDelete = (id: string) => {
+    Alert.alert(
+      'Delete Record',
+      'Are you sure you want to delete this vaccination record?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Delete', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteVaccination(id, petId, token!);
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete record');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <ScreenContainer>
       <Header 
         title={`${pet?.name || 'Pet'}'s Vaccinations`} 
         onBackPress={() => navigation.goBack()} 
         rightIcon="plus"
-        onRightPress={() => Alert.alert('Add Record', 'This feature will be available shortly.')}
+        onRightPress={() => navigation.navigate('AddVaccination', { petId })}
       />
       
       {loading && petVaccinations.length === 0 ? (
@@ -63,10 +84,15 @@ export const VaccinationRecordsScreen = ({ route, navigation }: any) => {
                     />
                     <Text style={styles.vaccineName}>{item.vaccineType}</Text>
                   </View>
-                  <Badge 
-                    label={expired ? 'Expired' : 'Valid'} 
-                    variant={expired ? 'error' : 'success'} 
-                  />
+                  <View style={styles.headerRight}>
+                    <Badge 
+                      label={expired ? 'Expired' : 'Valid'} 
+                      variant={expired ? 'error' : 'success'} 
+                    />
+                    <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
+                      <MaterialDesignIcons name="delete-outline" size={20} color={COLORS.error} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
                 
                 <View style={styles.divider} />
@@ -136,6 +162,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.text,
+    marginLeft: SPACING.sm,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deleteBtn: {
     marginLeft: SPACING.sm,
   },
   divider: {

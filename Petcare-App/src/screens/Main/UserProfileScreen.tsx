@@ -113,7 +113,7 @@ export const UserProfileScreen = ({ navigation }: any) => {
         <View style={styles.statsRow}>
           {renderStat(pets.length, 'Pets', 'paw', '#6366f1')}
           <View style={styles.statDivider} />
-          {renderStat(appointments.filter(a => a.status === 'upcoming').length, 'Visits', 'calendar-check', '#f59e0b')}
+          {renderStat(appointments.filter(a => a.status === 'scheduled').length, 'Visits', 'calendar-check', '#f59e0b')}
           <View style={styles.statDivider} />
           {renderStat('Gold', 'Status', 'crown', '#8b5cf6')}
         </View>

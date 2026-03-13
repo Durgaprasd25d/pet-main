@@ -32,8 +32,8 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
   const refreshing = petsLoading || apptsLoading;
   
   // Filter for display
-  const myPets = pets.slice(0, 2);
-  const myAppointments = appointments.filter(a => a.status === 'upcoming').slice(0, 2);
+  const myPets = pets.slice(0, 4);
+  const myAppointments = appointments.filter(a => a.status === 'scheduled').slice(0, 2);
 
 
   return (

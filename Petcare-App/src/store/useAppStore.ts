@@ -8,9 +8,11 @@ interface AppState {
   token: string | null;
   isAuthenticated: boolean;
   theme: 'light' | 'dark';
+  hasHydrated: boolean;
   setAuth: (user: User, token: string) => void;
   setUser: (user: User | null) => void;
   setTheme: (theme: 'light' | 'dark') => void;
+  setHasHydrated: (val: boolean) => void;
   logout: () => void;
 }
 
@@ -21,21 +23,20 @@ export const useAppStore = create<AppState>()(
       token: null,
       isAuthenticated: false,
       theme: 'light',
+      hasHydrated: false,
       setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setTheme: (theme) => set({ theme }),
+      setHasHydrated: (val) => set({ hasHydrated: val }),
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
     }),
     {
       name: 'pet-care-storage',
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: (state) => {
-        console.log('Hydration starting');
         return (state, error) => {
-          if (error) {
-            console.log('An error happened during hydration', error);
-          } else {
-            console.log('Hydration finished');
+          if (!error && state) {
+            state.setHasHydrated(true);
           }
         };
       },

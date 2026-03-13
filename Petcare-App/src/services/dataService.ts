@@ -47,6 +47,7 @@ export const dataService = {
     const response = await fetch(`${API_URL}/pets`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (!response.ok) throw new Error('Failed to fetch pets');
     const pets = await response.json();
     return pets.map((p: any) => ({ ...p, id: p._id }));
   },
@@ -54,38 +55,90 @@ export const dataService = {
     const response = await fetch(`${API_URL}/pets/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (!response.ok) throw new Error('Pet not found');
     const pet = await response.json();
     return { ...pet, id: pet._id };
   },
   addPet: async (petData: any, token: string): Promise<Pet> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (petData.image && typeof petData.image === 'object') {
+      const formData = new FormData();
+      Object.keys(petData).forEach(key => {
+        if (key === 'image') {
+          formData.append('image', {
+            uri: petData.image.uri,
+            type: petData.image.type || 'image/jpeg',
+            name: petData.image.name || 'pet.jpg',
+          } as any);
+        } else {
+          formData.append(key, petData[key]);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(petData);
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_URL}/pets`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(petData)
+      headers,
+      body
     });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to add pet');
+    }
     const pet = await response.json();
     return { ...pet, id: pet._id };
   },
   updatePet: async (id: string, petData: any, token: string): Promise<Pet> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (petData.image && typeof petData.image === 'object') {
+      const formData = new FormData();
+      Object.keys(petData).forEach(key => {
+        if (key === 'image') {
+          formData.append('image', {
+            uri: petData.image.uri,
+            type: petData.image.type || 'image/jpeg',
+            name: petData.image.name || 'pet.jpg',
+          } as any);
+        } else {
+          formData.append(key, petData[key]);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(petData);
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_URL}/pets/${id}`, {
       method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(petData)
+      headers,
+      body
     });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update pet');
+    }
     const pet = await response.json();
     return { ...pet, id: pet._id };
   },
   deletePet: async (id: string, token: string): Promise<void> => {
-    await fetch(`${API_URL}/pets/${id}`, {
+    const response = await fetch(`${API_URL}/pets/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (!response.ok) throw new Error('Failed to delete pet');
   },
 
   // Vets
@@ -299,6 +352,13 @@ export const dataService = {
     const vaccinations = await response.json();
     return vaccinations.map((v: any) => ({ ...v, id: v._id }));
   },
+  getUpcomingVaccinations: async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/vaccinations/upcoming`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const vaccinations = await response.json();
+    return vaccinations.map((v: any) => ({ ...v, id: v._id }));
+  },
   addVaccination: async (vaccinationData: any, token: string): Promise<any> => {
     const response = await fetch(`${API_URL}/vaccinations`, {
       method: 'POST',
@@ -310,5 +370,65 @@ export const dataService = {
     });
     const vaccination = await response.json();
     return { ...vaccination, id: vaccination._id };
+  },
+  deleteVaccination: async (id: string, token: string): Promise<void> => {
+    await fetch(`${API_URL}/vaccinations/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  },
+
+  // Medical Records (Phase 2)
+  getMedicalRecords: async (petId: string, token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/medical-records/pet/${petId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const records = await response.json();
+    return records.map((r: any) => ({ ...r, id: r._id }));
+  },
+  addMedicalRecord: async (recordData: any, token: string): Promise<any> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (recordData.document) {
+      const formData = new FormData();
+      Object.keys(recordData).forEach(key => {
+        if (key === 'document') {
+          formData.append('document', {
+            uri: recordData.document.uri,
+            type: recordData.document.type || 'image/jpeg',
+            name: recordData.document.name || 'document.jpg',
+          } as any);
+        } else {
+          formData.append(key, recordData[key]);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(recordData);
+      headers['Content-Type'] = 'application/json';
+    }
+
+    const response = await fetch(`${API_URL}/medical-records`, {
+      method: 'POST',
+      headers,
+      body
+    });
+    const record = await response.json();
+    return { ...record, id: record._id };
+  },
+  deleteMedicalRecord: async (id: string, token: string): Promise<void> => {
+    await fetch(`${API_URL}/medical-records/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  },
+  getPetHealth: async (petId: string, token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/pets/${petId}/health`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
   }
 };

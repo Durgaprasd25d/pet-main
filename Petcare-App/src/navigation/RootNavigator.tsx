@@ -5,31 +5,25 @@ import { AuthStack } from './AuthStack';
 import { AppStack } from './AppStack';
 import { useAppStore } from '../store/useAppStore';
 import { NavigationTheme } from '../theme/theme';
+import { ActivityIndicator, View } from 'react-native';
+import { COLORS } from '../theme/theme';
 
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
-  // Other global modals or full screen views could go here
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
-  const { isAuthenticated } = useAppStore();
-  const [isReady, setIsReady] = React.useState(false);
+  const { isAuthenticated, hasHydrated } = useAppStore();
 
-  React.useEffect(() => {
-    // Check if hydration is already finished
-    const checkHydration = async () => {
-      // Small delay to ensure Zustand has a chance to start rehydrating
-      await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
-      setIsReady(true);
-    };
-    checkHydration();
-  }, []);
-
-  if (!isReady) {
-    return null; // Or a Splash Screen
+  if (!hasHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
   }
 
   return (
