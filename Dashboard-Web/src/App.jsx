@@ -38,6 +38,7 @@ import ClinicManagement from './pages/ClinicManagement';
 import InventoryManagement from './pages/InventoryManagement';
 import StoreOrderManagement from './pages/StoreOrderManagement';
 import StoreProfile from './pages/StoreProfile';
+import AdoptionRequests from './pages/AdoptionRequests';
 
 const SidebarItem = ({ icon: Icon, label, href, active }) => (
   <Link 
@@ -98,10 +99,11 @@ const Sidebar = ({ onLogout, user }) => {
 
         {role === 'ngo' && (
           <>
-            <SidebarItem icon={Heart} label="Adoptions" href="/adoptions" active={location.pathname === '/adoptions'} />
+            <SidebarItem icon={Heart} label="Adoption Listings" href="/adoptions" active={location.pathname === '/adoptions'} />
+            <SidebarItem icon={MessageSquare} label="Adoption Requests" href="/adoption-requests" active={location.pathname === '/adoption-requests'} />
             <SidebarItem icon={AlertOctagon} label="Lost & Found" href="/lost-found" active={location.pathname === '/lost-found'} />
-            <SidebarItem icon={Home} label="Shelter Profile" href="/shelter" active={location.pathname === '/shelter'} />
-            <SidebarItem icon={Briefcase} label="Volunteers" href="/volunteers" active={location.pathname === '/volunteers'} />
+            {/* <SidebarItem icon={Home} label="Shelter Profile" href="/shelter" active={location.pathname === '/shelter'} /> */}
+            {/* <SidebarItem icon={Briefcase} label="Volunteers" href="/volunteers" active={location.pathname === '/volunteers'} /> */}
           </>
         )}
 
@@ -350,7 +352,12 @@ const App = () => {
           } />
           <Route path="/adoptions" element={
             <ProtectedRoute user={user} allowedRoles={['admin', 'ngo']}>
-              <AdoptionManagement />
+              <AdoptionManagement user={user} />
+            </ProtectedRoute>
+          } />
+          <Route path="/adoption-requests" element={
+            <ProtectedRoute user={user} allowedRoles={['admin', 'ngo']}>
+              <AdoptionRequests />
             </ProtectedRoute>
           } />
           <Route path="/lost-found" element={

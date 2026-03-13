@@ -102,7 +102,26 @@ export const dashboardService = {
     return response.data;
   },
   deleteAdoption: async (id) => {
-    await api.delete(`/adoptions/${id}`);
+    await api.delete(`/adoptions/pets/${id}`);
+  },
+  getShelterPets: async () => {
+    const response = await api.get("/adoptions/shelter/pets");
+    return response.data;
+  },
+  createAdoptionPet: async (data) => {
+    const config = {
+      headers: { "Content-Type": "multipart/form-data" },
+    };
+    const response = await api.post("/adoptions/pets", data, config);
+    return response.data;
+  },
+  getAdoptionRequests: async () => {
+    const response = await api.get("/adoptions/requests");
+    return response.data;
+  },
+  updateAdoptionRequestStatus: async (id, data) => {
+    const response = await api.put(`/adoptions/requests/${id}`, data);
+    return response.data;
   },
 
   // Lost & Found
@@ -111,7 +130,7 @@ export const dashboardService = {
     return response.data;
   },
   updateLostPetStatus: async (id, status) => {
-    await api.put(`/lostpets/${id}/status`, { status });
+    await api.put(`/lostpets/${id}`, { status });
   },
 
   // Community
