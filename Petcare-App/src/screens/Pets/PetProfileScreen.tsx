@@ -7,7 +7,8 @@ import {
   Image, 
   TouchableOpacity, 
   ImageBackground,
-  StatusBar
+  StatusBar,
+  Alert
 } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
@@ -20,23 +21,47 @@ import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 
 export const PetProfileScreen = ({ route, navigation }: any) => {
   const { petId } = route.params;
-  const { pets, fetchPets } = usePetStore();
+  const { token } = useAppStore();
+  const { pets, fetchPets, deletePet, loading: storeLoading } = usePetStore();
   
   const pet = pets.find(p => p.id === petId);
 
   useEffect(() => {
-    if (!pet) {
-      const { token } = useAppStore.getState();
-      if (token) fetchPets(token);
+    if (!pet && token) {
+      fetchPets(token);
     }
-  }, [petId]);
+  }, [petId, token]);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Remove Pet",
+      `Are you sure you want to remove ${pet?.name} from your profile? This action cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Remove", 
+          style: "destructive",
+          onPress: async () => {
+            if (token && petId) {
+              try {
+                await deletePet(petId, token);
+                navigation.goBack();
+              } catch (error) {
+                Alert.alert("Error", "Failed to remove pet.");
+              }
+            }
+          }
+        }
+      ]
+    );
+  };
 
   if (!pet) {
     return (
       <ScreenContainer>
         <Header title="Pet Profile" onBackPress={() => navigation.goBack()} />
         <View style={styles.loading}>
-          <Text>Loading...</Text>
+          <Text>Pet not found or loading...</Text>
         </View>
       </ScreenContainer>
     );
@@ -157,10 +182,13 @@ export const PetProfileScreen = ({ route, navigation }: any) => {
 
           <TouchableOpacity 
             style={styles.deleteBtn}
-            onPress={() => {}}
+            onPress={handleDelete}
+            disabled={storeLoading}
           >
             <MaterialDesignIcons name="trash-can-outline" size={20} color={COLORS.error} />
-            <Text style={styles.deleteText}>Remove {pet.name} from Profile</Text>
+            <Text style={styles.deleteText}>
+              {storeLoading ? 'Removing...' : `Remove ${pet.name} from Profile`}
+            </Text>
           </TouchableOpacity>
         </View>
 

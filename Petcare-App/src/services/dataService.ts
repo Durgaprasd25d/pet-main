@@ -66,7 +66,8 @@ export const dataService = {
       },
       body: JSON.stringify(petData)
     });
-    return response.json();
+    const pet = await response.json();
+    return { ...pet, id: pet._id };
   },
   updatePet: async (id: string, petData: any, token: string): Promise<Pet> => {
     const response = await fetch(`${API_URL}/pets/${id}`, {
@@ -77,7 +78,8 @@ export const dataService = {
       },
       body: JSON.stringify(petData)
     });
-    return response.json();
+    const pet = await response.json();
+    return { ...pet, id: pet._id };
   },
   deletePet: async (id: string, token: string): Promise<void> => {
     await fetch(`${API_URL}/pets/${id}`, {
@@ -219,5 +221,26 @@ export const dataService = {
       body: JSON.stringify({ message, history })
     });
     return response.json();
+  },
+  
+  // Vaccinations
+  getVaccinations: async (petId: string, token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/vaccinations/pet/${petId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const vaccinations = await response.json();
+    return vaccinations.map((v: any) => ({ ...v, id: v._id }));
+  },
+  addVaccination: async (vaccinationData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/vaccinations`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(vaccinationData)
+    });
+    const vaccination = await response.json();
+    return { ...vaccination, id: vaccination._id };
   }
 };

@@ -17,6 +17,11 @@ export interface Pet {
   weight: string;
   gender: string;
   image: string;
+  medicalHistory?: {
+    date: string;
+    title: string;
+    description: string;
+  }[];
 }
 
 export interface Appointment {

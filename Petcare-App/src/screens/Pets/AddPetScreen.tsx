@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -7,8 +7,6 @@ import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useAppStore } from '../../store/useAppStore';
-import { dataService } from '../../services/dataService';
-
 import { usePetStore } from '../../store/usePetStore';
 
 export const AddPetScreen = ({ navigation }: any) => {
@@ -23,7 +21,10 @@ export const AddPetScreen = ({ navigation }: any) => {
   const [gender, setGender] = useState('Male');
 
   const handleSave = async () => {
-    if (!name || !token) return;
+    if (!name || !token) {
+      Alert.alert('Error', 'Pet name is required');
+      return;
+    }
     
     try {
       await addPet({
@@ -35,8 +36,10 @@ export const AddPetScreen = ({ navigation }: any) => {
         gender,
         image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400' // Placeholder
       }, token);
+      Alert.alert('Success', `${name} has been added to your profile!`);
       navigation.goBack();
     } catch (error) {
+      Alert.alert('Error', 'Failed to save pet details');
       console.error('Error saving pet:', error);
     }
   };

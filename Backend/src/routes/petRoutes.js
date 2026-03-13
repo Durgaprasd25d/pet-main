@@ -5,11 +5,15 @@ const {
   getPetById,
   createPet,
   updatePet,
+  deletePet,
 } = require("../controllers/petController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.route("/").get(protect, getPets).post(protect, createPet);
 
-router.route("/:id").get(protect, getPetById).put(protect, updatePet);
+router.route("/:id")
+  .get(protect, getPetById)
+  .put(protect, updatePet)
+  .delete(protect, deletePet);
 
 module.exports = router;
