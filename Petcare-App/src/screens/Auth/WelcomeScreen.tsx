@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Image, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, Image, StatusBar, TouchableOpacity } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Button } from '../../components/ui/Button';
 import { SwipeButton } from '../../components/ui/SwipeButton';
@@ -38,16 +38,15 @@ export const WelcomeScreen = ({ navigation }: any) => {
           
           <View style={styles.buttonContainer}>
             <SwipeButton
-              title="Swipe to get started"
-              onSwipeComplete={() => navigation.navigate('Register')}
+              title="Swipe to sign in"
+              onSwipeComplete={() => navigation.navigate('Login')}
             />
-            <Button
-              title="Already have an account? Log In"
-              variant="ghost"
-              onPress={() => navigation.navigate('Login')}
-              style={styles.loginButton}
-              color={COLORS.primary}
-            />
+            <View style={styles.signupPrompt}>
+              <Text style={styles.footerText}>New to PetCare? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.signupText}>Sign Up Here</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -123,12 +122,20 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: SPACING.xl,
   },
-  button: {
-    width: '100%',
-    height: 56,
-    borderRadius: RADIUS.lg,
+  signupPrompt: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: SPACING.lg,
   },
-  loginButton: {
-    marginTop: SPACING.sm,
+  footerText: {
+    color: COLORS.textLight,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  signupText: {
+    color: COLORS.primary,
+    fontWeight: '800',
+    fontSize: 14,
   },
 });

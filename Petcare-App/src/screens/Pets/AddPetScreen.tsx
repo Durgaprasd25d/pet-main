@@ -193,4 +193,9 @@ const styles = StyleSheet.create({
   saveButton: {
     marginTop: SPACING.lg,
   },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: SPACING.sm,
+  },
 });

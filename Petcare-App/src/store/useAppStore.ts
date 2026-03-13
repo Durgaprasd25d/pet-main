@@ -22,3 +22,4 @@ export const useAppStore = create<AppState>((set) => ({
   setTheme: (theme) => set({ theme }),
   logout: () => set({ user: null, token: null, isAuthenticated: false }),
 }));
+

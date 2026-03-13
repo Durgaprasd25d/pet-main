@@ -52,7 +52,7 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
               resizeMode="contain"
             />
             <View>
-              <Text style={styles.greeting}>Hello, {user?.name.split(' ')[0]} 👋</Text>
+              <Text style={styles.greeting}>Hello, {user?.name ? user.name.split(' ')[0] : 'there'} 👋</Text>
               <Text style={styles.subtitle}>Your pets are doing great!</Text>
             </View>
           </View>

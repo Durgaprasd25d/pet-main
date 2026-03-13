@@ -4,6 +4,7 @@ import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { usePetStore } from '../../store/usePetStore';
 
 const mockTimeline = [
   { id: '1', date: 'March 10, 2026', title: 'Annual Checkup', doctor: 'Dr. Sarah Jenkins', type: 'visit', icon: 'stethoscope', color: COLORS.primary },
@@ -12,9 +13,13 @@ const mockTimeline = [
 ];
 
 export const PetHealthCardScreen = ({ navigation, route }: any) => {
+  const { petId } = route.params;
+  const { pets } = usePetStore();
+  const pet = pets.find(p => p.id === petId);
+
   return (
     <ScreenContainer>
-      <Header title="Digital Health Card" onBackPress={() => navigation.goBack()} rightIcon="share-variant" />
+      <Header title={`${pet?.name || 'Digital'} Health Card`} onBackPress={() => navigation.goBack()} rightIcon="share-variant" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
         <View style={styles.summaryCard}>
