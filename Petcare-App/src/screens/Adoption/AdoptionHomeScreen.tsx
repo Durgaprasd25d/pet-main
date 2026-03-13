@@ -48,16 +48,16 @@ export const AdoptionHomeScreen = ({ navigation }: any) => {
           <View style={styles.heroOverlay}>
             <Text style={styles.heroTitle}>Find Your New Best Friend</Text>
             <Text style={styles.heroSubtitle}>Give a rescue pet a forever home today.</Text>
-            <Button 
+            {/* <Button 
               title="Browse All" 
               onPress={() => navigation.navigate('AdoptionList')} 
               style={styles.heroBtn}
               textStyle={{ color: COLORS.primary, fontWeight: 'bold' }}
-            />
+            /> */}
           </View>
         </ImageBackground>
 
-        <View style={styles.sectionHeader}>
+        {/* <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Categories</Text>
         </View>
         <View style={styles.categoryRow}>
@@ -78,7 +78,7 @@ export const AdoptionHomeScreen = ({ navigation }: any) => {
               <Text style={styles.catText}>{cat.id}</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </View> */}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recently Added</Text>
