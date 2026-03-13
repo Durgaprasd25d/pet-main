@@ -66,7 +66,11 @@ export interface Adoption {
 
 export interface Post {
   id: string;
-  userId: string;
+  user: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
   userName: string;
   userAvatar: string;
   image?: string;
@@ -75,11 +79,12 @@ export interface Post {
   likes: number;
   likedBy?: string[];
   comments: number;
-  timeAgo: string;
-  timestamp?: string;
+  category: 'general' | 'health' | 'training' | 'stories' | 'lost_found';
   petId?: string;
+  lostPetId?: string;
   location?: string;
-  category?: string;
+  timeAgo: string;
+  createdAt: string;
 }
 
 export interface Notification {
@@ -104,15 +109,22 @@ export interface Notification {
 export interface LostAndFound {
   id: string;
   type: 'lost' | 'found';
-  petName: string;
+  petName?: string;
   breed: string;
-  date: string;
+  color: string;
+  lastSeenLocation: string;
+  lastSeenDate: string;
   location: string;
-  contact: string;
-  image: string;
+  date: string;
   description: string;
-  reportedBy?: string;
-  status?: 'Lost' | 'Found' | 'Resolved';
+  image: string;
+  reportedBy: any;
+  status: 'active' | 'resolved' | 'Lost' | 'Found';
+  contactInfo?: {
+    phone: string;
+    email: string;
+  };
+  createdAt: string;
 }
 
 export interface Emergency {

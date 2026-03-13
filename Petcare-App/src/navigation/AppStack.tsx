@@ -24,6 +24,7 @@ import { AdoptionListScreen } from '../screens/Adoption/AdoptionListScreen';
 import { AdoptionDetailsScreen } from '../screens/Adoption/AdoptionDetailsScreen';
 import { AdoptionApplicationScreen } from '../screens/Adoption/AdoptionApplicationScreen';
 import { ApplicationSuccessScreen } from '../screens/Adoption/ApplicationSuccessScreen';
+import { AdoptionStatusScreen } from '../screens/Adoption/AdoptionStatusScreen';
 
 // Lost & Found Screens
 import { LostFoundHomeScreen } from '../screens/LostFound/LostFoundHomeScreen';
@@ -74,8 +75,9 @@ export type AppStackParamList = {
   AdoptionHome: undefined;
   AdoptionList: { filter?: string };
   AdoptionDetails: { adoptionId: string };
-  AdoptionApplication: { adoptionId: string };
-  ApplicationSuccess: undefined;
+  AdoptionApplication: { petId: string, petName: string };
+  ApplicationSuccess: { petName: string };
+  AdoptionStatus: undefined;
   LostFoundHome: undefined;
   ReportLostPet: undefined;
   ReportFoundPet: undefined;
@@ -125,6 +127,7 @@ export const AppStack = () => {
       <Stack.Screen name="AdoptionDetails" component={AdoptionDetailsScreen} />
       <Stack.Screen name="AdoptionApplication" component={AdoptionApplicationScreen} />
       <Stack.Screen name="ApplicationSuccess" component={ApplicationSuccessScreen} />
+      <Stack.Screen name="AdoptionStatus" component={AdoptionStatusScreen} />
       
       <Stack.Screen name="LostFoundHome" component={LostFoundHomeScreen} />
       <Stack.Screen name="ReportLostPet" component={ReportLostPetScreen} />
