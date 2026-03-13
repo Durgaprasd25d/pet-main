@@ -46,22 +46,25 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
       >
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Image 
-              source={require('../../assets/images/logo.png')} 
+            <TouchableOpacity 
               style={styles.miniLogo} 
-              resizeMode="contain"
-            />
+              onPress={() => navigation.navigate('Profile')}
+            >
+              <MaterialDesignIcons name="account-circle" size={32} color={COLORS.primary} />
+            </TouchableOpacity>
             <View>
-              <Text style={styles.greeting}>Hello, {user?.name ? user.name.split(' ')[0] : 'there'} 👋</Text>
+              <Text style={styles.greeting}>Hello, {user?.name ? user.name.split(' ')[0] : 'there'}</Text>
               <Text style={styles.subtitle}>Your pets are doing great!</Text>
             </View>
           </View>
-          <TouchableOpacity 
-            style={styles.notificationBtn}
-            onPress={() => navigation.navigate('Notifications')}
-          >
-            <MaterialDesignIcons name="bell-badge-outline" size={26} color={COLORS.text} />
-          </TouchableOpacity>
+          {/* <View style={styles.headerRight}>
+            <TouchableOpacity 
+              style={styles.headerIconBtn}
+              onPress={() => navigation.navigate('Notifications')}
+            >
+              <MaterialDesignIcons name="bell-outline" size={26} color={COLORS.text} />
+            </TouchableOpacity>
+          </View> */}
         </View>
 
         <View style={styles.quickActions}>
@@ -110,7 +113,7 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
           </View>
         </TouchableOpacity>
 
-        <View style={styles.rewardsCard}>
+        {/* <View style={styles.rewardsCard}>
           <View style={styles.rewardsInfo}>
             <View style={styles.coinIcon}>
               <MaterialDesignIcons name="paw" size={24} color="#f59e0b" />
@@ -123,7 +126,7 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
           <TouchableOpacity style={styles.redeemBtn}>
             <Text style={styles.redeemText}>Redeem</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -199,12 +202,15 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   miniLogo: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: COLORS.border + '50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...SHADOWS.small,
   },
   greeting: {
     fontSize: 26,
@@ -217,9 +223,13 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
     marginTop: 2,
   },
-  notificationBtn: {
-    width: 48,
-    height: 48,
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIconBtn: {
+    width: 44,
+    height: 44,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.surface,
     justifyContent: 'center',

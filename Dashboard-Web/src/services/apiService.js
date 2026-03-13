@@ -143,4 +143,39 @@ export const dashboardService = {
     const response = await api.get(`/pets/${petId}/history`);
     return response.data;
   },
+
+  // Store & Products
+  getProducts: async (params = {}) => {
+    const response = await api.get("/products", { params });
+    return response.data;
+  },
+  getCategories: async () => {
+    const response = await api.get("/products/categories");
+    return response.data;
+  },
+  createProduct: async (data) => {
+    const config = {
+      headers: { "Content-Type": "multipart/form-data" },
+    };
+    const response = await api.post("/products", data, config);
+    return response.data;
+  },
+  updateProduct: async (id, data) => {
+    const config = {
+      headers: { "Content-Type": "multipart/form-data" },
+    };
+    const response = await api.put(`/products/${id}`, data, config);
+    return response.data;
+  },
+  deleteProduct: async (id) => {
+    await api.delete(`/products/${id}`);
+  },
+  getStoreOrders: async () => {
+    const response = await api.get("/orders/store");
+    return response.data;
+  },
+  updateOrderStatus: async (id, status) => {
+    const response = await api.put(`/orders/${id}/status`, { status });
+    return response.data;
+  },
 };

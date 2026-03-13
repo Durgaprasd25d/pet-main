@@ -18,7 +18,8 @@ import {
   Store,
   Package,
   Home,
-  FileText
+  FileText,
+  ShoppingBag
 } from 'lucide-react';
 import { dashboardService } from './services/apiService';
 import Login from './Login';
@@ -34,6 +35,9 @@ import LostFoundManagement from './pages/LostFoundManagement';
 import CommunityManagement from './pages/CommunityManagement';
 import PrescriptionsManagement from './pages/PrescriptionsManagement';
 import ClinicManagement from './pages/ClinicManagement';
+import InventoryManagement from './pages/InventoryManagement';
+import StoreOrderManagement from './pages/StoreOrderManagement';
+import StoreProfile from './pages/StoreProfile';
 
 const SidebarItem = ({ icon: Icon, label, href, active }) => (
   <Link 
@@ -104,6 +108,7 @@ const Sidebar = ({ onLogout, user }) => {
         {role === 'store' && (
           <>
             <SidebarItem icon={Package} label="Inventory" href="/inventory" active={location.pathname === '/inventory'} />
+            <SidebarItem icon={ShoppingBag} label="Orders" href="/store-orders" active={location.pathname === '/store-orders'} />
             <SidebarItem icon={Calendar} label="Service Bookings" href="/bookings" active={location.pathname === '/bookings'} />
             <SidebarItem icon={Store} label="Store Profile" href="/store-profile" active={location.pathname === '/store-profile'} />
             <SidebarItem icon={Dog} label="Customers" href="/pets" active={location.pathname === '/pets'} />
@@ -365,9 +370,10 @@ const App = () => {
           <Route path="/clinic" element={<ClinicManagement />} />
           <Route path="/shelter" element={<NGODashboard user={user} />} />
           <Route path="/volunteers" element={<NGODashboard user={user} />} />
-          <Route path="/inventory" element={<StoreDashboard user={user} />} />
+          <Route path="/inventory" element={<InventoryManagement user={user} />} />
           <Route path="/bookings" element={<StoreDashboard user={user} />} />
-          <Route path="/store-profile" element={<StoreDashboard user={user} />} />
+          <Route path="/store-profile" element={<StoreProfile user={user} />} />
+          <Route path="/store-orders" element={<StoreOrderManagement user={user} />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

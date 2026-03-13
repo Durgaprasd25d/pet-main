@@ -6,16 +6,9 @@ import { MainTabNavigator } from './MainTabNavigator';
 import { NotificationsScreen } from '../screens/Main/NotificationsScreen';
 import { EditProfileScreen } from '../screens/Main/EditProfileScreen';
 import { SettingsScreen } from '../screens/Main/SettingsScreen';
+import { UserProfileScreen } from '../screens/Main/UserProfileScreen';
 
 // Pet Screens
-import { AddPetScreen } from '../screens/Pets/AddPetScreen';
-import { PetProfileScreen } from '../screens/Pets/PetProfileScreen';
-import { EditPetScreen } from '../screens/Pets/EditPetScreen';
-import { PetHealthCardScreen } from '../screens/Pets/PetHealthCardScreen';
-import { VaccinationRecordsScreen } from '../screens/Pets/VaccinationRecordsScreen';
-import { MedicalHistoryScreen } from '../screens/Pets/MedicalHistoryScreen';
-import { AddMedicalRecordScreen } from '../screens/Pets/AddMedicalRecordScreen';
-import { AddVaccinationScreen } from '../screens/Pets/AddVaccinationScreen';
 
 // Vet Screens
 import { VetListScreen } from '../screens/Veterinary/VetListScreen';
@@ -64,17 +57,14 @@ import { PrivacyPolicyScreen } from '../screens/Utility/PrivacyPolicyScreen';
 import { OpenSourceLibrariesScreen } from '../screens/Utility/OpenSourceLibrariesScreen';
 import { PetAIChatScreen } from '../screens/Utility/PetAIChatScreen';
 
+// Store Screens
+
 export type AppStackParamList = {
   MainTabs: undefined;
   Notifications: undefined;
   EditProfile: undefined;
   Settings: undefined;
-  AddPet: undefined;
-  PetProfile: { petId: string };
-  EditPet: { petId: string };
-  PetHealthCard: { petId: string };
-  VaccinationRecords: { petId: string };
-  MedicalHistory: { petId: string };
+  Profile: undefined;
   VetList: undefined;
   VetProfile: { vetId: string };
   BookAppointment: { vetId?: string };
@@ -103,8 +93,6 @@ export type AppStackParamList = {
   FilterResults: undefined;
   ReminderCenter: undefined;
   VaccinationReminder: undefined;
-  AddMedicalRecord: { petId: string };
-  AddVaccination: { petId: string };
   HelpSupport: undefined;
   AboutApp: undefined;
   PrivacySecurity: undefined;
@@ -123,15 +111,7 @@ export const AppStack = () => {
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
-      
-      <Stack.Screen name="AddPet" component={AddPetScreen} />
-      <Stack.Screen name="PetProfile" component={PetProfileScreen} />
-      <Stack.Screen name="EditPet" component={EditPetScreen} />
-      <Stack.Screen name="PetHealthCard" component={PetHealthCardScreen} />
-      <Stack.Screen name="VaccinationRecords" component={VaccinationRecordsScreen} />
-      <Stack.Screen name="MedicalHistory" component={MedicalHistoryScreen} />
-      <Stack.Screen name="AddMedicalRecord" component={AddMedicalRecordScreen} />
-      <Stack.Screen name="AddVaccination" component={AddVaccinationScreen} />
+      <Stack.Screen name="Profile" component={UserProfileScreen} />
       
       <Stack.Screen name="VetList" component={VetListScreen} />
       <Stack.Screen name="VetProfile" component={VetProfileScreen} />

@@ -171,7 +171,9 @@ export const UserProfileScreen = ({ navigation }: any) => {
               <View style={styles.divider} />
               {renderMenuItem('shield-lock-outline', 'Privacy & Security', () => navigation.navigate('PrivacySecurity'), '#10b981')}
               <View style={styles.divider} />
-              {renderMenuItem('wallet-outline', 'Payments & Subscriptions', () => { }, '#f43f5e')}
+              {renderMenuItem('package-variant-closed', 'My Orders', () => navigation.navigate('StoreTab', { screen: 'MyOrders' }), '#f43f5e')}
+              <View style={styles.divider} />
+              {renderMenuItem('wallet-outline', 'Payments & Subscriptions', () => { }, '#3b82f6')}
             </View>
           </View>
 

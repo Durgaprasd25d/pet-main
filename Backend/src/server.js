@@ -43,6 +43,8 @@ const aiRoutes = require("./routes/aiRoutes");
 const prescriptionRoutes = require("./routes/prescriptionRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const medicalRecordRoutes = require("./routes/medicalRecordRoutes");
+const productRoutes = require("./routes/productRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 // Mount routes
 app.use("/api/auth", authRoutes);
@@ -59,6 +61,8 @@ app.use("/api/emergency", emergencyRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => {
   res.send("Pet Care API is running...");

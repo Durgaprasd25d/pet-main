@@ -430,5 +430,64 @@ export const dataService = {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     return response.json();
-  }
+  },
+
+  // Store & Products
+  getProducts: async (params: any = {}): Promise<any[]> => {
+    let url = `${API_URL}/products`;
+    const queryParams = [];
+    if (params.category) queryParams.push(`category=${params.category}`);
+    if (params.storeId) queryParams.push(`storeId=${params.storeId}`);
+    
+    if (queryParams.length > 0) {
+      url += `?${queryParams.join('&')}`;
+    }
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch products');
+    return await response.json();
+  },
+
+  getCategories: async (): Promise<string[]> => {
+    const response = await fetch(`${API_URL}/products/categories`);
+    if (!response.ok) throw new Error('Failed to fetch categories');
+    return await response.json();
+  },
+
+  // Orders
+  createOrder: async (orderData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(orderData)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to place order');
+    }
+    return await response.json();
+  },
+
+  getMyOrders: async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/orders/user`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch orders');
+    return await response.json();
+  },
+
+  getOrderById: async (id: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/orders/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch order details');
+    return await response.json();
+  },
 };
