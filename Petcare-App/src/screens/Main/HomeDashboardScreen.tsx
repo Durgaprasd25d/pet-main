@@ -186,6 +186,28 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
           )}
         </View>
       </ScrollView>
+
+      {/* Floating Buttons */}
+      <TouchableOpacity 
+        style={styles.floatingAI} 
+        onPress={() => navigation.navigate('PetAIChat')}
+        activeOpacity={0.8}
+      >
+        <MaterialDesignIcons name="robot" size={28} color="#fff" />
+        <Text style={styles.floatingAIText}>AI Assistant</Text>
+      </TouchableOpacity>
+
+      {/* Persistent SOS Floating Button */}
+      {/* 
+      <TouchableOpacity 
+        style={styles.floatingSOS} 
+        onPress={() => navigation.navigate('EmergencySOS')}
+        activeOpacity={0.8}
+      >
+        <MaterialDesignIcons name="alert-octagon" size={32} color="#fff" />
+        <Text style={styles.floatingSOSText}>SOS</Text>
+      </TouchableOpacity>
+      */}
     </ScreenContainer>
   );
 };
@@ -434,5 +456,52 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  /*
+  floatingSOS: {
+    position: 'absolute',
+    bottom: SPACING.lg,
+    right: SPACING.lg,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: COLORS.error,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...SHADOWS.large,
+    shadowColor: COLORS.error,
+    elevation: 8,
+    zIndex: 100,
+  },
+  floatingSOSText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '900',
+    marginTop: -2,
+  },
+  */
+  floatingAI: {
+    position: 'absolute',
+    bottom: SPACING.lg,
+    right: SPACING.lg,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...SHADOWS.large,
+    shadowColor: COLORS.primary,
+    elevation: 8,
+    zIndex: 100,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  floatingAIText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '900',
+    marginTop: -2,
+    textAlign: 'center',
   },
 });

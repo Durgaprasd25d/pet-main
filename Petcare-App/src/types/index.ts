@@ -138,6 +138,7 @@ export interface Emergency {
   };
   status: 'pending' | 'accepted' | 'resolved' | 'cancelled';
   description?: string;
+  assignedVetId?: string;
   emergencyType?: string;
   createdAt: string;
 }

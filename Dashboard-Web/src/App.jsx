@@ -39,6 +39,7 @@ import InventoryManagement from './pages/InventoryManagement';
 import StoreOrderManagement from './pages/StoreOrderManagement';
 import StoreProfile from './pages/StoreProfile';
 import AdoptionRequests from './pages/AdoptionRequests';
+import EmergencyManagement from './pages/EmergencyManagement';
 
 const SidebarItem = ({ icon: Icon, label, href, active }) => (
   <Link 
@@ -94,6 +95,8 @@ const Sidebar = ({ onLogout, user }) => {
             <SidebarItem icon={Dog} label="Patients" href="/pets" active={location.pathname === '/pets'} />
             <SidebarItem icon={FileText} label="Prescriptions" href="/prescriptions" active={location.pathname === '/prescriptions'} />
             <SidebarItem icon={Stethoscope} label="Clinic Info" href="/clinic" active={location.pathname === '/clinic'} />
+            <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Urgent Care</div>
+            <SidebarItem icon={AlertOctagon} label="Emergency SOS" href="/emergency" active={location.pathname === '/emergency'} />
           </>
         )}
 
@@ -368,6 +371,11 @@ const App = () => {
           <Route path="/community" element={
             <ProtectedRoute user={user} allowedRoles={['admin']}>
               <CommunityManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/emergency" element={
+            <ProtectedRoute user={user} allowedRoles={['admin', 'vet']}>
+              <EmergencyManagement />
             </ProtectedRoute>
           } />
           <Route path="/settings" element={<div className="p-8 mt-16 ml-64">Settings Page</div>} />

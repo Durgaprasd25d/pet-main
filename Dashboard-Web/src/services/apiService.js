@@ -197,4 +197,13 @@ export const dashboardService = {
     const response = await api.put(`/orders/${id}/status`, { status });
     return response.data;
   },
+  // Emergency SOS
+  getEmergencies: async () => {
+    const response = await api.get("/emergency");
+    return response.data;
+  },
+  updateEmergencyStatus: async (id, status) => {
+    const response = await api.put(`/emergency/${id}`, { status });
+    return response.data;
+  },
 };

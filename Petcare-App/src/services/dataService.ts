@@ -189,6 +189,12 @@ export const dataService = {
     const vet = await response.json();
     return { ...vet, id: vet._id };
   },
+  getNearbyVets: async (lat: number, lng: number): Promise<Vet[]> => {
+    const response = await fetch(`${API_URL}/vets/nearby?lat=${lat}&lng=${lng}`);
+    if (!response.ok) throw new Error('Failed to fetch nearby vets');
+    const vets = await response.json();
+    return vets.map((v: any) => ({ ...v, id: v._id }));
+  },
 
   // Appointments
   getAppointments: async (token: string): Promise<Appointment[]> => {

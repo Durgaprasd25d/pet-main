@@ -44,6 +44,7 @@ import { AskQuestionScreen } from '../screens/Community/AskQuestionScreen';
 import { EmergencySOSScreen } from '../screens/Emergency/EmergencySOSScreen';
 import { NearbyVetClinicsScreen } from '../screens/Emergency/NearbyVetClinicsScreen';
 import { EmergencyContactScreen } from '../screens/Emergency/EmergencyContactScreen';
+import { EmergencyDetailsScreen } from '../screens/Emergency/EmergencyDetailsScreen';
 
 // Utility Screens
 import { SearchScreen } from '../screens/Utility/SearchScreen';
@@ -91,6 +92,7 @@ export type AppStackParamList = {
   EmergencySOS: undefined;
   NearbyVetClinics: undefined;
   EmergencyContact: undefined;
+  EmergencyDetails: { emergencyId: string };
   Search: undefined;
   FilterResults: undefined;
   ReminderCenter: undefined;
@@ -144,6 +146,7 @@ export const AppStack = () => {
       <Stack.Screen name="EmergencySOS" component={EmergencySOSScreen} />
       <Stack.Screen name="NearbyVetClinics" component={NearbyVetClinicsScreen} />
       <Stack.Screen name="EmergencyContact" component={EmergencyContactScreen} />
+      <Stack.Screen name="EmergencyDetails" component={EmergencyDetailsScreen} />
       
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="FilterResults" component={FilterResultsScreen} />
