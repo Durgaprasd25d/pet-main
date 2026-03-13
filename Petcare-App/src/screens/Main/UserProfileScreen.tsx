@@ -84,6 +84,13 @@ export const UserProfileScreen = ({ navigation }: any) => {
             <View style={styles.decorationCircle1} />
             <View style={styles.decorationCircle2} />
 
+            <TouchableOpacity
+              style={styles.editProfileGlassBtn}
+              onPress={() => navigation.navigate('EditProfile')}
+            >
+              <MaterialDesignIcons name="pencil" size={20} color="#fff" />
+            </TouchableOpacity>
+
             <View style={styles.headerContent}>
               <View style={styles.profileMeta}>
                 <View style={styles.avatarWrapper}>
@@ -97,14 +104,6 @@ export const UserProfileScreen = ({ navigation }: any) => {
                 </View>
                 <Text style={styles.name}>{user?.name || 'Pet Owner'}</Text>
                 <Text style={styles.email}>{user?.email || 'owner@example.com'}</Text>
-
-                <TouchableOpacity
-                  style={styles.editProfileBtn}
-                  onPress={() => navigation.navigate('EditProfile')}
-                >
-                  <MaterialDesignIcons name="pencil" size={14} color={COLORS.primary} />
-                  <Text style={styles.editProfileText}>Edit Profile</Text>
-                </TouchableOpacity>
               </View>
             </View>
           </LinearGradient>
@@ -291,20 +290,20 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     fontWeight: '500',
   },
-  editProfileBtn: {
-    flexDirection: 'row',
+  editProfileGlassBtn: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    width: 44,
+    height: 44,
+    borderRadius: 15,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: RADIUS.round,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    zIndex: 10,
     ...SHADOWS.small,
-    gap: 8,
-  },
-  editProfileText: {
-    color: COLORS.primary,
-    fontWeight: '800',
-    fontSize: 14,
   },
   statsRow: {
     flexDirection: 'row',

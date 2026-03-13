@@ -22,70 +22,76 @@ const UsersManagement = () => {
   }, []);
 
   return (
-    <div className="p-8 mt-16 ml-64 min-h-screen bg-slate-50">
-      <div className="mb-8 flex justify-between items-center">
+    <div className="p-10 mt-16 ml-64 min-h-screen bg-slate-50/50">
+      <div className="mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
-          <p className="text-slate-500">Manage and monitor all platform users.</p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">User Community</h1>
+          <p className="text-slate-500 font-medium mt-1">Oversight and management of all registered pet owners.</p>
         </div>
-        <div className="bg-white px-4 py-2 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600">
-          Total Users: {users.length}
+        <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-200 text-sm font-black text-slate-700 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            <UserIcon size={18} />
+          </div>
+          <div>
+            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-none mb-1">Total Users</p>
+            <p className="text-lg leading-none">{users.length}</p>
+          </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Contact</th>
-                <th className="px-6 py-4">Location</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+              <tr className="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                <th className="px-8 py-5">Profile Name</th>
+                <th className="px-8 py-5">Contact Node</th>
+                <th className="px-8 py-5">Geo Location</th>
+                <th className="px-8 py-5">Account Tier</th>
+                <th className="px-8 py-5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr><td colSpan="5" className="px-6 py-8 text-center text-slate-400">Loading users...</td></tr>
+                <tr><td colSpan="5" className="px-8 py-20 text-center text-slate-300 font-bold italic">Synchronizing user data...</td></tr>
               ) : users.map((user) => (
-                <tr key={user._id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden">
-                        {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon size={20} className="text-slate-400" />}
+                <tr key={user._id} className="group hover:bg-slate-50/80 transition-all duration-200">
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon size={24} className="text-slate-300" />}
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-900">{user.name}</p>
-                        <p className="text-xs text-slate-500">Joined {new Date(user.createdAt || Date.now()).toLocaleDateString()}</p>
+                        <p className="font-black text-slate-800 tracking-tight leading-tight">{user.name}</p>
+                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Verified User</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-xs text-slate-600">
-                        <Mail size={12} /> {user.email}
+                  <td className="px-8 py-5">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 font-bold">
+                        <Mail size={12} className="text-slate-300" /> {user.email}
                       </div>
                       {user.phone && (
-                        <div className="flex items-center gap-2 text-xs text-slate-600">
-                          <Phone size={12} /> {user.phone}
+                        <div className="flex items-center gap-2 text-xs text-slate-500 font-bold">
+                          <Phone size={12} className="text-slate-300" /> {user.phone}
                         </div>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <MapPin size={14} className="text-slate-400" />
-                      {user.location || 'Not set'}
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2 text-sm text-slate-500 font-bold">
+                      <MapPin size={14} className="text-slate-300" />
+                      {user.location || 'Unknown'}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600">
-                      User
+                  <td className="px-8 py-5">
+                    <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200">
+                      Standard
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                  <td className="px-8 py-5 text-right">
+                    <button className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-white hover:shadow-lg rounded-xl transition-all border border-transparent hover:border-slate-100">
                       <Trash2 size={18} />
                     </button>
                   </td>
