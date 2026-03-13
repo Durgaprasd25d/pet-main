@@ -5,17 +5,26 @@ import { AuthStack } from './AuthStack';
 import { AppStack } from './AppStack';
 import { useAppStore } from '../store/useAppStore';
 import { NavigationTheme } from '../theme/theme';
+import { ActivityIndicator, View } from 'react-native';
+import { COLORS } from '../theme/theme';
 
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
-  // Other global modals or full screen views could go here
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
-  const { isAuthenticated } = useAppStore();
+  const { isAuthenticated, hasHydrated } = useAppStore();
+
+  if (!hasHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer theme={NavigationTheme}>

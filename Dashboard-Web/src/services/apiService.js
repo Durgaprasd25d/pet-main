@@ -30,9 +30,27 @@ export const dashboardService = {
     return response.data;
   },
 
+  register: async (name, email, password, role) => {
+    const response = await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      role,
+    });
+    return response.data;
+  },
+
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+  },
+
+  updateProfile: async (data) => {
+    const response = await api.put("/auth/profile", data);
+    if (response.data.token) {
+      localStorage.setItem("user", JSON.stringify(response.data));
+    }
+    return response.data;
   },
 
   getStats: async () => {
@@ -66,7 +84,10 @@ export const dashboardService = {
     return response.data;
   },
   cancelAppointment: async (id) => {
-    await api.put(`/appointments/${id}/cancel`);
+    await api.put(`/appointments/${id}/status`, { status: "cancelled" });
+  },
+  completeAppointment: async (id) => {
+    await api.put(`/appointments/${id}/status`, { status: "completed" });
   },
 
   // Users
@@ -100,5 +121,61 @@ export const dashboardService = {
   },
   deletePost: async (id) => {
     await api.delete(`/community/${id}`);
+  },
+
+  // Prescriptions
+  getPrescriptions: async () => {
+    const response = await api.get("/prescriptions");
+    return response.data;
+  },
+  createPrescription: async (data) => {
+    const response = await api.post("/prescriptions", data);
+    return response.data;
+  },
+  deletePrescription: async (id) => {
+    await api.delete(`/prescriptions/${id}`);
+  },
+  getPetPrescriptions: async (petId) => {
+    const response = await api.get(`/prescriptions?petId=${petId}`);
+    return response.data;
+  },
+  getPetHistory: async (petId) => {
+    const response = await api.get(`/pets/${petId}/history`);
+    return response.data;
+  },
+
+  // Store & Products
+  getProducts: async (params = {}) => {
+    const response = await api.get("/products", { params });
+    return response.data;
+  },
+  getCategories: async () => {
+    const response = await api.get("/products/categories");
+    return response.data;
+  },
+  createProduct: async (data) => {
+    const config = {
+      headers: { "Content-Type": "multipart/form-data" },
+    };
+    const response = await api.post("/products", data, config);
+    return response.data;
+  },
+  updateProduct: async (id, data) => {
+    const config = {
+      headers: { "Content-Type": "multipart/form-data" },
+    };
+    const response = await api.put(`/products/${id}`, data, config);
+    return response.data;
+  },
+  deleteProduct: async (id) => {
+    await api.delete(`/products/${id}`);
+  },
+  getStoreOrders: async () => {
+    const response = await api.get("/orders/store");
+    return response.data;
+  },
+  updateOrderStatus: async (id, status) => {
+    const response = await api.put(`/orders/${id}/status`, { status });
+    return response.data;
   },
 };

@@ -1,13 +1,11 @@
 import data from '../mock/data.json';
-import { User, Pet, Appointment, Vet, Adoption, Post, LostAndFound } from '../types';
+import { User, Pet, Appointment, Vet, Adoption, Post, LostAndFound, Emergency } from '../types';
 
 import { API_URL as ENV_API_URL } from '@env';
 
-const API_URL = ENV_API_URL || 'http://10.78.10.236:5000/api';
+export const API_URL = ENV_API_URL || 'http://192.168.1.3:5000/api'; // Primary (Wi-Fi)
+// const API_URL = ENV_API_URL || 'http://10.31.42.78:5000/api'; // Alternative (Ethernet)
 console.log('[DataService] Using API_URL:', API_URL);
-
-
-
 
 export const dataService = {
   // Auth
@@ -44,12 +42,12 @@ export const dataService = {
     return response.json();
   },
 
-
   // Pets
   getPets: async (token: string): Promise<Pet[]> => {
     const response = await fetch(`${API_URL}/pets`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (!response.ok) throw new Error('Failed to fetch pets');
     const pets = await response.json();
     return pets.map((p: any) => ({ ...p, id: p._id }));
   },
@@ -57,36 +55,90 @@ export const dataService = {
     const response = await fetch(`${API_URL}/pets/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (!response.ok) throw new Error('Pet not found');
     const pet = await response.json();
     return { ...pet, id: pet._id };
   },
   addPet: async (petData: any, token: string): Promise<Pet> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (petData.image && typeof petData.image === 'object') {
+      const formData = new FormData();
+      Object.keys(petData).forEach(key => {
+        if (key === 'image') {
+          formData.append('image', {
+            uri: petData.image.uri,
+            type: petData.image.type || 'image/jpeg',
+            name: petData.image.name || 'pet.jpg',
+          } as any);
+        } else {
+          formData.append(key, petData[key]);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(petData);
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_URL}/pets`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(petData)
+      headers,
+      body
     });
-    return response.json();
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to add pet');
+    }
+    const pet = await response.json();
+    return { ...pet, id: pet._id };
   },
   updatePet: async (id: string, petData: any, token: string): Promise<Pet> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (petData.image && typeof petData.image === 'object') {
+      const formData = new FormData();
+      Object.keys(petData).forEach(key => {
+        if (key === 'image') {
+          formData.append('image', {
+            uri: petData.image.uri,
+            type: petData.image.type || 'image/jpeg',
+            name: petData.image.name || 'pet.jpg',
+          } as any);
+        } else {
+          formData.append(key, petData[key]);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(petData);
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_URL}/pets/${id}`, {
       method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(petData)
+      headers,
+      body
     });
-    return response.json();
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update pet');
+    }
+    const pet = await response.json();
+    return { ...pet, id: pet._id };
   },
   deletePet: async (id: string, token: string): Promise<void> => {
-    await fetch(`${API_URL}/pets/${id}`, {
+    const response = await fetch(`${API_URL}/pets/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (!response.ok) throw new Error('Failed to delete pet');
   },
 
   // Vets
@@ -106,7 +158,13 @@ export const dataService = {
     const response = await fetch(`${API_URL}/appointments`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    return response.json();
+    const appointments = await response.json();
+    return appointments.map((a: any) => ({ 
+      ...a, 
+      id: a._id,
+      petId: a.petId?._id || a.petId,
+      vetId: a.vetId?._id || a.vetId
+    }));
   },
   bookAppointment: async (appointmentData: any, token: string): Promise<Appointment> => {
     const response = await fetch(`${API_URL}/appointments`, {
@@ -117,7 +175,13 @@ export const dataService = {
       },
       body: JSON.stringify(appointmentData)
     });
-    return response.json();
+    const a = await response.json();
+    return { 
+      ...a, 
+      id: a._id,
+      petId: a.petId?._id || a.petId,
+      vetId: a.vetId?._id || a.vetId
+    };
   },
   cancelAppointment: async (id: string, token: string): Promise<void> => {
     await fetch(`${API_URL}/appointments/${id}/cancel`, {
@@ -125,7 +189,6 @@ export const dataService = {
       headers: { 'Authorization': `Bearer ${token}` }
     });
   },
-
 
   // Adoption (Phase 2)
   getAdoptions: async (): Promise<Adoption[]> => {
@@ -149,16 +212,49 @@ export const dataService = {
   getPosts: async (): Promise<Post[]> => {
     const response = await fetch(`${API_URL}/community`);
     const posts = await response.json();
-    return posts.map((p: any) => ({ ...p, id: p._id }));
+    return posts.map((p: any) => ({ 
+      ...p, 
+      id: p._id,
+      userName: p.user?.name || 'Anonymous',
+      userAvatar: p.user?.avatar || 'https://via.placeholder.com/150',
+      image: p.images && p.images.length > 0 ? p.images[0] : undefined,
+      likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+      likedBy: Array.isArray(p.likes) ? p.likes.map((id: any) => id.toString()) : [],
+      comments: p.commentCount || 0,
+      timeAgo: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Just now'
+    }));
   },
   createPost: async (postData: any, token: string): Promise<Post> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (postData.images && postData.images.length > 0) {
+      const formData = new FormData();
+      formData.append('content', postData.content);
+      if (postData.category) formData.append('category', postData.category);
+      if (postData.petId) formData.append('petId', postData.petId);
+      if (postData.location) formData.append('location', postData.location);
+      
+      postData.images.forEach((img: any) => {
+        formData.append('images', {
+          uri: img.uri,
+          type: img.type || 'image/jpeg',
+          name: img.name || 'image.jpg',
+        } as any);
+      });
+      body = formData;
+      // Do not set Content-Type, fetch will set it correctly for FormData
+    } else {
+      body = JSON.stringify(postData);
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_URL}/community`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(postData)
+      headers,
+      body
     });
     return response.json();
   },
@@ -170,6 +266,29 @@ export const dataService = {
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ text })
+    });
+    return response.json();
+  },
+  likePost: async (postId: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/community/${postId}/like`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+  },
+  
+  // Notifications
+  getNotifications: async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/notifications`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const notifications = await response.json();
+    return notifications.map((n: any) => ({ ...n, id: n._id }));
+  },
+  markNotificationAsRead: async (id: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/notifications/${id}/read`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     return response.json();
   },
@@ -191,6 +310,184 @@ export const dataService = {
       body: JSON.stringify(reportData)
     });
     return response.json();
-  }
-};
+  },
 
+  // Emergency SOS
+  triggerSOS: async (sosData: any, token: string): Promise<Emergency> => {
+    const response = await fetch(`${API_URL}/emergency`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(sosData)
+    });
+    return response.json();
+  },
+  getEmergenciesByToken: async (token: string): Promise<Emergency[]> => {
+    const response = await fetch(`${API_URL}/emergency`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+  },
+
+  // AI Chat
+  chatWithAI: async (message: string, history: any[], token: string) => {
+    const response = await fetch(`${API_URL}/ai/chat`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ message, history })
+    });
+    return response.json();
+  },
+  
+  // Vaccinations
+  getVaccinations: async (petId: string, token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/vaccinations/pet/${petId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const vaccinations = await response.json();
+    return vaccinations.map((v: any) => ({ ...v, id: v._id }));
+  },
+  getUpcomingVaccinations: async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/vaccinations/upcoming`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const vaccinations = await response.json();
+    return vaccinations.map((v: any) => ({ ...v, id: v._id }));
+  },
+  addVaccination: async (vaccinationData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/vaccinations`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(vaccinationData)
+    });
+    const vaccination = await response.json();
+    return { ...vaccination, id: vaccination._id };
+  },
+  deleteVaccination: async (id: string, token: string): Promise<void> => {
+    await fetch(`${API_URL}/vaccinations/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  },
+
+  // Medical Records (Phase 2)
+  getMedicalRecords: async (petId: string, token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/medical-records/pet/${petId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const records = await response.json();
+    return records.map((r: any) => ({ ...r, id: r._id }));
+  },
+  addMedicalRecord: async (recordData: any, token: string): Promise<any> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (recordData.document) {
+      const formData = new FormData();
+      Object.keys(recordData).forEach(key => {
+        if (key === 'document') {
+          formData.append('document', {
+            uri: recordData.document.uri,
+            type: recordData.document.type || 'image/jpeg',
+            name: recordData.document.name || 'document.jpg',
+          } as any);
+        } else {
+          formData.append(key, recordData[key]);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(recordData);
+      headers['Content-Type'] = 'application/json';
+    }
+
+    const response = await fetch(`${API_URL}/medical-records`, {
+      method: 'POST',
+      headers,
+      body
+    });
+    const record = await response.json();
+    return { ...record, id: record._id };
+  },
+  deleteMedicalRecord: async (id: string, token: string): Promise<void> => {
+    await fetch(`${API_URL}/medical-records/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  },
+  getPetHealth: async (petId: string, token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/pets/${petId}/health`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+  },
+
+  // Store & Products
+  getProducts: async (params: any = {}): Promise<any[]> => {
+    let url = `${API_URL}/products`;
+    const queryParams = [];
+    if (params.category) queryParams.push(`category=${params.category}`);
+    if (params.storeId) queryParams.push(`storeId=${params.storeId}`);
+    
+    if (queryParams.length > 0) {
+      url += `?${queryParams.join('&')}`;
+    }
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch products');
+    return await response.json();
+  },
+
+  getCategories: async (): Promise<string[]> => {
+    const response = await fetch(`${API_URL}/products/categories`);
+    if (!response.ok) throw new Error('Failed to fetch categories');
+    return await response.json();
+  },
+
+  // Orders
+  createOrder: async (orderData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(orderData)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to place order');
+    }
+    return await response.json();
+  },
+
+  getMyOrders: async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/orders/user`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch orders');
+    return await response.json();
+  },
+
+  getOrderById: async (id: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/orders/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch order details');
+    return await response.json();
+  },
+};

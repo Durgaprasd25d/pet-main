@@ -17,6 +17,13 @@ export interface Pet {
   weight: string;
   gender: string;
   image: string;
+  microchipId?: string;
+  bloodGroup?: string;
+  medicalHistory?: {
+    date: string;
+    title: string;
+    description: string;
+  }[];
 }
 
 export interface Appointment {
@@ -26,7 +33,7 @@ export interface Appointment {
   date: string;
   time: string;
   reason: string;
-  status: 'upcoming' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'completed' | 'cancelled';
 }
 
 export interface Vet {
@@ -41,6 +48,7 @@ export interface Vet {
   about: string;
   address?: string;
   contactNumber?: string;
+  availability?: string[];
 }
 
 export interface Adoption {
@@ -61,12 +69,36 @@ export interface Post {
   userId: string;
   userName: string;
   userAvatar: string;
-  image: string;
+  image?: string;
+  images?: string[];
   content: string;
   likes: number;
+  likedBy?: string[];
   comments: number;
   timeAgo: string;
   timestamp?: string;
+  petId?: string;
+  location?: string;
+  category?: string;
+}
+
+export interface Notification {
+  id: string;
+  recipient: string;
+  sender: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  type: 'like' | 'comment' | 'reply' | 'adoption' | 'alert';
+  post?: {
+    id: string;
+    content: string;
+    image?: string;
+  };
+  content: string;
+  isRead: boolean;
+  createdAt: string;
 }
 
 export interface LostAndFound {
@@ -81,4 +113,19 @@ export interface LostAndFound {
   description: string;
   reportedBy?: string;
   status?: 'Lost' | 'Found' | 'Resolved';
+}
+
+export interface Emergency {
+  id: string;
+  userId: string;
+  petId?: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+  status: 'pending' | 'accepted' | 'resolved' | 'cancelled';
+  description?: string;
+  emergencyType?: string;
+  createdAt: string;
 }

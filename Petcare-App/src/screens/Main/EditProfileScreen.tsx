@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Avatar } from '../../components/ui/Avatar';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
-import { COLORS, SPACING, RADIUS } from '../../theme/theme';
+import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { useAppStore } from '../../store/useAppStore';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import LinearGradient from 'react-native-linear-gradient';
 
 export const EditProfileScreen = ({ navigation }: any) => {
   const { user, setUser } = useAppStore();
@@ -30,18 +31,25 @@ export const EditProfileScreen = ({ navigation }: any) => {
 
   return (
     <ScreenContainer>
-      <Header title="Edit Profile" onBackPress={() => navigation.goBack()} />
+      <Header title="Edit Profile" onBackPress={() => navigation.goBack()} transparent />
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.imageContainer}>
+        <LinearGradient
+          colors={[COLORS.primary, '#10b981']}
+          style={styles.gradientHeader}
+        />
+        
+        <View style={styles.avatarSection}>
           <View style={styles.avatarWrapper}>
-            <Avatar source={user?.avatar ? { uri: user.avatar } : undefined} size={120} />
+            <Avatar source={user?.avatar ? { uri: user.avatar } : undefined} size={110} />
             <TouchableOpacity style={styles.cameraButton}>
-              <MaterialDesignIcons name="camera" size={20} color={COLORS.surface} />
+              <MaterialDesignIcons name="camera" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
+          <Text style={styles.infoText}>Tap camera to update photo</Text>
         </View>
 
         <View style={styles.formContainer}>
@@ -84,31 +92,46 @@ export const EditProfileScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    padding: SPACING.lg,
     flexGrow: 1,
+    paddingBottom: SPACING.xl,
   },
-  imageContainer: {
+  gradientHeader: {
+    height: 120,
+    width: '100%',
+  },
+  avatarSection: {
     alignItems: 'center',
+    marginTop: -55,
     marginBottom: SPACING.xl,
-    marginTop: SPACING.md,
   },
   avatarWrapper: {
     position: 'relative',
+    ...SHADOWS.large,
+    backgroundColor: '#fff',
+    borderRadius: RADIUS.round,
+    padding: 6,
   },
   cameraButton: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: COLORS.primary,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    bottom: 2,
+    right: 2,
+    backgroundColor: COLORS.secondary,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: COLORS.background,
+    borderColor: '#fff',
+  },
+  infoText: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginTop: 10,
+    fontWeight: '600',
   },
   formContainer: {
+    paddingHorizontal: SPACING.lg,
     width: '100%',
   },
   saveButton: {

@@ -18,6 +18,11 @@ const postSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    petId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Pet",
+    },
+    location: String,
     category: {
       type: String,
       enum: ["general", "health", "training", "stories"],

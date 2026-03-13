@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text, Alert, Image, Platform } from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -7,8 +8,6 @@ import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useAppStore } from '../../store/useAppStore';
-import { dataService } from '../../services/dataService';
-
 import { usePetStore } from '../../store/usePetStore';
 
 export const AddPetScreen = ({ navigation }: any) => {
@@ -21,9 +20,13 @@ export const AddPetScreen = ({ navigation }: any) => {
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('Male');
+  const [selectedImage, setSelectedImage] = useState<any>(null);
 
   const handleSave = async () => {
-    if (!name || !token) return;
+    if (!name || !token) {
+      Alert.alert('Error', 'Pet name is required');
+      return;
+    }
     
     try {
       await addPet({
@@ -33,11 +36,40 @@ export const AddPetScreen = ({ navigation }: any) => {
         age: parseInt(age) || 0,
         weight,
         gender,
-        image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400' // Placeholder
+        image: selectedImage ? selectedImage : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400' // Use object if selected, else placeholder
       }, token);
+      Alert.alert('Success', `${name} has been added to your profile!`);
       navigation.goBack();
     } catch (error) {
+      Alert.alert('Error', 'Failed to save pet details');
       console.error('Error saving pet:', error);
+    }
+  };
+
+  const selectImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibrary({
+        mediaType: 'photo',
+        includeBase64: false,
+        quality: 0.8,
+      });
+
+      if (result.didCancel) return;
+      if (result.errorCode) {
+        Alert.alert('Error', result.errorMessage || 'Unknown error');
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        setSelectedImage({
+          uri: Platform.OS === 'android' ? asset.uri : asset.uri?.replace('file://', ''),
+          type: asset.type,
+          name: asset.fileName || `pet_${Date.now()}.jpg`,
+        });
+      }
+    } catch (error: any) {
+      Alert.alert('Error', 'Failed to select image: ' + error.message);
     }
   };
 
@@ -70,10 +102,16 @@ export const AddPetScreen = ({ navigation }: any) => {
         keyboardShouldPersistTaps="handled"
       >
         
-        <View style={styles.imageSelector}>
-          <MaterialDesignIcons name={"camera-plus" as any} size={40} color={COLORS.textLight} />
-          <Text style={styles.imageConfigText}>Add Photo</Text>
-        </View>
+        <TouchableOpacity style={styles.imageSelector} onPress={selectImage}>
+          {selectedImage ? (
+            <Image source={{ uri: selectedImage.uri }} style={styles.fullImage} />
+          ) : (
+            <>
+              <MaterialDesignIcons name={"camera-plus" as any} size={40} color={COLORS.textLight} />
+              <Text style={styles.imageConfigText}>Add Photo</Text>
+            </>
+          )}
+        </TouchableOpacity>
 
         <View style={styles.section}>
           <Text style={styles.label}>Pet Type</Text>
@@ -129,6 +167,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: SPACING.xl,
     marginTop: SPACING.md,
+    overflow: 'hidden',
+  },
+  fullImage: {
+    width: '100%',
+    height: '100%',
   },
   imageConfigText: {
     fontSize: 12,
@@ -192,5 +235,10 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: SPACING.lg,
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: SPACING.sm,
   },
 });

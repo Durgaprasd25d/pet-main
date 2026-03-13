@@ -39,7 +39,7 @@ export const AppointmentConfirmationScreen = ({ route, navigation }: any) => {
         date,
         time,
         reason,
-        status: 'upcoming'
+        status: 'scheduled'
       }, token);
       navigation.navigate('MainTabs', { screen: 'AppointmentsTab' });
     } catch (error) {

@@ -28,6 +28,7 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password,
+      role: req.body.role, // Use role from request body if provided
       otp,
       otpExpires,
     });
@@ -89,6 +90,7 @@ exports.verifyOTP = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
       token: generateToken(user._id),
     });
   } catch (error) {
@@ -153,6 +155,7 @@ exports.loginUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         token: generateToken(user._id),
       });
     } else {
@@ -175,6 +178,7 @@ exports.getUserProfile = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         phone: user.phone,
         location: user.location,
         avatar: user.avatar,
@@ -186,6 +190,60 @@ exports.getUserProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.phone = req.body.phone || user.phone;
+      user.location = req.body.location || user.location;
+      user.avatar = req.body.avatar || user.avatar;
+
+      // Vet specific fields
+      if (user.role === "vet") {
+        user.specialty = req.body.specialty || user.specialty;
+        user.clinicName = req.body.clinicName || user.clinicName;
+        user.about = req.body.about || user.about;
+        user.address = req.body.address || user.address;
+        user.availability = req.body.availability || user.availability;
+        user.price = req.body.price || user.price;
+      }
+
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        phone: updatedUser.phone,
+        location: updatedUser.location,
+        avatar: updatedUser.avatar,
+        specialty: updatedUser.specialty,
+        clinicName: updatedUser.clinicName,
+        about: updatedUser.about,
+        address: updatedUser.address,
+        availability: updatedUser.availability,
+        price: updatedUser.price,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Get all users (admin)
 // @route   GET /api/auth/users
 // @access  Private/Admin

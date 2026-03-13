@@ -6,14 +6,9 @@ import { MainTabNavigator } from './MainTabNavigator';
 import { NotificationsScreen } from '../screens/Main/NotificationsScreen';
 import { EditProfileScreen } from '../screens/Main/EditProfileScreen';
 import { SettingsScreen } from '../screens/Main/SettingsScreen';
+import { UserProfileScreen } from '../screens/Main/UserProfileScreen';
 
 // Pet Screens
-import { AddPetScreen } from '../screens/Pets/AddPetScreen';
-import { PetProfileScreen } from '../screens/Pets/PetProfileScreen';
-import { EditPetScreen } from '../screens/Pets/EditPetScreen';
-import { PetHealthCardScreen } from '../screens/Pets/PetHealthCardScreen';
-import { VaccinationRecordsScreen } from '../screens/Pets/VaccinationRecordsScreen';
-import { MedicalHistoryScreen } from '../screens/Pets/MedicalHistoryScreen';
 
 // Vet Screens
 import { VetListScreen } from '../screens/Veterinary/VetListScreen';
@@ -42,6 +37,7 @@ import { CreatePostScreen } from '../screens/Community/CreatePostScreen';
 import { PostDetailsScreen } from '../screens/Community/PostDetailsScreen';
 import { UserCommunityProfileScreen } from '../screens/Community/UserCommunityProfileScreen';
 import { CommentsScreen } from '../screens/Community/CommentsScreen';
+import { AskQuestionScreen } from '../screens/Community/AskQuestionScreen';
 
 // Emergency Screens
 import { EmergencySOSScreen } from '../screens/Emergency/EmergencySOSScreen';
@@ -55,18 +51,20 @@ import { ReminderCenterScreen } from '../screens/Utility/ReminderCenterScreen';
 import { VaccinationReminderScreen } from '../screens/Utility/VaccinationReminderScreen';
 import { HelpSupportScreen } from '../screens/Utility/HelpSupportScreen';
 import { AboutAppScreen } from '../screens/Utility/AboutAppScreen';
+import { PrivacySecurityScreen } from '../screens/Utility/PrivacySecurityScreen';
+import { TermsOfServiceScreen } from '../screens/Utility/TermsOfServiceScreen';
+import { PrivacyPolicyScreen } from '../screens/Utility/PrivacyPolicyScreen';
+import { OpenSourceLibrariesScreen } from '../screens/Utility/OpenSourceLibrariesScreen';
+import { PetAIChatScreen } from '../screens/Utility/PetAIChatScreen';
+
+// Store Screens
 
 export type AppStackParamList = {
   MainTabs: undefined;
   Notifications: undefined;
   EditProfile: undefined;
   Settings: undefined;
-  AddPet: undefined;
-  PetProfile: { petId: string };
-  EditPet: { petId: string };
-  PetHealthCard: { petId: string };
-  VaccinationRecords: { petId: string };
-  MedicalHistory: { petId: string };
+  Profile: undefined;
   VetList: undefined;
   VetProfile: { vetId: string };
   BookAppointment: { vetId?: string };
@@ -87,6 +85,7 @@ export type AppStackParamList = {
   PostDetails: { postId: string };
   UserCommunityProfile: { userId: string };
   Comments: { postId: string };
+  AskQuestion: undefined;
   EmergencySOS: undefined;
   NearbyVetClinics: undefined;
   EmergencyContact: undefined;
@@ -96,6 +95,11 @@ export type AppStackParamList = {
   VaccinationReminder: undefined;
   HelpSupport: undefined;
   AboutApp: undefined;
+  PrivacySecurity: undefined;
+  TermsOfService: undefined;
+  PrivacyPolicy: undefined;
+  OpenSourceLibraries: undefined;
+  PetAIChat: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -107,13 +111,7 @@ export const AppStack = () => {
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
-      
-      <Stack.Screen name="AddPet" component={AddPetScreen} />
-      <Stack.Screen name="PetProfile" component={PetProfileScreen} />
-      <Stack.Screen name="EditPet" component={EditPetScreen} />
-      <Stack.Screen name="PetHealthCard" component={PetHealthCardScreen} />
-      <Stack.Screen name="VaccinationRecords" component={VaccinationRecordsScreen} />
-      <Stack.Screen name="MedicalHistory" component={MedicalHistoryScreen} />
+      <Stack.Screen name="Profile" component={UserProfileScreen} />
       
       <Stack.Screen name="VetList" component={VetListScreen} />
       <Stack.Screen name="VetProfile" component={VetProfileScreen} />
@@ -138,6 +136,7 @@ export const AppStack = () => {
       <Stack.Screen name="PostDetails" component={PostDetailsScreen} />
       <Stack.Screen name="UserCommunityProfile" component={UserCommunityProfileScreen} />
       <Stack.Screen name="Comments" component={CommentsScreen} />
+      <Stack.Screen name="AskQuestion" component={AskQuestionScreen} />
       
       <Stack.Screen name="EmergencySOS" component={EmergencySOSScreen} />
       <Stack.Screen name="NearbyVetClinics" component={NearbyVetClinicsScreen} />
@@ -149,6 +148,11 @@ export const AppStack = () => {
       <Stack.Screen name="VaccinationReminder" component={VaccinationReminderScreen} />
       <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
       <Stack.Screen name="AboutApp" component={AboutAppScreen} />
+      <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
+      <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+      <Stack.Screen name="OpenSourceLibraries" component={OpenSourceLibrariesScreen} />
+      <Stack.Screen name="PetAIChat" component={PetAIChatScreen} />
     </Stack.Navigator>
   );
 };

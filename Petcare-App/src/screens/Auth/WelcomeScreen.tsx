@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Text, Image, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, Image, StatusBar, TouchableOpacity } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Button } from '../../components/ui/Button';
+import { SwipeButton } from '../../components/ui/SwipeButton';
 import { COLORS, SPACING, RADIUS, SIZES } from '../../theme/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -18,6 +19,13 @@ export const WelcomeScreen = ({ navigation }: any) => {
             style={styles.image}
           />
           <View style={styles.overlay} />
+          <View style={styles.logoOverlay}>
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.welcomeLogo}
+              resizeMode="contain"
+            />
+          </View>
         </View>
         
         <View style={[styles.content, { paddingBottom: Math.max(insets.bottom, SPACING.lg) }]}>
@@ -29,18 +37,16 @@ export const WelcomeScreen = ({ navigation }: any) => {
           </Text>
           
           <View style={styles.buttonContainer}>
-            <Button
-              title="Get Started"
-              onPress={() => navigation.navigate('Register')}
-              style={styles.button}
+            <SwipeButton
+              title="Swipe to sign in"
+              onSwipeComplete={() => navigation.navigate('Login')}
             />
-            <Button
-              title="Already have an account? Log In"
-              variant="ghost"
-              onPress={() => navigation.navigate('Login')}
-              style={styles.loginButton}
-              color={COLORS.primary}
-            />
+            <View style={styles.signupPrompt}>
+              <Text style={styles.footerText}>New to PetCare? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.signupText}>Sign Up Here</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -65,6 +71,18 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.1)',
+  },
+  logoOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  welcomeLogo: {
+    width: 200,
+    height: 200,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: RADIUS.xl,
+    padding: SPACING.md,
   },
   content: {
     flex: 1,
@@ -104,12 +122,20 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: SPACING.xl,
   },
-  button: {
-    width: '100%',
-    height: 56,
-    borderRadius: RADIUS.lg,
+  signupPrompt: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: SPACING.lg,
   },
-  loginButton: {
-    marginTop: SPACING.sm,
+  footerText: {
+    color: COLORS.textLight,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  signupText: {
+    color: COLORS.primary,
+    fontWeight: '800',
+    fontSize: 14,
   },
 });

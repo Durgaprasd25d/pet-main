@@ -102,8 +102,8 @@ export const VetProfileScreen = ({ route, navigation }: any) => {
             </View>
             <View style={styles.locationContent}>
               <Text style={styles.clinicName}>{vet.clinicName}</Text>
-              <Text style={styles.address}>123 Pet Care Lane, Downtown District</Text>
-              <Text style={styles.hours}>Open today: 09:00 AM - 07:00 PM</Text>
+              <Text style={styles.address}>{vet.address || 'Clinic Address not available'}</Text>
+              <Text style={styles.hours}>{vet.availability?.[0] || 'Open'} : {vet.availability?.[1] || 'Flexible Hours'}</Text>
             </View>
             <MaterialDesignIcons name="chevron-right" size={24} color={COLORS.border} />
           </TouchableOpacity>

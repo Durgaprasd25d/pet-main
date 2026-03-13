@@ -10,7 +10,7 @@ export const EmergencyContactScreen = ({ navigation }: any) => {
   const renderContactCard = (title: string, phone: string, description: string, icon: string, color: string) => (
     <View style={styles.card}>
       <View style={[styles.iconBox, { backgroundColor: color + '20' }]}>
-        <MaterialDesignIcons name={icon} size={28} color={color} />
+        <MaterialDesignIcons name={icon as any} size={28} color={color} />
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{title}</Text>

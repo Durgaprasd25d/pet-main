@@ -14,7 +14,7 @@ const appointmentSchema = new mongoose.Schema(
     },
     vetId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Vet",
+      ref: "User",
       required: true,
     },
     date: {

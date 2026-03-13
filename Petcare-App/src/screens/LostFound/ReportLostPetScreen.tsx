@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Platform, Alert } from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -21,6 +22,7 @@ export const ReportLostPetScreen = ({ navigation }: any) => {
   const [location, setLocation] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedImage, setSelectedImage] = useState<any>(null);
 
   const handleReport = async () => {
     if (!token) return;
@@ -34,13 +36,40 @@ export const ReportLostPetScreen = ({ navigation }: any) => {
         date,
         description,
         status: 'Lost',
-        image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400' // Placeholder
+        image: selectedImage ? selectedImage : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400' // Placeholder
       }, token);
       navigation.goBack();
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const selectImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibrary({
+        mediaType: 'photo',
+        includeBase64: false,
+        quality: 0.8,
+      });
+
+      if (result.didCancel) return;
+      if (result.errorCode) {
+        Alert.alert('Error', result.errorMessage || 'Unknown error');
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        setSelectedImage({
+          uri: Platform.OS === 'android' ? asset.uri : asset.uri?.replace('file://', ''),
+          type: asset.type,
+          name: asset.fileName || `lost_pet_${Date.now()}.jpg`,
+        });
+      }
+    } catch (error: any) {
+      Alert.alert('Error', 'Failed to select image: ' + error.message);
     }
   };
 
@@ -63,10 +92,16 @@ export const ReportLostPetScreen = ({ navigation }: any) => {
         keyboardShouldPersistTaps="handled"
       >
         
-        <View style={styles.imageConfig}>
-          <MaterialDesignIcons name={"camera-plus" as any} size={40} color={COLORS.textLight} />
-          <Text style={styles.imageText}>Upload Photo</Text>
-        </View>
+        <TouchableOpacity style={styles.imageConfig} onPress={selectImage}>
+          {selectedImage ? (
+            <Image source={{ uri: selectedImage.uri }} style={styles.fullImage} />
+          ) : (
+            <>
+              <MaterialDesignIcons name={"camera-plus" as any} size={40} color={COLORS.textLight} />
+              <Text style={styles.imageText}>Upload Photo</Text>
+            </>
+          )}
+        </TouchableOpacity>
 
         <Text style={styles.sectionTitle}>Pet Type</Text>
         <View style={styles.typeRow}>
@@ -120,6 +155,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.xl,
+    overflow: 'hidden',
+  },
+  fullImage: {
+    width: '100%',
+    height: '100%',
   },
   imageText: {
     marginTop: SPACING.sm,

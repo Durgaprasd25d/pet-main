@@ -2,14 +2,15 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Text, Image, TouchableOpacity, Linking } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
+import { CustomModal } from '../../components/ui/CustomModal';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
 export const AboutAppScreen = ({ navigation }: any) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const handleLink = (url: string) => {
-    // In a real app, use Linking.openURL(url)
-    console.log('Opening:', url);
+    setModalVisible(true);
   };
 
   const renderLinkRow = (icon: string, title: string, onPress: () => void) => (
@@ -29,22 +30,29 @@ export const AboutAppScreen = ({ navigation }: any) => {
         
         <View style={styles.headerArea}>
           <View style={styles.logoContainer}>
-            <MaterialDesignIcons name="paw" size={60} color={COLORS.surface} />
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.logo} 
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>HACKATHON EDITION</Text>
           </View>
           <Text style={styles.appName}>PetCare Super App</Text>
-          <Text style={styles.versionText}>Version 1.0.0</Text>
+          <Text style={styles.versionText}>Built with ❤️ for InnovateX 5.0</Text>
         </View>
 
         <View style={styles.descriptionBox}>
           <Text style={styles.description}>
-            PetCare Super App is your all-in-one platform for managing your pet's life. From medical records and vet appointments to community discussions and emergency SOS, we strive to make pet parenting as easy and joyful as possible.
+            PetCare is a next-generation ecosystem designed to revolutionize pet parenting. By integrating AI-driven insights, real-time emergency services, and a vibrant community, we ensure every pet lives their best life.
           </Text>
         </View>
 
         <View style={styles.linksContainer}>
-          {renderLinkRow('file-document-outline', 'Terms of Service', () => handleLink('https://example.com/terms'))}
-          {renderLinkRow('shield-check-outline', 'Privacy Policy', () => handleLink('https://example.com/privacy'))}
-          {renderLinkRow('information-outline', 'Open Source Libraries', () => handleLink('https://example.com/licenses'))}
+          {renderLinkRow('file-document-outline', 'Terms of Service', () => navigation.navigate('TermsOfService'))}
+          {renderLinkRow('shield-check-outline', 'Privacy Policy', () => navigation.navigate('PrivacyPolicy'))}
+          {renderLinkRow('information-outline', 'Open Source Libraries', () => navigation.navigate('OpenSourceLibraries'))}
         </View>
 
         <View style={styles.socialRow}>
@@ -62,6 +70,17 @@ export const AboutAppScreen = ({ navigation }: any) => {
         <Text style={styles.copyright}>© {new Date().getFullYear()} PetCare Inc. All rights reserved.</Text>
 
       </ScrollView>
+
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Coming Soon"
+        message="Our team is working hard to establish our presence on social media. We'll be there soon! 🐾"
+        confirmLabel="Got it!"
+        onConfirm={() => setModalVisible(false)}
+        showCancel={false}
+        type="info"
+      />
     </ScreenContainer>
   );
 };
@@ -78,19 +97,40 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    width: 160,
+    height: 160,
+    borderRadius: RADIUS.xl,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.md,
-    ...SHADOWS.small,
+    ...SHADOWS.medium,
+    overflow: 'hidden',
+    padding: 0,
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
   },
   appName: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.text,
+  },
+  badge: {
+    backgroundColor: COLORS.primary + '15',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: RADIUS.round,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.primary + '30',
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    letterSpacing: 1,
   },
   versionText: {
     fontSize: 14,

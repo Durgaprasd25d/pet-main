@@ -7,6 +7,7 @@ const {
   getUsers,
   verifyOTP,
   resendOTP,
+  updateUserProfile,
 } = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -15,6 +16,7 @@ router.post("/login", loginUser);
 router.post("/verify-otp", verifyOTP);
 router.post("/resend-otp", resendOTP);
 router.get("/profile", protect, getUserProfile);
+router.put("/profile", protect, updateUserProfile);
 
 router.get("/users", protect, getUsers);
 

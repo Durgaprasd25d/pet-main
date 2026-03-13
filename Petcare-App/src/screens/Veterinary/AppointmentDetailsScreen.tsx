@@ -9,28 +9,40 @@ import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-
 import { dataService } from '../../services/dataService';
 import { Appointment, Vet, Pet } from '../../types';
 
+import { useAppointmentStore } from '../../store/useAppointmentStore';
+import { useAppStore } from '../../store/useAppStore';
+import { usePetStore } from '../../store/usePetStore';
+import { useVetStore } from '../../store/useVetStore';
+
 export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
   const { appointmentId } = route.params;
-  const [appointment, setAppointment] = useState<Appointment | null>(null);
-  const [vet, setVet] = useState<Vet | null>(null);
+  const { token } = useAppStore();
+  const { appointments, fetchAppointments } = useAppointmentStore();
+  const { pets, fetchPets } = usePetStore();
+  const { vets, fetchVets } = useVetStore();
+  
+  const appointment = appointments.find(a => a.id === appointmentId);
   const [pet, setPet] = useState<Pet | null>(null);
+  const [vet, setVet] = useState<Vet | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const appts = await dataService.getAppointments();
-      const a = appts.find(ap => ap.id === appointmentId);
-      if (a) {
-        setAppointment(a);
-        const v = await dataService.getVets().then(vets => vets.find(v => v.id === a.vetId));
-        const p = await dataService.getPetById(a.petId);
-        if (v) setVet(v);
-        if (p) setPet(p);
-      }
-    };
-    fetchData();
-  }, [appointmentId]);
+    if (token) {
+      if (!appointment) fetchAppointments(token);
+      if (pets.length === 0) fetchPets(token);
+      if (vets.length === 0) fetchVets();
+    }
+  }, [appointmentId, token]);
 
-  if (!appointment || !vet || !pet) {
+  useEffect(() => {
+    if (appointment) {
+      const p = pets.find(p => p.id === appointment.petId);
+      const v = vets.find(v => v.id === appointment.vetId);
+      if (p) setPet(p);
+      if (v) setVet(v);
+    }
+  }, [appointment, pets, vets]);
+
+  if (!appointment) {
     return (
       <ScreenContainer>
         <Header title="Appointment Details" onBackPress={() => navigation.goBack()} />
@@ -43,7 +55,7 @@ export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
 
   const getStatusColor = (status: string): "success" | "warning" | "error" | "neutral" => {
     switch (status) {
-      case 'upcoming': return 'success';
+      case 'scheduled': return 'success';
       case 'completed': return 'neutral';
       case 'cancelled': return 'error';
       default: return 'neutral';
@@ -64,7 +76,7 @@ export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
           <View style={styles.dateTimeRow}>
             <View style={styles.dateTimeItem}>
               <MaterialDesignIcons name="calendar-blank-outline" size={20} color={COLORS.primary} style={styles.icon} />
-              <Text style={styles.dateTimeText}>{appointment.date}</Text>
+              <Text style={styles.dateTimeText}>{new Date(appointment.date).toLocaleDateString()}</Text>
             </View>
             <View style={styles.dateTimeItem}>
               <MaterialDesignIcons name="clock-outline" size={20} color={COLORS.primary} style={styles.icon} />
@@ -75,10 +87,10 @@ export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
 
         <Text style={styles.sectionTitle}>Veterinarian</Text>
         <View style={styles.profileCard}>
-          <Image source={{ uri: vet.image }} style={styles.avatar} />
+          <Image source={{ uri: vet?.image || 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2070&auto=format&fit=crop' }} style={styles.avatar} />
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>{vet.name}</Text>
-            <Text style={styles.subtext}>{vet.clinicName}</Text>
+            <Text style={styles.name}>{vet?.name || 'Veterinarian'}</Text>
+            <Text style={styles.subtext}>{vet?.clinicName || 'PetCare Wellness Clinic'}</Text>
           </View>
           <View style={styles.actionIcons}>
             <View style={styles.iconCircle}>
@@ -92,16 +104,16 @@ export const AppointmentDetailsScreen = ({ route, navigation }: any) => {
 
         <Text style={styles.sectionTitle}>Patient</Text>
         <View style={styles.profileCard}>
-          <Image source={{ uri: pet.image }} style={styles.avatar} />
+          <Image source={{ uri: pet?.image || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop' }} style={styles.avatar} />
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>{pet.name}</Text>
-            <Text style={styles.subtext}>{pet.breed} • {pet.age} yrs</Text>
+            <Text style={styles.name}>{pet?.name || 'Pet Name'}</Text>
+            <Text style={styles.subtext}>{pet?.breed || 'Breed'} • {pet?.age || '?'} yrs</Text>
           </View>
         </View>
 
       </ScrollView>
 
-      {appointment.status === 'upcoming' ? (
+      {appointment.status === 'scheduled' ? (
         <View style={styles.footer}>
           <Button 
             title="Reschedule" 

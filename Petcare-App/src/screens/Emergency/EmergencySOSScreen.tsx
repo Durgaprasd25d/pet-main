@@ -1,15 +1,108 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  withDelay,
+  Easing 
+} from 'react-native-reanimated';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useAppStore } from '../../store/useAppStore';
+import { useEmergencyStore } from '../../store/useEmergencyStore';
+import { CustomModal } from '../../components/ui/CustomModal';
 
 export const EmergencySOSScreen = ({ navigation }: any) => {
+  const { token } = useAppStore();
+  const { triggerSOS, loading } = useEmergencyStore();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  
+  // Premium Animation Values
+  const pulse1 = useSharedValue(1);
+  const opacity1 = useSharedValue(0.6);
+  const pulse2 = useSharedValue(1);
+  const opacity2 = useSharedValue(0.6);
+  const pulse3 = useSharedValue(1);
+  const opacity3 = useSharedValue(0.6);
+
+  useEffect(() => {
+    const duration = 2500;
+    
+    pulse1.value = withRepeat(
+      withTiming(2.2, { duration, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+      -1,
+      false
+    );
+    opacity1.value = withRepeat(
+      withTiming(0, { duration, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+      -1,
+      false
+    );
+
+    pulse2.value = withDelay(800, withRepeat(
+      withTiming(2.2, { duration, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+      -1,
+      false
+    ));
+    opacity2.value = withDelay(800, withRepeat(
+      withTiming(0, { duration, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+      -1,
+      false
+    ));
+
+    pulse3.value = withDelay(1600, withRepeat(
+      withTiming(2.2, { duration, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+      -1,
+      false
+    ));
+    opacity3.value = withDelay(1600, withRepeat(
+      withTiming(0, { duration, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+      -1,
+      false
+    ));
+  }, []);
+
+  const animatedStyle1 = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse1.value }],
+    opacity: opacity1.value,
+  }));
+
+  const animatedStyle2 = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse2.value }],
+    opacity: opacity2.value,
+  }));
+
+  const animatedStyle3 = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse3.value }],
+    opacity: opacity3.value,
+  }));
   
   const handleSOSPress = () => {
-    // In a real app, this would trigger an alarm, call emergency contacts, or nearby vets
-    navigation.navigate('NearbyVetClinics');
+    if (!token) {
+      return;
+    }
+    setModalVisible(true);
+  };
+
+  const confirmSOS = async () => {
+    setModalVisible(false);
+    const sosData = {
+      latitude: 19.0760,
+      longitude: 72.8777,
+      address: "Current location detected",
+      description: "User triggered emergency SOS",
+      emergencyType: "Critical"
+    };
+
+    const result = await triggerSOS(sosData, token as string);
+    if (result) {
+      setSuccessModalVisible(true);
+    }
   };
 
   return (
@@ -23,10 +116,27 @@ export const EmergencySOSScreen = ({ navigation }: any) => {
         </View>
 
         <View style={styles.sosContainer}>
-          <View style={styles.pulseRing1} />
-          <View style={styles.pulseRing2} />
-          <TouchableOpacity style={styles.sosButton} onPress={handleSOSPress} activeOpacity={0.8}>
-            <Text style={styles.sosText}>SOS</Text>
+          {/* Multi-layered Premium Ripples */}
+          <Animated.View style={[styles.pulseRing, animatedStyle1]} />
+          <Animated.View style={[styles.pulseRing, animatedStyle2]} />
+          <Animated.View style={[styles.pulseRing, animatedStyle3]} />
+          
+          <View style={styles.buttonShadow} />
+          
+          <TouchableOpacity 
+            style={[styles.sosButton, loading && { opacity: 0.7 }]} 
+            onPress={handleSOSPress} 
+            activeOpacity={0.8}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" size="large" />
+            ) : (
+              <View style={styles.innerButton}>
+                <Text style={styles.sosText}>SOS</Text>
+                <Text style={styles.tapText}>TAP TO CALL</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -75,6 +185,30 @@ export const EmergencySOSScreen = ({ navigation }: any) => {
         </View>
 
       </ScrollView>
+
+      {/* Premium SOS Modals */}
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={confirmSOS}
+        title="Confirm SOS Alert"
+        message="This will broadcast your location to all nearby veterinary clinics for immediate assistance."
+        confirmLabel="Trigger Emergency"
+        type="error"
+        loading={loading}
+      />
+
+      <CustomModal
+        visible={successModalVisible}
+        onClose={() => {
+          setSuccessModalVisible(false);
+          navigation.navigate('NearbyVetClinics');
+        }}
+        title="SOS Alert Sent"
+        message="Nearby veterinarians have been notified. Please stay where you are, help is coming."
+        confirmLabel="View Nearby Vets"
+        type="success"
+      />
     </ScreenContainer>
   );
 };
@@ -110,19 +244,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 60,
   },
-  pulseRing1: {
+  pulseRing: {
     position: 'absolute',
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: COLORS.error + '20',
-  },
-  pulseRing2: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     backgroundColor: COLORS.error + '40',
+  },
+  buttonShadow: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: COLORS.error,
+    opacity: 0.2,
+    ...SHADOWS.large,
+    shadowColor: COLORS.error,
+    shadowRadius: 30,
+    shadowOpacity: 0.8,
   },
   sosButton: {
     width: 140,
@@ -131,16 +270,31 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.error,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 10,
+    borderWidth: 4,
+    borderColor: '#fff',
+    elevation: 20,
     shadowColor: COLORS.error,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.5,
-    shadowRadius: 15,
+    shadowRadius: 20,
+  },
+  innerButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   sosText: {
-    fontSize: 36,
+    fontSize: 40,
+    fontWeight: '900',
+    color: '#fff',
+    letterSpacing: 2,
+    marginBottom: -4,
+  },
+  tapText: {
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#fff',
+    opacity: 0.9,
+    letterSpacing: 1,
   },
   quickActions: {
     width: '100%',

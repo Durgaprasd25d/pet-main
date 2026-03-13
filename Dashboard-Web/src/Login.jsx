@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { dashboardService } from './services/apiService';
+import { Link } from 'react-router-dom';
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
@@ -25,12 +26,12 @@ const Login = ({ onLoginSuccess }) => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        <div className="bg-primary p-8 text-white text-center">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-            <span className="text-2xl font-bold">P</span>
+        <div className="bg-white border-b border-slate-100 p-10 text-center">
+          <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner p-2 border border-slate-100">
+            <img src="/logo.png" alt="PetCare Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold">PetCare Admin</h1>
-          <p className="text-white/80 text-sm mt-1">Management Dashboard Access</p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">PetCare Admin</h1>
+          <p className="text-slate-500 text-sm mt-3 font-medium">Management Dashboard Access</p>
         </div>
         
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -85,9 +86,12 @@ const Login = ({ onLoginSuccess }) => {
             )}
           </button>
 
-          <div className="text-center pt-4">
+          <div className="text-center pt-4 space-y-4">
             <p className="text-xs text-slate-400">
               Authorized access only. By signing in you agree to our <span className="underline cursor-pointer">Security Policy</span>.
+            </p>
+            <p className="text-sm font-bold text-slate-500">
+              New business partner? <Link to="/register" className="text-primary hover:underline">Create an account</Link>
             </p>
           </div>
         </form>

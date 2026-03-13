@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Linking, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -22,6 +22,26 @@ export const HelpSupportScreen = ({ navigation }: any) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
+  const handleEmailPress = async () => {
+    const email = 'sranjan41509@gmail.com';
+    const subject = 'PetCare App Support Query';
+    const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+    
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      Alert.alert('Error', 'Could not open your email app. Please ensure an email app like Gmail is installed and set up.');
+    }
+  };
+
+  const handlePhonePress = () => {
+    const phoneNumber = '8917472082';
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url).catch(() => {
+      Alert.alert('Error', 'Could not open dialer');
+    });
+  };
+
   return (
     <ScreenContainer>
       <Header title="Help & Support" onBackPress={() => navigation.goBack()} />
@@ -31,13 +51,19 @@ export const HelpSupportScreen = ({ navigation }: any) => {
           <Text style={styles.sectionTitle}>Need Immediate Help?</Text>
           <Text style={styles.supportText}>Our team is available 24/7 to assist you with any concerns.</Text>
           <View style={styles.supportActions}>
-            <TouchableOpacity style={styles.supportBtn}>
-              <MaterialDesignIcons name="chat" size={24} color={COLORS.primary} />
-              <Text style={styles.supportBtnText}>Live Chat</Text>
+            <TouchableOpacity 
+              style={styles.supportBtn} 
+              onPress={() => navigation.navigate('PetAIChat')}
+            >
+              <MaterialDesignIcons name="robot" size={24} color={COLORS.primary} />
+              <Text style={styles.supportBtnText}>AI Chat</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.supportBtn}>
+            <TouchableOpacity 
+              style={styles.supportBtn}
+              onPress={handleEmailPress} 
+            >
               <MaterialDesignIcons name="email" size={24} color={COLORS.primary} />
-              <Text style={styles.supportBtnText}>Email Us</Text>
+              <Text style={styles.supportBtnText}>Email</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -69,7 +95,28 @@ export const HelpSupportScreen = ({ navigation }: any) => {
 
         <View style={styles.feedbackSection}>
           <Text style={styles.feedbackTitle}>Still need help?</Text>
-          <Button title="Contact Support Team" onPress={() => {}} style={{ width: '100%' }} />
+          <View style={styles.quickContactCards}>
+            <TouchableOpacity style={styles.contactCard} onPress={() => navigation.navigate('PetAIChat')}>
+              <View style={[styles.contactIconCircle, { backgroundColor: '#8b5cf615' }]}>
+                <MaterialDesignIcons name="robot" size={24} color="#8b5cf6" />
+              </View>
+              <Text style={styles.contactCardText}>AI Chat</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.contactCard} onPress={handlePhonePress}>
+              <View style={[styles.contactIconCircle, { backgroundColor: '#10b98115' }]}>
+                <MaterialDesignIcons name="phone" size={24} color="#10b981" />
+              </View>
+              <Text style={styles.contactCardText}>Call Us</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.contactCard} onPress={handleEmailPress}>
+              <View style={[styles.contactIconCircle, { backgroundColor: '#3b82f615' }]}>
+                <MaterialDesignIcons name="email" size={24} color="#3b82f6" />
+              </View>
+              <Text style={styles.contactCardText}>Email</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
       </ScrollView>
@@ -157,16 +204,44 @@ const styles = StyleSheet.create({
     marginTop: SPACING.md,
   },
   feedbackSection: {
-    alignItems: 'center',
     marginTop: SPACING.xl,
     padding: SPACING.lg,
-    backgroundColor: COLORS.primary + '10',
-    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
+    ...SHADOWS.small,
   },
   feedbackTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '800',
     color: COLORS.text,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.lg,
+    textAlign: 'center',
+  },
+  quickContactCards: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  contactCard: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.lg,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  contactIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  contactCardText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: COLORS.text,
   },
 });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Platform, Alert } from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -8,15 +9,23 @@ import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useCommunityStore } from '../../store/useCommunityStore';
 import { useAppStore } from '../../store/useAppStore';
+import { usePetStore } from '../../store/usePetStore';
 
 export const CreatePostScreen = ({ navigation }: any) => {
 
   const { user, token } = useAppStore();
   const { createPost } = useCommunityStore();
+  const { pets, fetchPets } = usePetStore();
   
   const [content, setContent] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
+  const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (token) fetchPets(token);
+  }, [token]);
 
   const handlePost = async () => {
     if (!token) return;
@@ -24,14 +33,56 @@ export const CreatePostScreen = ({ navigation }: any) => {
     try {
       await createPost({
         content,
-        images: imageUri ? [imageUri] : [],
-        category: 'General'
+        images: selectedImage ? [selectedImage] : [],
+        category: 'general',
+        petId: selectedPetId,
+        location: location.trim() || undefined
       }, token);
       navigation.goBack();
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const selectImage = async () => {
+    console.log('[CreatePost] Opening image library...');
+    try {
+      if (!ImagePicker.launchImageLibrary) {
+        throw new Error('launchImageLibrary is not a function');
+      }
+
+      const result = await ImagePicker.launchImageLibrary({
+        mediaType: 'photo',
+        includeBase64: false,
+        quality: 0.8,
+      });
+
+      console.log('[CreatePost] Image picker result:', JSON.stringify(result));
+
+      if (result.didCancel) {
+        console.log('[CreatePost] User cancelled image picker');
+        return;
+      }
+      
+      if (result.errorCode) {
+        console.error('[CreatePost] ImagePicker Error: ', result.errorMessage);
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        console.log('[CreatePost] Selected asset:', asset.uri);
+        setSelectedImage({
+          uri: Platform.OS === 'android' ? asset.uri : asset.uri?.replace('file://', ''),
+          type: asset.type,
+          name: asset.fileName || `post_image_${Date.now()}.jpg`,
+        });
+      }
+    } catch (error: any) {
+      console.error('[CreatePost] Error selecting image:', error);
+      Alert.alert('Error', 'Error selecting image: ' + error.message);
     }
   };
 
@@ -59,17 +110,48 @@ export const CreatePostScreen = ({ navigation }: any) => {
           containerStyle={styles.textContainer}
         />
 
-        {imageUri ? (
+        <Text style={styles.sectionTitle}>Tag a Pet (Optional)</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.petSelector}>
+          {pets.map(pet => (
+            <TouchableOpacity 
+              key={pet.id} 
+              style={[
+                styles.petItem, 
+                selectedPetId === pet.id && styles.selectedPetItem
+              ]}
+              onPress={() => setSelectedPetId(selectedPetId === pet.id ? null : pet.id)}
+            >
+              <Image source={{ uri: pet.image }} style={styles.petAvatar} />
+              <Text style={[
+                styles.petName,
+                selectedPetId === pet.id && styles.selectedPetName
+              ]}>{pet.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <View style={styles.locationContainer}>
+          <MaterialDesignIcons name="map-marker-outline" size={20} color={COLORS.primary} />
+          <Input 
+            placeholder="Add location..." 
+            value={location} 
+            onChangeText={setLocation}
+            style={styles.locationInput}
+            containerStyle={styles.locationInputContainer}
+          />
+        </View>
+
+        {selectedImage ? (
           <View style={styles.imagePreviewContainer}>
-            <Image source={{ uri: imageUri }} style={styles.imagePreview} />
-            <TouchableOpacity style={styles.removeImageBtn} onPress={() => setImageUri(null)}>
+            <Image source={{ uri: selectedImage.uri }} style={styles.imagePreview} />
+            <TouchableOpacity style={styles.removeImageBtn} onPress={() => setSelectedImage(null)}>
               <MaterialDesignIcons name="close" size={20} color={COLORS.surface} />
             </TouchableOpacity>
           </View>
         ) : (
           <TouchableOpacity 
             style={styles.addPhotoBtn}
-            onPress={() => setImageUri('https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=600')} // Mocking image selection
+            onPress={selectImage}
           >
             <MaterialDesignIcons name="image-outline" size={32} color={COLORS.primary} />
             <Text style={styles.addPhotoText}>Add Photo / Video</Text>
@@ -82,7 +164,7 @@ export const CreatePostScreen = ({ navigation }: any) => {
         <Button 
           title="Post" 
           onPress={handlePost} 
-          disabled={(!content.trim() && !imageUri) || loading}
+          disabled={(!content.trim() && !selectedImage) || loading}
           loading={loading}
         />
       </View>
@@ -165,5 +247,60 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.md,
+  },
+  petSelector: {
+    flexDirection: 'row',
+    marginBottom: SPACING.lg,
+  },
+  petItem: {
+    alignItems: 'center',
+    marginRight: SPACING.md,
+    padding: 8,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.background,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    width: 80,
+  },
+  selectedPetItem: {
+    backgroundColor: COLORS.primary + '10',
+    borderColor: COLORS.primary,
+  },
+  petAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginBottom: 4,
+  },
+  petName: {
+    fontSize: 12,
+    color: COLORS.textLight,
+  },
+  selectedPetName: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  locationInputContainer: {
+    flex: 1,
+    marginLeft: SPACING.xs,
+    marginBottom: 0,
+  },
+  locationInput: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+    height: 40,
   },
 });

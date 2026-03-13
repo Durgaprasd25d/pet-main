@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert, Image } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -43,9 +43,7 @@ export const LoginScreen = ({ navigation }: any) => {
     } finally {
       setLoading(false);
     }
-
   };
-
   return (
     <ScreenContainer>
       <Header title="" onBackPress={() => navigation.goBack()} transparent />
@@ -59,6 +57,11 @@ export const LoginScreen = ({ navigation }: any) => {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.headerContainer}>
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.logo} 
+              resizeMode="contain"
+            />
             <Text style={styles.title}>Welcome Back</Text>
             <Text style={styles.subtitle}>Sign in to continue caring for your pet</Text>
           </View>
@@ -122,6 +125,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     marginTop: SPACING.lg,
     marginBottom: SPACING.xxl,
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: SIZES.isSmallDevice ? 28 : 32,

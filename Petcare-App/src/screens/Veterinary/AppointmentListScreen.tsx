@@ -10,16 +10,19 @@ import { Appointment, Pet } from '../../types';
 
 import { useAppointmentStore } from '../../store/useAppointmentStore';
 import { usePetStore } from '../../store/usePetStore';
+import { useVetStore } from '../../store/useVetStore';
 
 export const AppointmentListScreen = ({ navigation }: any) => {
   const { token } = useAppStore();
   const { appointments, loading, fetchAppointments } = useAppointmentStore();
   const { pets, fetchPets } = usePetStore();
+  const { vets, fetchVets } = useVetStore();
 
   useEffect(() => {
     if (token) {
       fetchAppointments(token);
       fetchPets(token);
+      fetchVets();
     }
   }, [token]);
 
@@ -27,11 +30,15 @@ export const AppointmentListScreen = ({ navigation }: any) => {
     if (token) {
       fetchAppointments(token);
       fetchPets(token);
+      fetchVets();
     }
   };
 
-  const upcomingAppts = appointments.filter(a => a.status === 'upcoming');
-  const pastAppts = appointments.filter(a => a.status === 'completed' || a.status === 'cancelled');
+  const upcomingAppts = appointments.filter(a => a.status === 'scheduled');
+  
+  const pastAppts = appointments.filter(a => 
+    a.status === 'completed' || a.status === 'cancelled'
+  );
 
 
   return (
@@ -45,13 +52,15 @@ export const AppointmentListScreen = ({ navigation }: any) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Upcoming</Text>
           {upcomingAppts.length > 0 ? (
-            upcomingAppts.map(appt => {
+            upcomingAppts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(appt => {
               const pet = pets.find(p => p.id === appt.petId);
+              const vet = vets.find(v => v.id === appt.vetId);
               return (
                 <AppointmentCard 
                   key={appt.id} 
                   appointment={appt} 
                   petName={pet?.name}
+                  vetName={vet?.name}
                   onPress={() => navigation.navigate('AppointmentDetails', { appointmentId: appt.id })} 
                 />
               );
@@ -66,11 +75,13 @@ export const AppointmentListScreen = ({ navigation }: any) => {
           {pastAppts.length > 0 ? (
             pastAppts.map(appt => {
               const pet = pets.find(p => p.id === appt.petId);
+              const vet = vets.find(v => v.id === appt.vetId);
               return (
                 <AppointmentCard 
                   key={appt.id} 
                   appointment={appt} 
                   petName={pet?.name}
+                  vetName={vet?.name}
                   onPress={() => navigation.navigate('AppointmentDetails', { appointmentId: appt.id })} 
                 />
               );

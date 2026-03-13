@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { PetCard } from '../../components/cards/PetCard';
 import { AppointmentCard } from '../../components/cards/AppointmentCard';
@@ -32,8 +32,8 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
   const refreshing = petsLoading || apptsLoading;
   
   // Filter for display
-  const myPets = pets.slice(0, 2);
-  const myAppointments = appointments.filter(a => a.status === 'upcoming').slice(0, 2);
+  const myPets = pets.slice(0, 4);
+  const myAppointments = appointments.filter(a => a.status === 'scheduled').slice(0, 2);
 
 
   return (
@@ -45,16 +45,26 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
         decelerationRate="fast"
       >
         <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>Hello, {user?.name.split(' ')[0]} 👋</Text>
-            <Text style={styles.subtitle}>Your pets are doing great!</Text>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity 
+              style={styles.miniLogo} 
+              onPress={() => navigation.navigate('Profile')}
+            >
+              <MaterialDesignIcons name="account-circle" size={32} color={COLORS.primary} />
+            </TouchableOpacity>
+            <View>
+              <Text style={styles.greeting}>Hello, {user?.name ? user.name.split(' ')[0] : 'there'}</Text>
+              <Text style={styles.subtitle}>Your pets are doing great!</Text>
+            </View>
           </View>
-          <TouchableOpacity 
-            style={styles.notificationBtn}
-            onPress={() => navigation.navigate('Notifications')}
-          >
-            <MaterialDesignIcons name="bell-badge-outline" size={26} color={COLORS.text} />
-          </TouchableOpacity>
+          {/* <View style={styles.headerRight}>
+            <TouchableOpacity 
+              style={styles.headerIconBtn}
+              onPress={() => navigation.navigate('Notifications')}
+            >
+              <MaterialDesignIcons name="bell-outline" size={26} color={COLORS.text} />
+            </TouchableOpacity>
+          </View> */}
         </View>
 
         <View style={styles.quickActions}>
@@ -83,6 +93,40 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
             <Text style={styles.actionText}>Help</Text>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity 
+          style={styles.aiBanner} 
+          onPress={() => navigation.navigate('PetAIChat')}
+          activeOpacity={0.9}
+        >
+          <View style={styles.aiBannerContent}>
+            <View style={styles.aiBannerText}>
+              <Text style={styles.aiBannerTitle}>Pet AI Assistant</Text>
+              <Text style={styles.aiBannerDesc}>Instant answers for your pet's health & behavior.</Text>
+            </View>
+            <View style={styles.aiIconContainer}>
+              <MaterialDesignIcons name="robot" size={32} color="#fff" />
+            </View>
+          </View>
+          <View style={styles.aiBannerBadge}>
+            <Text style={styles.aiBadgeText}>BETA</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* <View style={styles.rewardsCard}>
+          <View style={styles.rewardsInfo}>
+            <View style={styles.coinIcon}>
+              <MaterialDesignIcons name="paw" size={24} color="#f59e0b" />
+            </View>
+            <View>
+              <Text style={styles.pointsText}>1,240 Paw Points</Text>
+              <Text style={styles.rewardsSub}>You're earning rewards! 🏆</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.redeemBtn}>
+            <Text style={styles.redeemText}>Redeem</Text>
+          </TouchableOpacity>
+        </View> */}
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -152,6 +196,22 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
     marginTop: SPACING.sm,
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  miniLogo: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: COLORS.border + '50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...SHADOWS.small,
+  },
   greeting: {
     fontSize: 26,
     fontWeight: '900',
@@ -163,9 +223,13 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
     marginTop: 2,
   },
-  notificationBtn: {
-    width: 48,
-    height: 48,
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIconBtn: {
+    width: 44,
+    height: 44,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.surface,
     justifyContent: 'center',
@@ -227,5 +291,106 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.text,
+  },
+  aiBanner: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
+    ...SHADOWS.medium,
+    overflow: 'hidden',
+  },
+  aiBannerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+  },
+  aiBannerText: {
+    flex: 1,
+    marginRight: SPACING.md,
+  },
+  aiBannerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  aiBannerDesc: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 18,
+  },
+  aiIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  aiBannerBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  aiBadgeText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.primary,
+  },
+  rewardsCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.md,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.xl,
+    borderWidth: 1,
+    borderColor: '#f59e0b30',
+    ...SHADOWS.small,
+  },
+  rewardsInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  coinIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fffbeb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
+    borderWidth: 1,
+    borderColor: '#fef3c7',
+  },
+  pointsText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: COLORS.text,
+  },
+  rewardsSub: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    fontWeight: '600',
+  },
+  redeemBtn: {
+    backgroundColor: '#fffbeb',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: RADIUS.round,
+    borderWidth: 1,
+    borderColor: '#fef3c7',
+  },
+  redeemText: {
+    color: '#d97706',
+    fontSize: 13,
+    fontWeight: '800',
   },
 });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Image, TouchableOpacity, TextInput } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Image, TouchableOpacity, TextInput, Share } from 'react-native';
+import { Portal, Modal } from 'react-native-paper';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
@@ -13,14 +14,21 @@ import { useAppStore } from '../../store/useAppStore';
 export const PostDetailsScreen = ({ route, navigation }: any) => {
   const { postId } = route.params;
   const { posts, comments, fetchComments, addComment } = useCommunityStore();
-  const { token } = useAppStore();
+  const { token, user } = useAppStore();
   const [commentText, setCommentText] = useState('');
+  const [isLiked, setIsLiked] = useState(false);
+  const [isCommentsVisible, setIsCommentsVisible] = useState(false);
   
   const post = posts.find(p => p.id === postId);
 
   useEffect(() => {
     fetchComments(postId);
-  }, [postId]);
+    const disconnectSocket = useCommunityStore.getState().initializeSocket(token || '');
+    return () => {
+      disconnectSocket();
+      useCommunityStore.getState().setCurrentPostId(null);
+    };
+  }, [postId, post, token]);
 
   const handleSend = async () => {
     if (commentText.trim() && token) {
@@ -28,6 +36,14 @@ export const PostDetailsScreen = ({ route, navigation }: any) => {
       setCommentText('');
     }
   };
+
+  const handleLike = async () => {
+    if (token) {
+      await useCommunityStore.getState().likePost(postId, token);
+    }
+  };
+
+  const isPostLiked = user?.id && post?.likedBy?.includes(user.id);
 
 
   if (!post) {
@@ -60,7 +76,20 @@ export const PostDetailsScreen = ({ route, navigation }: any) => {
               </TouchableOpacity>
               <Text style={styles.timeText}>{formattedDate}</Text>
             </View>
+            {post.location && (
+              <View style={styles.locationBadge}>
+                <MaterialDesignIcons name="map-marker" size={12} color={COLORS.primary} />
+                <Text style={styles.locationText}>{post.location}</Text>
+              </View>
+            )}
           </View>
+
+          {post.petId && (
+            <View style={styles.tagBadge}>
+              <MaterialDesignIcons name="paw" size={14} color={COLORS.primary} />
+              <Text style={styles.tagText}>Tagged: Bruno</Text>
+            </View>
+          )}
 
           <Text style={styles.content}>{post.content}</Text>
 
@@ -69,56 +98,80 @@ export const PostDetailsScreen = ({ route, navigation }: any) => {
           )}
 
           <View style={styles.statsRow}>
-            <Text style={styles.statText}>{post.likes} Likes</Text>
-            <Text style={styles.statText} onPress={() => navigation.navigate('Comments', { postId: post.id })}>
-              {post.comments} Comments
-            </Text>
-          </View>
-
-          <View style={styles.actionsRow}>
-            <TouchableOpacity style={styles.actionBtn}>
-              <MaterialDesignIcons name="heart-outline" size={24} color={COLORS.textLight} />
-              <Text style={styles.actionText}>Like</Text>
+            <TouchableOpacity style={styles.actionBtn} onPress={handleLike}>
+              <MaterialDesignIcons 
+                name={isPostLiked ? "heart" : "heart-outline"} 
+                size={24} 
+                color={isPostLiked ? COLORS.accent : COLORS.textLight} 
+              />
+              <Text style={[styles.actionText, isPostLiked && { color: COLORS.accent }]}>{post.likes} Like</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('Comments', { postId: post.id })}>
+            <TouchableOpacity style={styles.actionBtn} onPress={() => setIsCommentsVisible(true)}>
               <MaterialDesignIcons name="comment-outline" size={24} color={COLORS.textLight} />
-              <Text style={styles.actionText}>Comment</Text>
+              <Text style={styles.actionText}>{post.comments} Comment</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionBtn}>
+            <TouchableOpacity 
+              style={styles.actionBtn}
+              onPress={() => Share.share({
+                message: post.content,
+                url: post.image,
+                title: 'Share Post'
+              })}
+            >
               <MaterialDesignIcons name="share-outline" size={24} color={COLORS.textLight} />
               <Text style={styles.actionText}>Share</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <Text style={styles.commentsHeader}>Comments</Text>
-        {comments.map((c: any) => (
-          <View key={c._id || c.id} style={styles.commentItem}>
-            <Image source={{ uri: c.authorAvatar || 'https://i.pravatar.cc/150?img=68' }} style={styles.commentAvatar} />
-            <View style={styles.commentContent}>
-              <View style={styles.commentHeader}>
-                <Text style={styles.commentAuthor}>{c.authorName}</Text>
-                <Text style={styles.commentTime}>{new Date(c.createdAt).toLocaleDateString()}</Text>
-              </View>
-              <Text style={styles.commentText}>{c.text}</Text>
+        <Portal>
+          <Modal
+            visible={isCommentsVisible}
+            onDismiss={() => setIsCommentsVisible(false)}
+            contentContainerStyle={styles.modalContainer}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Comments</Text>
+              <TouchableOpacity onPress={() => setIsCommentsVisible(false)}>
+                <MaterialDesignIcons name="close" size={24} color={COLORS.text} />
+              </TouchableOpacity>
             </View>
-          </View>
-        ))}
+            
+            <ScrollView style={styles.modalCommentsList}>
+              {comments.map((c: any) => (
+                <View key={c._id || c.id} style={styles.commentItem}>
+                  <Image source={{ uri: c.user?.avatar || 'https://via.placeholder.com/150' }} style={styles.commentAvatar} />
+                  <View style={styles.commentContent}>
+                    <View style={styles.commentHeader}>
+                      <Text style={styles.commentAuthor}>{c.user?.name || 'Anonymous'}</Text>
+                      <Text style={styles.commentTime}>{new Date(c.createdAt).toLocaleDateString()}</Text>
+                    </View>
+                    <Text style={styles.commentText}>{c.text}</Text>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+
+            <View style={styles.modalInputContainer}>
+              <TextInput 
+                style={styles.modalInput} 
+                placeholder="Write a comment..." 
+                value={commentText}
+                onChangeText={setCommentText}
+                autoFocus
+              />
+              <TouchableOpacity 
+                style={styles.modalSendBtn} 
+                onPress={handleSend}
+                disabled={!commentText.trim()}
+              >
+                <MaterialDesignIcons name="send" size={24} color={commentText.trim() ? COLORS.primary : COLORS.border} />
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </Portal>
 
       </ScrollView>
-
-      {/* Quick Comment Input */}
-      <View style={styles.commentInputContainer}>
-        <TextInput 
-          style={styles.commentInput} 
-          placeholder="Write a comment..." 
-          value={commentText}
-          onChangeText={setCommentText}
-        />
-        <TouchableOpacity style={styles.sendBtn} onPress={handleSend} disabled={!commentText.trim()}>
-          <MaterialDesignIcons name="send" size={24} color={commentText.trim() ? COLORS.primary : COLORS.border} />
-        </TouchableOpacity>
-      </View>
     </ScreenContainer>
   );
 };
@@ -169,6 +222,36 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: SPACING.md,
   },
+  locationBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary + '10',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: RADIUS.sm,
+    marginLeft: SPACING.sm,
+  },
+  locationText: {
+    fontSize: 10,
+    color: COLORS.primary,
+    marginLeft: 2,
+  },
+  tagBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.secondary + '10',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: RADIUS.md,
+    marginBottom: SPACING.md,
+    alignSelf: 'flex-start',
+  },
+  tagText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.secondary || COLORS.primary,
+    marginLeft: 4,
+  },
   postImage: {
     width: '100%',
     height: 300,
@@ -203,12 +286,59 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 6,
   },
+  modalContainer: {
+    backgroundColor: COLORS.surface,
+    padding: SPACING.lg,
+    margin: SPACING.lg,
+    borderRadius: RADIUS.xl,
+    maxHeight: '80%',
+    ...SHADOWS.medium,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+    paddingBottom: SPACING.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border + '50',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.text,
+  },
+  modalCommentsList: {
+    flexGrow: 0,
+    maxHeight: 400,
+  },
+  modalInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border + '50',
+  },
+  modalInput: {
+    flex: 1,
+    height: 45,
+    backgroundColor: COLORS.background,
+    borderRadius: RADIUS.lg,
+    paddingHorizontal: SPACING.md,
+    fontSize: 14,
+    color: COLORS.text,
+  },
+  modalSendBtn: {
+    marginLeft: SPACING.sm,
+    padding: SPACING.xs,
+  },
   commentsHeader: {
     fontSize: 16,
     fontWeight: 'bold',
     color: COLORS.text,
     marginHorizontal: SPACING.md,
     marginBottom: SPACING.sm,
+    marginTop: SPACING.md,
   },
   commentItem: {
     flexDirection: 'row',

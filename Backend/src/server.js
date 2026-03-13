@@ -38,6 +38,13 @@ const adoptionRoutes = require("./routes/adoptionRoutes");
 const lostPetRoutes = require("./routes/lostPetRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const emergencyRoutes = require("./routes/emergencyRoutes");
+const aiRoutes = require("./routes/aiRoutes");
+const prescriptionRoutes = require("./routes/prescriptionRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const medicalRecordRoutes = require("./routes/medicalRecordRoutes");
+const productRoutes = require("./routes/productRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 // Mount routes
 app.use("/api/auth", authRoutes);
@@ -45,17 +52,42 @@ app.use("/api/pets", petRoutes);
 app.use("/api/vets", vetRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/vaccinations", vaccinationRoutes);
+app.use("/api/medical-records", medicalRecordRoutes);
 app.use("/api/adoptions", adoptionRoutes);
 app.use("/api/lostpets", lostPetRoutes);
 app.use("/api/community", communityRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/emergency", emergencyRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/prescriptions", prescriptionRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => {
   res.send("Pet Care API is running...");
 });
 
 const PORT = process.env.PORT || 5000;
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
-app.listen(PORT, () => {
+// Make io accessible to routes
+app.set("io", io);
+
+io.on("connection", (socket) => {
+  console.log("New client connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
