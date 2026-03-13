@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Platform, Alert } from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { Input } from '../../components/ui/Input';
@@ -18,7 +19,7 @@ export const AskQuestionScreen = ({ navigation }: any) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedType, setSelectedType] = useState('Dog');
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -28,7 +29,7 @@ export const AskQuestionScreen = ({ navigation }: any) => {
       await createPost({
         content: `[Q: ${title}] ${description}`,
         category: 'health', // Questions usually fall under health/advice
-        images: imageUri ? [imageUri] : [],
+        images: selectedImage ? [selectedImage] : [],
         petType: selectedType // Backend can handle extra fields
       }, token);
       navigation.goBack();
@@ -36,6 +37,46 @@ export const AskQuestionScreen = ({ navigation }: any) => {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const selectImage = async () => {
+    console.log('[AskQuestion] Opening image library...');
+    try {
+      if (!ImagePicker.launchImageLibrary) {
+        throw new Error('launchImageLibrary is not a function');
+      }
+
+      const result = await ImagePicker.launchImageLibrary({
+        mediaType: 'photo',
+        includeBase64: false,
+        quality: 0.8,
+      });
+
+      console.log('[AskQuestion] Image picker result:', JSON.stringify(result));
+
+      if (result.didCancel) {
+        console.log('[AskQuestion] User cancelled image picker');
+        return;
+      }
+      
+      if (result.errorCode) {
+        console.error('[AskQuestion] ImagePicker Error: ', result.errorMessage);
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        console.log('[AskQuestion] Selected asset:', asset.uri);
+        setSelectedImage({
+          uri: Platform.OS === 'android' ? asset.uri : asset.uri?.replace('file://', ''),
+          type: asset.type,
+          name: asset.fileName || `post_image_${Date.now()}.jpg`,
+        });
+      }
+    } catch (error: any) {
+      console.error('[AskQuestion] Error selecting image:', error);
+      Alert.alert('Error', 'Error selecting image: ' + error.message);
     }
   };
 
@@ -84,10 +125,10 @@ export const AskQuestionScreen = ({ navigation }: any) => {
 
         <TouchableOpacity 
           style={styles.imageSelector}
-          onPress={() => setImageUri('https://images.unsplash.com/photo-1544191173-05f426588277?q=80&w=600')} // Mocking
+          onPress={selectImage}
         >
-          {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+          {selectedImage ? (
+            <Image source={{ uri: selectedImage.uri }} style={styles.imagePreview} />
           ) : (
             <>
               <MaterialDesignIcons name="camera-plus-outline" size={32} color={COLORS.primary} />

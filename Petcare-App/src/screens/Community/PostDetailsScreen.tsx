@@ -140,10 +140,10 @@ export const PostDetailsScreen = ({ route, navigation }: any) => {
             <ScrollView style={styles.modalCommentsList}>
               {comments.map((c: any) => (
                 <View key={c._id || c.id} style={styles.commentItem}>
-                  <Image source={{ uri: c.authorAvatar || 'https://i.pravatar.cc/150?img=68' }} style={styles.commentAvatar} />
+                  <Image source={{ uri: c.user?.avatar || 'https://via.placeholder.com/150' }} style={styles.commentAvatar} />
                   <View style={styles.commentContent}>
                     <View style={styles.commentHeader}>
-                      <Text style={styles.commentAuthor}>{c.authorName}</Text>
+                      <Text style={styles.commentAuthor}>{c.user?.name || 'Anonymous'}</Text>
                       <Text style={styles.commentTime}>{new Date(c.createdAt).toLocaleDateString()}</Text>
                     </View>
                     <Text style={styles.commentText}>{c.text}</Text>

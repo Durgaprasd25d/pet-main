@@ -16,6 +16,21 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
   const { isAuthenticated } = useAppStore();
+  const [isReady, setIsReady] = React.useState(false);
+
+  React.useEffect(() => {
+    // Check if hydration is already finished
+    const checkHydration = async () => {
+      // Small delay to ensure Zustand has a chance to start rehydrating
+      await new Promise<void>(resolve => setTimeout(() => resolve(), 10));
+      setIsReady(true);
+    };
+    checkHydration();
+  }, []);
+
+  if (!isReady) {
+    return null; // Or a Splash Screen
+  }
 
   return (
     <NavigationContainer theme={NavigationTheme}>

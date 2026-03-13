@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Post } from '../types';
 import { dataService, API_URL } from '../services/dataService';
 import { io } from 'socket.io-client';
+import { useAppStore } from './useAppStore';
 
 const SOCKET_URL = API_URL.replace('/api', '');
 
@@ -64,13 +65,38 @@ export const useCommunityStore = create<CommunityState>((set) => ({
     set({ posts });
   },
   likePost: async (postId, token) => {
+    // Optimistic Update
+    set((state) => {
+      const user = useAppStore.getState().user;
+      if (!user) return state;
+
+      return {
+        posts: state.posts.map((p) => {
+          if (p.id === postId) {
+            const isLiked = p.likedBy?.includes(user.id);
+            const newLikedBy = isLiked
+              ? (p.likedBy || []).filter(id => id !== user.id)
+              : [...(p.likedBy || []), user.id];
+            
+            return {
+              ...p,
+              likes: isLiked ? Math.max(0, p.likes - 1) : p.likes + 1,
+              likedBy: newLikedBy
+            };
+          }
+          return p;
+        })
+      };
+    });
+
     try {
       await dataService.likePost(postId, token);
-      // Refresh posts to get latest like counts from others too
-      const posts = await dataService.getPosts();
-      set({ posts });
+      // Backend emit will synchronize eventually, but optimistic UI makes it instant
     } catch (error) {
       console.error("Failed to like post", error);
+      // Revert on error - fetch latest posts to sync
+      const posts = await dataService.getPosts();
+      set({ posts });
     }
   },
   setCurrentPostId: (id) => set({ currentPostId: id }),
@@ -85,7 +111,11 @@ export const useCommunityStore = create<CommunityState>((set) => ({
       const mappedPost = { 
         ...newPost, 
         id: newPost._id,
+        userName: newPost.user?.name || 'Anonymous',
+        userAvatar: newPost.user?.avatar || 'https://via.placeholder.com/150',
+        image: newPost.images && newPost.images.length > 0 ? newPost.images[0] : undefined,
         likes: Array.isArray(newPost.likes) ? newPost.likes.length : 0,
+        likedBy: Array.isArray(newPost.likes) ? newPost.likes.map((id: any) => id.toString()) : [],
         comments: newPost.commentCount || 0
       };
       set((state) => ({ 

@@ -8,8 +8,13 @@ const {
   getComments,
 } = require("../controllers/communityController");
 const { protect } = require("../middleware/authMiddleware");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.route("/").get(getPosts).post(protect, createPost);
+router
+  .route("/")
+  .get(getPosts)
+  .post(protect, upload.array("images"), createPost);
 
 router.post("/:id/like", protect, likePost);
 

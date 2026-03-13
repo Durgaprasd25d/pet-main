@@ -1,18 +1,38 @@
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const Notification = require("../models/Notification");
+const cloudinary = require("../config/cloudinaryConfig");
 
 // @desc    Create new community post
 // @route   POST /api/posts
 // @access  Private
 exports.createPost = async (req, res) => {
   try {
-    const { content, images, category, petId, location } = req.body;
+    const { content, category, petId, location } = req.body;
+    let imageUrls = [];
+
+    // Handle Cloudinary uploads if files are present
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map((file) => {
+        return new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { resource_type: "auto", folder: "petcare_community" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            },
+          );
+          uploadStream.end(file.buffer);
+        });
+      });
+      imageUrls = await Promise.all(uploadPromises);
+    }
+
     const post = await Post.create({
       user: req.user._id,
       content,
-      images,
-      category,
+      images: imageUrls,
+      category: category || "general",
       petId,
       location,
     });
@@ -128,15 +148,16 @@ exports.addComment = async (req, res) => {
       });
     }
 
-    res.status(201).json(comment);
+    const populatedComment = await Comment.findById(comment._id).populate(
+      "user",
+      "name avatar",
+    );
+
+    res.status(201).json(populatedComment);
 
     // Emit real-time event
     const io = req.app.get("io");
     if (io) {
-      const populatedComment = await Comment.findById(comment._id).populate(
-        "user",
-        "name avatar",
-      );
       io.emit("comment_added", {
         postId: post._id,
         comment: populatedComment,

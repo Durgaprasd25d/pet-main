@@ -162,19 +162,46 @@ export const dataService = {
     return posts.map((p: any) => ({ 
       ...p, 
       id: p._id,
+      userName: p.user?.name || 'Anonymous',
+      userAvatar: p.user?.avatar || 'https://via.placeholder.com/150',
+      image: p.images && p.images.length > 0 ? p.images[0] : undefined,
       likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
       likedBy: Array.isArray(p.likes) ? p.likes.map((id: any) => id.toString()) : [],
-      comments: p.commentCount || 0
+      comments: p.commentCount || 0,
+      timeAgo: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Just now'
     }));
   },
   createPost: async (postData: any, token: string): Promise<Post> => {
+    let body: any;
+    let headers: any = { 
+      'Authorization': `Bearer ${token}`
+    };
+
+    if (postData.images && postData.images.length > 0) {
+      const formData = new FormData();
+      formData.append('content', postData.content);
+      if (postData.category) formData.append('category', postData.category);
+      if (postData.petId) formData.append('petId', postData.petId);
+      if (postData.location) formData.append('location', postData.location);
+      
+      postData.images.forEach((img: any) => {
+        formData.append('images', {
+          uri: img.uri,
+          type: img.type || 'image/jpeg',
+          name: img.name || 'image.jpg',
+        } as any);
+      });
+      body = formData;
+      // Do not set Content-Type, fetch will set it correctly for FormData
+    } else {
+      body = JSON.stringify(postData);
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_URL}/community`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(postData)
+      headers,
+      body
     });
     return response.json();
   },
