@@ -1,18 +1,34 @@
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
+const Notification = require("../models/Notification");
 
 // @desc    Create new community post
 // @route   POST /api/posts
 // @access  Private
 exports.createPost = async (req, res) => {
   try {
-    const { content, images, category } = req.body;
+    const { content, images, category, petId, location } = req.body;
     const post = await Post.create({
       user: req.user._id,
       content,
       images,
       category,
+      petId,
+      location,
     });
+
+    // Populate user before emitting
+    const populatedPost = await Post.findById(post._id).populate(
+      "user",
+      "name avatar",
+    );
+
+    // Emit real-time event
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("post_created", populatedPost);
+    }
+
     res.status(201).json(post);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -50,9 +66,32 @@ exports.likePost = async (req, res) => {
       );
     } else {
       post.likes.push(req.user._id);
+
+      // Create notification for post owner
+      if (post.user.toString() !== req.user._id.toString()) {
+        await Notification.create({
+          recipient: post.user,
+          sender: req.user._id,
+          type: "like",
+          post: post._id,
+          content: `${req.user.name} liked your post.`,
+        });
+      }
     }
 
     await post.save();
+
+    // Emit real-time event
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("post_liked", {
+        postId: post._id,
+        likes: post.likes.length,
+        userId: req.user._id, // To help client know if they liked it
+        isLiked: !isLiked,
+      });
+    }
+
     res.json({ likes: post.likes.length, isLiked: !isLiked });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -78,7 +117,32 @@ exports.addComment = async (req, res) => {
     post.commentCount += 1;
     await post.save();
 
+    // Create notification for post owner
+    if (post.user.toString() !== req.user._id.toString()) {
+      await Notification.create({
+        recipient: post.user,
+        sender: req.user._id,
+        type: "comment",
+        post: post._id,
+        content: `${req.user.name} commented on your post.`,
+      });
+    }
+
     res.status(201).json(comment);
+
+    // Emit real-time event
+    const io = req.app.get("io");
+    if (io) {
+      const populatedComment = await Comment.findById(comment._id).populate(
+        "user",
+        "name avatar",
+      );
+      io.emit("comment_added", {
+        postId: post._id,
+        comment: populatedComment,
+        commentCount: post.commentCount,
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

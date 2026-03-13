@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Share } from 'react-native';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { Post } from '../../types';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
@@ -14,6 +14,7 @@ interface PostCardProps {
   onCommentPress?: () => void;
   onSharePress?: () => void;
   index?: number;
+  currentUserId?: string;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ 
@@ -23,8 +24,10 @@ export const PostCard: React.FC<PostCardProps> = ({
   onLikePress, 
   onCommentPress, 
   onSharePress,
-  index = 0
+  index = 0,
+  currentUserId
 }) => {
+  const isLiked = currentUserId && post.likedBy?.includes(currentUserId);
   return (
     <Animated.View 
       entering={FadeInDown.delay(index * 100).duration(600)}
@@ -36,14 +39,26 @@ export const PostCard: React.FC<PostCardProps> = ({
         </TouchableOpacity>
         <TouchableOpacity style={styles.headerInfo} onPress={onUserPress} activeOpacity={0.7}>
           <Text style={styles.userName}>{post.userName}</Text>
-          <Text style={styles.timeAgo}>{post.timeAgo}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <MaterialDesignIcons name="dots-horizontal" size={24} color={COLORS.textLight} />
+          <View style={styles.timeLocationRow}>
+            <Text style={styles.timeAgo}>{post.timeAgo}</Text>
+            {post.location && (
+              <>
+                <Text style={styles.dot}> • </Text>
+                <MaterialDesignIcons name="map-marker" size={10} color={COLORS.textLight} />
+                <Text style={styles.locationText}>{post.location}</Text>
+              </>
+            )}
+          </View>
         </TouchableOpacity>
       </View>
       
       <TouchableOpacity onPress={onPress} activeOpacity={0.9} disabled={!onPress}>
+        {post.petId && (
+          <View style={styles.tagBadge}>
+            <MaterialDesignIcons name="paw" size={12} color={COLORS.primary} />
+            <Text style={styles.tagText}>Tagged Pet</Text>
+          </View>
+        )}
         <Text style={styles.content}>{post.content}</Text>
         
         {post.image ? (
@@ -53,8 +68,12 @@ export const PostCard: React.FC<PostCardProps> = ({
       
       <View style={styles.actions}>
         <TouchableOpacity style={styles.actionBtn} onPress={onLikePress}>
-          <MaterialDesignIcons name="heart-outline" size={22} color={COLORS.text} />
-          <Text style={styles.actionText}>{post.likes}</Text>
+          <MaterialDesignIcons 
+            name={isLiked ? "heart" : "heart-outline"} 
+            size={22} 
+            color={isLiked ? COLORS.accent : COLORS.text} 
+          />
+          <Text style={[styles.actionText, isLiked && { color: COLORS.accent }]}>{post.likes || 0}</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.actionBtn} onPress={onCommentPress}>
@@ -62,7 +81,17 @@ export const PostCard: React.FC<PostCardProps> = ({
           <Text style={styles.actionText}>{post.comments}</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.shareBtn} onPress={onSharePress}>
+        <TouchableOpacity 
+          style={styles.shareBtn} 
+          onPress={() => {
+            Share.share({
+              message: post.content,
+              url: post.image,
+              title: 'Share Post'
+            });
+            onSharePress?.();
+          }}
+        >
           <MaterialDesignIcons name="share-variant-outline" size={21} color={COLORS.text} />
         </TouchableOpacity>
       </View>
@@ -134,5 +163,34 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.text,
     marginLeft: 6,
+  },
+  timeLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dot: {
+    fontSize: 12,
+    color: COLORS.textLight,
+  },
+  locationText: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginLeft: 2,
+  },
+  tagBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary + '10',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: RADIUS.md,
+    marginBottom: SPACING.sm,
+    alignSelf: 'flex-start',
+  },
+  tagText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    marginLeft: 4,
   },
 });

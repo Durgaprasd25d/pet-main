@@ -42,6 +42,7 @@ import { CreatePostScreen } from '../screens/Community/CreatePostScreen';
 import { PostDetailsScreen } from '../screens/Community/PostDetailsScreen';
 import { UserCommunityProfileScreen } from '../screens/Community/UserCommunityProfileScreen';
 import { CommentsScreen } from '../screens/Community/CommentsScreen';
+import { AskQuestionScreen } from '../screens/Community/AskQuestionScreen';
 
 // Emergency Screens
 import { EmergencySOSScreen } from '../screens/Emergency/EmergencySOSScreen';
@@ -92,6 +93,7 @@ export type AppStackParamList = {
   PostDetails: { postId: string };
   UserCommunityProfile: { userId: string };
   Comments: { postId: string };
+  AskQuestion: undefined;
   EmergencySOS: undefined;
   NearbyVetClinics: undefined;
   EmergencyContact: undefined;
@@ -148,6 +150,7 @@ export const AppStack = () => {
       <Stack.Screen name="PostDetails" component={PostDetailsScreen} />
       <Stack.Screen name="UserCommunityProfile" component={UserCommunityProfileScreen} />
       <Stack.Screen name="Comments" component={CommentsScreen} />
+      <Stack.Screen name="AskQuestion" component={AskQuestionScreen} />
       
       <Stack.Screen name="EmergencySOS" component={EmergencySOSScreen} />
       <Stack.Screen name="NearbyVetClinics" component={NearbyVetClinicsScreen} />

@@ -8,15 +8,23 @@ import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useCommunityStore } from '../../store/useCommunityStore';
 import { useAppStore } from '../../store/useAppStore';
+import { usePetStore } from '../../store/usePetStore';
 
 export const CreatePostScreen = ({ navigation }: any) => {
 
   const { user, token } = useAppStore();
   const { createPost } = useCommunityStore();
+  const { pets, fetchPets } = usePetStore();
   
   const [content, setContent] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
+  const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (token) fetchPets(token);
+  }, [token]);
 
   const handlePost = async () => {
     if (!token) return;
@@ -25,7 +33,9 @@ export const CreatePostScreen = ({ navigation }: any) => {
       await createPost({
         content,
         images: imageUri ? [imageUri] : [],
-        category: 'General'
+        category: 'general',
+        petId: selectedPetId,
+        location: location.trim() || undefined
       }, token);
       navigation.goBack();
     } catch (error) {
@@ -58,6 +68,37 @@ export const CreatePostScreen = ({ navigation }: any) => {
           style={styles.textArea}
           containerStyle={styles.textContainer}
         />
+
+        <Text style={styles.sectionTitle}>Tag a Pet (Optional)</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.petSelector}>
+          {pets.map(pet => (
+            <TouchableOpacity 
+              key={pet.id} 
+              style={[
+                styles.petItem, 
+                selectedPetId === pet.id && styles.selectedPetItem
+              ]}
+              onPress={() => setSelectedPetId(selectedPetId === pet.id ? null : pet.id)}
+            >
+              <Image source={{ uri: pet.image }} style={styles.petAvatar} />
+              <Text style={[
+                styles.petName,
+                selectedPetId === pet.id && styles.selectedPetName
+              ]}>{pet.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <View style={styles.locationContainer}>
+          <MaterialDesignIcons name="map-marker-outline" size={20} color={COLORS.primary} />
+          <Input 
+            placeholder="Add location..." 
+            value={location} 
+            onChangeText={setLocation}
+            style={styles.locationInput}
+            containerStyle={styles.locationInputContainer}
+          />
+        </View>
 
         {imageUri ? (
           <View style={styles.imagePreviewContainer}>
@@ -165,5 +206,60 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.md,
+  },
+  petSelector: {
+    flexDirection: 'row',
+    marginBottom: SPACING.lg,
+  },
+  petItem: {
+    alignItems: 'center',
+    marginRight: SPACING.md,
+    padding: 8,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.background,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    width: 80,
+  },
+  selectedPetItem: {
+    backgroundColor: COLORS.primary + '10',
+    borderColor: COLORS.primary,
+  },
+  petAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginBottom: 4,
+  },
+  petName: {
+    fontSize: 12,
+    color: COLORS.textLight,
+  },
+  selectedPetName: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  locationInputContainer: {
+    flex: 1,
+    marginLeft: SPACING.xs,
+    marginBottom: 0,
+  },
+  locationInput: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+    height: 40,
   },
 });

@@ -31,7 +31,7 @@ export interface Appointment {
   date: string;
   time: string;
   reason: string;
-  status: 'upcoming' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'completed' | 'cancelled';
 }
 
 export interface Vet {
@@ -66,12 +66,36 @@ export interface Post {
   userId: string;
   userName: string;
   userAvatar: string;
-  image: string;
+  image?: string;
+  images?: string[];
   content: string;
   likes: number;
+  likedBy?: string[];
   comments: number;
   timeAgo: string;
   timestamp?: string;
+  petId?: string;
+  location?: string;
+  category?: string;
+}
+
+export interface Notification {
+  id: string;
+  recipient: string;
+  sender: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  type: 'like' | 'comment' | 'reply' | 'adoption' | 'alert';
+  post?: {
+    id: string;
+    content: string;
+    image?: string;
+  };
+  content: string;
+  isRead: boolean;
+  createdAt: string;
 }
 
 export interface LostAndFound {

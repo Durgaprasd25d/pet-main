@@ -3,7 +3,7 @@ import { User, Pet, Appointment, Vet, Adoption, Post, LostAndFound, Emergency } 
 
 import { API_URL as ENV_API_URL } from '@env';
 
-const API_URL = ENV_API_URL || 'http://192.168.1.3:5000/api'; // Primary (Wi-Fi)
+export const API_URL = ENV_API_URL || 'http://192.168.1.3:5000/api'; // Primary (Wi-Fi)
 // const API_URL = ENV_API_URL || 'http://10.31.42.78:5000/api'; // Alternative (Ethernet)
 console.log('[DataService] Using API_URL:', API_URL);
 
@@ -105,7 +105,13 @@ export const dataService = {
     const response = await fetch(`${API_URL}/appointments`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    return response.json();
+    const appointments = await response.json();
+    return appointments.map((a: any) => ({ 
+      ...a, 
+      id: a._id,
+      petId: a.petId?._id || a.petId,
+      vetId: a.vetId?._id || a.vetId
+    }));
   },
   bookAppointment: async (appointmentData: any, token: string): Promise<Appointment> => {
     const response = await fetch(`${API_URL}/appointments`, {
@@ -116,7 +122,13 @@ export const dataService = {
       },
       body: JSON.stringify(appointmentData)
     });
-    return response.json();
+    const a = await response.json();
+    return { 
+      ...a, 
+      id: a._id,
+      petId: a.petId?._id || a.petId,
+      vetId: a.vetId?._id || a.vetId
+    };
   },
   cancelAppointment: async (id: string, token: string): Promise<void> => {
     await fetch(`${API_URL}/appointments/${id}/cancel`, {
@@ -147,7 +159,13 @@ export const dataService = {
   getPosts: async (): Promise<Post[]> => {
     const response = await fetch(`${API_URL}/community`);
     const posts = await response.json();
-    return posts.map((p: any) => ({ ...p, id: p._id }));
+    return posts.map((p: any) => ({ 
+      ...p, 
+      id: p._id,
+      likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+      likedBy: Array.isArray(p.likes) ? p.likes.map((id: any) => id.toString()) : [],
+      comments: p.commentCount || 0
+    }));
   },
   createPost: async (postData: any, token: string): Promise<Post> => {
     const response = await fetch(`${API_URL}/community`, {
@@ -168,6 +186,29 @@ export const dataService = {
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ text })
+    });
+    return response.json();
+  },
+  likePost: async (postId: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/community/${postId}/like`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.json();
+  },
+  
+  // Notifications
+  getNotifications: async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/notifications`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const notifications = await response.json();
+    return notifications.map((n: any) => ({ ...n, id: n._id }));
+  },
+  markNotificationAsRead: async (id: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/notifications/${id}/read`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     return response.json();
   },

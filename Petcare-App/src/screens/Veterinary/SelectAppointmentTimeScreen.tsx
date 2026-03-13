@@ -5,13 +5,27 @@ import { Header } from '../../components/layout/Header';
 import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const dates = ['14', '15', '16', '17', '18', '19'];
-const mockSlots = ['09:00 AM', '09:30 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:30 PM', '04:00 PM'];
+const getNextDays = () => {
+  const days = [];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    days.push({
+      dateNum: date.getDate().toString(),
+      dayName: dayNames[date.getDay()],
+      fullDate: date.toISOString().split('T')[0]
+    });
+  }
+  return days;
+};
+
+const nextDays = getNextDays();
+const mockSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
 
 export const SelectAppointmentTimeScreen = ({ route, navigation }: any) => {
   const { vetId, petId, reason } = route.params;
-  const [selectedDate, setSelectedDate] = useState('15');
+  const [selectedDay, setSelectedDay] = useState(nextDays[0]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
 
   const handleNext = () => {
@@ -20,7 +34,7 @@ export const SelectAppointmentTimeScreen = ({ route, navigation }: any) => {
         vetId,
         petId,
         reason,
-        date: `2026-03-${selectedDate}`,
+        date: selectedDay.fullDate,
         time: selectedSlot
       });
     }
@@ -41,21 +55,21 @@ export const SelectAppointmentTimeScreen = ({ route, navigation }: any) => {
         <Text style={styles.stepText}>Step 2: Time</Text>
 
         <View style={styles.calendarHeader}>
-          <Text style={styles.monthText}>March 2026</Text>
+          <Text style={styles.monthText}>{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</Text>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
-          {dates.map((date, index) => (
+          {nextDays.map((day) => (
             <TouchableOpacity 
-              key={date}
-              style={[styles.dateCard, selectedDate === date && styles.dateCardActive]}
+              key={day.fullDate}
+              style={[styles.dateCard, selectedDay.fullDate === day.fullDate && styles.dateCardActive]}
               onPress={() => {
-                setSelectedDate(date);
-                setSelectedSlot(null); // Reset slot on date change
+                setSelectedDay(day);
+                setSelectedSlot(null);
               }}
             >
-              <Text style={[styles.dayText, selectedDate === date && styles.textActive]}>{days[index]}</Text>
-              <Text style={[styles.dateNum, selectedDate === date && styles.textActive]}>{date}</Text>
+              <Text style={[styles.dayText, selectedDay.fullDate === day.fullDate && styles.textActive]}>{day.dayName}</Text>
+              <Text style={[styles.dateNum, selectedDay.fullDate === day.fullDate && styles.textActive]}>{day.dateNum}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>

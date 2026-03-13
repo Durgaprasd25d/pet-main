@@ -7,13 +7,17 @@ import { SPACING, COLORS, SHADOWS, RADIUS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
 import { useCommunityStore } from '../../store/useCommunityStore';
+import { useAppStore } from '../../store/useAppStore';
 
 export const CommunityFeedScreen = ({ navigation }: any) => {
-  const { posts, loading, fetchPosts } = useCommunityStore();
+  const { token, user } = useAppStore();
+  const { posts, loading, fetchPosts, likePost } = useCommunityStore();
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+    const disconnectSocket = useCommunityStore.getState().initializeSocket(token || '');
+    return () => disconnectSocket();
+  }, [token]);
 
   return (
     <ScreenContainer>
@@ -57,8 +61,11 @@ export const CommunityFeedScreen = ({ navigation }: any) => {
             key={post.id} 
             post={post} 
             index={index}
+            currentUserId={user?.id}
             onPress={() => navigation.navigate('PostDetails', { postId: post.id })} 
             onUserPress={() => navigation.navigate('UserCommunityProfile', { userId: post.userId })}
+            onLikePress={() => token && likePost(post.id, token)}
+            onCommentPress={() => navigation.navigate('PostDetails', { postId: post.id })}
           />
         ))}
       </ScrollView>

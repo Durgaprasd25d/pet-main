@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { dashboardService } from './services/apiService';
+import { Link } from 'react-router-dom';
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
@@ -85,9 +86,12 @@ const Login = ({ onLoginSuccess }) => {
             )}
           </button>
 
-          <div className="text-center pt-4">
+          <div className="text-center pt-4 space-y-4">
             <p className="text-xs text-slate-400">
               Authorized access only. By signing in you agree to our <span className="underline cursor-pointer">Security Policy</span>.
+            </p>
+            <p className="text-sm font-bold text-slate-500">
+              New business partner? <Link to="/register" className="text-primary hover:underline">Create an account</Link>
             </p>
           </div>
         </form>

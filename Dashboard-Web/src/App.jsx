@@ -12,10 +12,18 @@ import {
   Heart,
   AlertOctagon,
   MessageSquare,
-  ShieldCheck
+  ShieldCheck,
+  Stethoscope,
+  Briefcase,
+  Store,
+  Package,
+  Home,
+  FileText
 } from 'lucide-react';
 import { dashboardService } from './services/apiService';
 import Login from './Login';
+import Register from './Register';
+import { VetDashboard, NGODashboard, StoreDashboard } from './pages/RoleDashboards';
 
 // Import Pages
 import UsersManagement from './pages/UsersManagement';
@@ -24,6 +32,8 @@ import AppointmentsManagement from './pages/AppointmentsManagement';
 import AdoptionManagement from './pages/AdoptionManagement';
 import LostFoundManagement from './pages/LostFoundManagement';
 import CommunityManagement from './pages/CommunityManagement';
+import PrescriptionsManagement from './pages/PrescriptionsManagement';
+import ClinicManagement from './pages/ClinicManagement';
 
 const SidebarItem = ({ icon: Icon, label, href, active }) => (
   <Link 
@@ -39,8 +49,10 @@ const SidebarItem = ({ icon: Icon, label, href, active }) => (
   </Link>
 );
 
-const Sidebar = ({ onLogout }) => {
+const Sidebar = ({ onLogout, user }) => {
   const location = useLocation();
+  const role = user?.role || 'admin';
+
   return (
     <div className="w-64 h-screen bg-white border-r border-slate-200 flex flex-col p-4 fixed left-0 top-0 overflow-y-auto z-20">
       <div className="flex items-center gap-3 px-2 mb-10">
@@ -49,23 +61,57 @@ const Sidebar = ({ onLogout }) => {
         </div>
         <div className="flex flex-col">
           <span className="text-lg font-black tracking-tight text-slate-800 leading-none">PetCare</span>
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Admin Panel</span>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">
+            {role === 'admin' ? 'Admin Panel' : role === 'vet' ? 'Veterinary Portal' : role === 'ngo' ? 'NGO Portal' : 'Pet Store Portal'}
+          </span>
         </div>
       </div>
       
       <nav className="flex-1 space-y-1">
         <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/" active={location.pathname === '/'} />
-        <SidebarItem icon={UserIcon} label="Users" href="/users" active={location.pathname === '/users'} />
-        <SidebarItem icon={Dog} label="Pets" href="/pets" active={location.pathname === '/pets'} />
-        <SidebarItem icon={Calendar} label="Appointments" href="/appointments" active={location.pathname === '/appointments'} />
         
-        <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ecosystem</div>
-        <SidebarItem icon={Heart} label="Adoptions" href="/adoptions" active={location.pathname === '/adoptions'} />
-        <SidebarItem icon={AlertOctagon} label="Lost & Found" href="/lost-found" active={location.pathname === '/lost-found'} />
-        <SidebarItem icon={MessageSquare} label="Community" href="/community" active={location.pathname === '/community'} />
+        {role === 'admin' && (
+          <>
+            <SidebarItem icon={UserIcon} label="Users" href="/users" active={location.pathname === '/users'} />
+            <SidebarItem icon={Dog} label="Pets" href="/pets" active={location.pathname === '/pets'} />
+            <SidebarItem icon={Calendar} label="Appointments" href="/appointments" active={location.pathname === '/appointments'} />
+            
+            <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ecosystem</div>
+            <SidebarItem icon={Heart} label="Adoptions" href="/adoptions" active={location.pathname === '/adoptions'} />
+            <SidebarItem icon={AlertOctagon} label="Lost & Found" href="/lost-found" active={location.pathname === '/lost-found'} />
+            <SidebarItem icon={MessageSquare} label="Community" href="/community" active={location.pathname === '/community'} />
+          </>
+        )}
+
+        {role === 'vet' && (
+          <>
+            <SidebarItem icon={Calendar} label="My Appointments" href="/appointments" active={location.pathname === '/appointments'} />
+            <SidebarItem icon={Dog} label="Patients" href="/pets" active={location.pathname === '/pets'} />
+            <SidebarItem icon={FileText} label="Prescriptions" href="/prescriptions" active={location.pathname === '/prescriptions'} />
+            <SidebarItem icon={Stethoscope} label="Clinic Info" href="/clinic" active={location.pathname === '/clinic'} />
+          </>
+        )}
+
+        {role === 'ngo' && (
+          <>
+            <SidebarItem icon={Heart} label="Adoptions" href="/adoptions" active={location.pathname === '/adoptions'} />
+            <SidebarItem icon={AlertOctagon} label="Lost & Found" href="/lost-found" active={location.pathname === '/lost-found'} />
+            <SidebarItem icon={Home} label="Shelter Profile" href="/shelter" active={location.pathname === '/shelter'} />
+            <SidebarItem icon={Briefcase} label="Volunteers" href="/volunteers" active={location.pathname === '/volunteers'} />
+          </>
+        )}
+
+        {role === 'store' && (
+          <>
+            <SidebarItem icon={Package} label="Inventory" href="/inventory" active={location.pathname === '/inventory'} />
+            <SidebarItem icon={Calendar} label="Service Bookings" href="/bookings" active={location.pathname === '/bookings'} />
+            <SidebarItem icon={Store} label="Store Profile" href="/store-profile" active={location.pathname === '/store-profile'} />
+            <SidebarItem icon={Dog} label="Customers" href="/pets" active={location.pathname === '/pets'} />
+          </>
+        )}
         
-        <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">System</div>
-        <SidebarItem icon={Settings} label="Settings" href="/settings" active={location.pathname === '/settings'} />
+        {/* <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">System</div>
+        <SidebarItem icon={Settings} label="Settings" href="/settings" active={location.pathname === '/settings'} /> */}
       </nav>
 
       <div className="mt-auto pt-4 border-t border-slate-100">
@@ -83,7 +129,7 @@ const Sidebar = ({ onLogout }) => {
 
 
 
-const Topbar = ({ user }) => (
+const Topbar = ({ user, onLogout }) => (
   <div className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 fixed top-0 right-0 left-64 z-10">
     <div className="relative w-96">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -102,12 +148,19 @@ const Topbar = ({ user }) => (
       <div className="h-8 w-px bg-slate-200 mx-2"></div>
       <div className="flex items-center gap-3">
         <div className="text-right hidden sm:block">
-          <p className="text-sm font-semibold text-slate-900">{user?.name || 'Admin User'}</p>
-          <p className="text-xs text-slate-500">Super Admin</p>
+          <p className="text-sm font-semibold text-slate-900">{user?.name || 'User'}</p>
+          <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">{user?.role || 'admin'}</p>
         </div>
         <div className="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 overflow-hidden">
           {user?.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : null}
         </div>
+        <button 
+          onClick={onLogout}
+          className="ml-2 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+          title="Sign Out"
+        >
+          <LogOut size={20} className="group-hover:scale-110 transition-transform" />
+        </button>
       </div>
     </div>
   </div>
@@ -141,7 +194,7 @@ const DashboardHome = () => {
       <div className="mb-10 relative overflow-hidden bg-primary rounded-3xl p-10 text-white shadow-2xl shadow-primary/20">
         <div className="relative z-10">
           <h1 className="text-3xl font-black mb-2 tracking-tight">System Overview</h1>
-          <p className="text-white/80 font-medium max-w-md">Welcome back, Admin. Here's what's happening with the PetCare ecosystem today.</p>
+          <p className="text-white/80 font-medium max-w-md">Welcome back to your PetCare portal. Manage your operations efficiently from this dashboard.</p>
         </div>
         {/* Abstract shapes for premium feel */}
         <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
@@ -227,6 +280,14 @@ const DashboardHome = () => {
   );
 };
 
+const ProtectedRoute = ({ children, allowedRoles, user }) => {
+  if (!user) return <Navigate to="/login" replace />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -249,6 +310,7 @@ const App = () => {
     return (
       <Routes>
         <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
@@ -256,24 +318,62 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Sidebar onLogout={handleLogout} />
-      <Topbar user={user} />
+      <Sidebar onLogout={handleLogout} user={user} />
+      <Topbar user={user} onLogout={handleLogout} />
       <div className="flex-1">
         <Routes>
-          <Route path="/" element={<DashboardHome />} />
-          <Route path="/users" element={<UsersManagement />} />
-          <Route path="/pets" element={<PetsManagement />} />
-          <Route path="/appointments" element={<AppointmentsManagement />} />
-          <Route path="/adoptions" element={<AdoptionManagement />} />
-          <Route path="/lost-found" element={<LostFoundManagement />} />
-          <Route path="/community" element={<CommunityManagement />} />
+          <Route path="/" element={
+            user?.role === 'vet' ? <VetDashboard user={user} /> :
+            user?.role === 'ngo' ? <NGODashboard user={user} /> :
+            user?.role === 'store' ? <StoreDashboard user={user} /> :
+            <DashboardHome />
+          } />
+          <Route path="/users" element={
+            <ProtectedRoute user={user} allowedRoles={['admin']}>
+              <UsersManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/pets" element={
+            <ProtectedRoute user={user} allowedRoles={['admin', 'vet', 'store']}>
+              <PetsManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/appointments" element={
+            <ProtectedRoute user={user} allowedRoles={['admin', 'vet']}>
+              <AppointmentsManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/adoptions" element={
+            <ProtectedRoute user={user} allowedRoles={['admin', 'ngo']}>
+              <AdoptionManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/lost-found" element={
+            <ProtectedRoute user={user} allowedRoles={['admin', 'ngo']}>
+              <LostFoundManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/community" element={
+            <ProtectedRoute user={user} allowedRoles={['admin']}>
+              <CommunityManagement />
+            </ProtectedRoute>
+          } />
           <Route path="/settings" element={<div className="p-8 mt-16 ml-64">Settings Page</div>} />
+          
+          {/* Boilerplate redirect for new modules */}
+          <Route path="/prescriptions" element={<PrescriptionsManagement />} />
+          <Route path="/clinic" element={<ClinicManagement />} />
+          <Route path="/shelter" element={<NGODashboard user={user} />} />
+          <Route path="/volunteers" element={<NGODashboard user={user} />} />
+          <Route path="/inventory" element={<StoreDashboard user={user} />} />
+          <Route path="/bookings" element={<StoreDashboard user={user} />} />
+          <Route path="/store-profile" element={<StoreDashboard user={user} />} />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-
       </div>
     </div>
   );
-}
+};
 
 export default App;

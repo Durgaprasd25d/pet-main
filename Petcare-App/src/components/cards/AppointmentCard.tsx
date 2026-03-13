@@ -90,7 +90,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <View style={styles.timeRow}>
             <View style={styles.timeItem}>
               <MaterialDesignIcons name="calendar-blank" size={16} color={COLORS.textLight} style={styles.timeIcon} />
-              <Text style={styles.timeText}>{appointment.date}</Text>
+              <Text style={styles.timeText}>{new Date(appointment.date).toLocaleDateString()}</Text>
             </View>
             <View style={styles.timeItem}>
               <MaterialDesignIcons name="clock-time-four-outline" size={16} color={COLORS.textLight} style={styles.timeIcon} />

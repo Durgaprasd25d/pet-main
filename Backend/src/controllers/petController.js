@@ -1,11 +1,89 @@
 const Pet = require("../models/Pet");
+const Appointment = require("../models/Appointment");
+const Prescription = require("../models/Prescription");
+const Vaccination = require("../models/Vaccination");
+
+// @desc    Get pet medical history (Aggregated)
+// @route   GET /api/pets/:id/history
+// @access  Private
+exports.getPetHistory = async (req, res) => {
+  try {
+    const petId = req.params.id;
+
+    // Fetch all related data
+    const [appointments, prescriptions, vaccinations] = await Promise.all([
+      Appointment.find({ petId }).populate(
+        "vetId",
+        "name clinicName specialty",
+      ),
+      Prescription.find({ petId }).populate(
+        "vetId",
+        "name clinicName specialty",
+      ),
+      Vaccination.find({ petId }),
+    ]);
+
+    // Map and normalize records
+    const history = [
+      ...appointments.map((a) => ({
+        _id: a._id,
+        type: "appointment",
+        date: a.date,
+        time: a.time,
+        title: `Clinical Visit: ${a.reason}`,
+        vet: a.vetId?.name,
+        clinic: a.vetId?.clinicName,
+        status: a.status,
+      })),
+      ...prescriptions.map((p) => ({
+        _id: p._id,
+        type: "prescription",
+        date: p.date,
+        title: "Medical Prescription",
+        vet: p.vetId?.name,
+        clinic: p.vetId?.clinicName,
+        medicines: p.medicines,
+        instructions: p.instructions,
+      })),
+      ...vaccinations.map((v) => ({
+        _id: v._id,
+        type: "vaccination",
+        date: v.dateAdministered,
+        title: `Vaccination: ${v.vaccineType}`,
+        vet: v.vetName,
+        notes: v.notes,
+        nextDue: v.nextDueDate,
+      })),
+    ];
+
+    // Sort by date descending
+    history.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.json(history);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // @desc    Get all pets
 // @route   GET /api/pets
 // @access  Private
 exports.getPets = async (req, res) => {
   try {
-    const pets = await Pet.find({ ownerId: req.user._id });
+    let query = {};
+    if (req.user.role === "admin") {
+      query = {};
+    } else if (req.user.role === "vet") {
+      // Find IDs of pets that have appointments with this vet
+      const appointments = await Appointment.find({
+        vetId: req.user._id,
+      }).distinct("petId");
+      query = { _id: { $in: appointments } };
+    } else {
+      query = { ownerId: req.user._id };
+    }
+
+    const pets = await Pet.find(query).populate("ownerId", "name email phone");
     res.json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
