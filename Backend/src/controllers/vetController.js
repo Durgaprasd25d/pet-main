@@ -36,6 +36,8 @@ exports.getVets = async (req, res) => {
       about: vet.about,
       address: vet.address,
       contactNumber: vet.phone,
+      latitude: vet.coordinates?.latitude,
+      longitude: vet.coordinates?.longitude,
     }));
     res.json(formattedVets);
   } catch (error) {
@@ -91,6 +93,8 @@ exports.getNearbyVets = async (req, res) => {
           about: vet.about,
           address: vet.address,
           contactNumber: vet.phone,
+          latitude: vet.coordinates?.latitude,
+          longitude: vet.coordinates?.longitude,
           emergencyAvailable: true, // Always true for this feature context
         };
       })
@@ -125,6 +129,8 @@ exports.getVetById = async (req, res) => {
         about: vet.about,
         address: vet.address,
         phone: vet.phone,
+        latitude: vet.coordinates?.latitude,
+        longitude: vet.coordinates?.longitude,
       };
       res.json(formattedVet);
     } else {

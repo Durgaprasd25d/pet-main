@@ -48,6 +48,8 @@ export interface Vet {
   about: string;
   address?: string;
   contactNumber?: string;
+  latitude?: number | string;
+  longitude?: number | string;
   availability?: string[];
 }
 
@@ -131,11 +133,13 @@ export interface Emergency {
   id: string;
   userId: string;
   petId?: string;
-  location: {
+  location?: {
     latitude: number;
     longitude: number;
     address?: string;
   };
+  latitude?: number;
+  longitude?: number;
   status: 'pending' | 'accepted' | 'resolved' | 'cancelled';
   description?: string;
   assignedVetId?: string;

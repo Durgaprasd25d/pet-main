@@ -16,6 +16,8 @@ import { useAppStore } from '../../store/useAppStore';
 import { useEmergencyStore } from '../../store/useEmergencyStore';
 import { usePetStore } from '../../store/usePetStore';
 import { CustomModal } from '../../components/ui/CustomModal';
+import { requestLocationPermission } from '../../utils/locationPermission';
+import Geolocation from '@react-native-community/geolocation';
 import { Pet, Emergency } from '../../types';
 
 export const EmergencySOSScreen = ({ navigation }: any) => {
@@ -27,6 +29,7 @@ export const EmergencySOSScreen = ({ navigation }: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [lastEmergency, setLastEmergency] = useState<Emergency | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
   
   // Premium Animation Values
   const pulse1 = useSharedValue(1);
@@ -37,6 +40,11 @@ export const EmergencySOSScreen = ({ navigation }: any) => {
   const opacity3 = useSharedValue(0.6);
 
   useEffect(() => {
+    // Request location permissions on mount safely
+    if (Geolocation && typeof Geolocation.requestAuthorization === 'function') {
+      Geolocation.requestAuthorization();
+    }
+
     if (token) {
       fetchPets(token);
     }
@@ -104,21 +112,79 @@ export const EmergencySOSScreen = ({ navigation }: any) => {
   const confirmSOS = async () => {
     setModalVisible(false);
     
-    // In a real app, we'd use Geolocation.getCurrentPosition
-    const sosData = {
-      latitude: 19.0760,
-      longitude: 72.8777,
-      address: "Detected near Malad East, Mumbai",
-      petId: selectedPet?.id,
-      description: `EMERGENCY ALERT: ${selectedPet?.name || 'A pet'} requires immediate medical attention.`,
-      emergencyType: "Critical"
-    };
-
-    const result = await triggerSOS(sosData, token as string);
-    if (result) {
-      setLastEmergency(result);
-      setSuccessModalVisible(true);
+    // Check/Request permission before getting location
+    const hasPermission = await requestLocationPermission();
+    if (!hasPermission) return;
+    
+    if (!Geolocation || typeof Geolocation.getCurrentPosition !== 'function') {
+      Alert.alert(
+        "Location Error",
+        "Geolocation service is not available. Please ensure the app has necessary permissions.",
+        [{ text: "OK" }]
+      );
+      return;
     }
+
+    setIsLocating(true);
+
+    Geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        const sosData = {
+          latitude,
+          longitude,
+          address: "Detected via GPS Location",
+          petId: selectedPet?.id,
+          description: `EMERGENCY ALERT: ${selectedPet?.name || 'A pet'} requires immediate medical attention.`,
+          emergencyType: "Critical"
+        };
+
+        const result = await triggerSOS(sosData, token as string);
+        setIsLocating(false);
+        if (result) {
+          setLastEmergency(result);
+          setSuccessModalVisible(true);
+        }
+      },
+      (error) => {
+        console.warn('High accuracy location failed, retrying with lower accuracy...', error);
+        
+        // Retry with lower accuracy if high accuracy fails (common on emulators/indoor)
+        Geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            const sosData = {
+              latitude,
+              longitude,
+              address: "Detected via Network Location",
+              petId: selectedPet?.id,
+              description: `EMERGENCY ALERT: ${selectedPet?.name || 'A pet'} requires medical attention (approx location).`,
+              emergencyType: "Critical"
+            };
+
+            const result = await triggerSOS(sosData, token as string);
+            setIsLocating(false);
+            if (result) {
+              setLastEmergency(result);
+              setSuccessModalVisible(true);
+            }
+          },
+          (err) => {
+            setIsLocating(false);
+            let message = "Failed to get your location.";
+            if (err.code === 1) message = "Location permission denied.";
+            else if (err.code === 2) message = "Position unavailable. Please ensure GPS/Location is ON.";
+            else if (err.code === 3) message = "Location request timed out. Try moving to an open area.";
+            
+            Alert.alert("Location Error", message, [{ text: "OK" }]);
+            console.error(err);
+          },
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
+        );
+      },
+      { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
+    );
   };
 
   return (
@@ -174,12 +240,12 @@ export const EmergencySOSScreen = ({ navigation }: any) => {
           <View style={styles.buttonShadow} />
           
           <TouchableOpacity 
-            style={[styles.sosButton, loading && { opacity: 0.7 }]} 
+            style={[styles.sosButton, (loading || isLocating) && { opacity: 0.7 }]} 
             onPress={handleSOSPress} 
             activeOpacity={0.8}
-            disabled={loading}
+            disabled={loading || isLocating}
           >
-            {loading ? (
+            {(loading || isLocating) ? (
               <ActivityIndicator color="#fff" size="large" />
             ) : (
               <View style={styles.innerButton}>

@@ -7,8 +7,11 @@ import {
   TouchableOpacity, 
   Image, 
   Linking,
-  ActivityIndicator
+  ActivityIndicator,
+  Dimensions
 } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
@@ -97,6 +100,71 @@ export const EmergencyDetailsScreen = ({ route, navigation }: any) => {
               <Text style={[styles.stepLabel, currentStep >= 3 && styles.activeStepLabel]}>Help Arrived</Text>
             </View>
           </View>
+        </View>
+
+        {/* Live Map Tracking */}
+        <View style={styles.mapContainer}>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            initialRegion={{
+              latitude: emergency?.location?.latitude || emergency?.latitude || 19.0760,
+              longitude: emergency?.location?.longitude || emergency?.longitude || 72.8777,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
+          >
+            {/* User Marker */}
+            {(emergency?.location?.latitude || emergency?.latitude) && 
+             (emergency?.location?.longitude || emergency?.longitude) && (
+              <Marker
+                coordinate={{ 
+                  latitude: emergency?.location?.latitude || emergency!.latitude!, 
+                  longitude: emergency?.location?.longitude || emergency!.longitude! 
+                }}
+                title="Your Location"
+                description="Emergency SOS Location"
+                pinColor={COLORS.error}
+              >
+                <View style={styles.userMarkerContainer}>
+                   <MaterialDesignIcons name="account-alert" size={24} color={COLORS.error} />
+                </View>
+              </Marker>
+            )}
+
+            {/* Vet Marker & Routing */}
+            {emergency?.status === 'accepted' && assignedVet?.latitude && assignedVet?.longitude && (
+              <>
+                <Marker
+                  coordinate={{ 
+                    latitude: parseFloat(assignedVet.latitude as any), 
+                    longitude: parseFloat(assignedVet.longitude as any) 
+                  }}
+                  title={assignedVet.name}
+                  description={assignedVet.clinicName}
+                >
+                  <View style={styles.vetMarkerContainer}>
+                     <MaterialDesignIcons name="hospital-marker" size={24} color={COLORS.primary} />
+                  </View>
+                </Marker>
+
+                <MapViewDirections
+                  origin={{ 
+                    latitude: emergency?.location?.latitude || emergency!.latitude!, 
+                    longitude: emergency?.location?.longitude || emergency!.longitude! 
+                  }}
+                  destination={{ 
+                    latitude: parseFloat(assignedVet.latitude as any), 
+                    longitude: parseFloat(assignedVet.longitude as any) 
+                  }}
+                  apikey="AIzaSyAt_3PK6WrDpx97Bw9QswjglLVWLZTVHhk"
+                  strokeWidth={4}
+                  strokeColor={COLORS.primary}
+                  optimizeWaypoints={true}
+                />
+              </>
+            )}
+          </MapView>
         </View>
 
         {/* Assigned Responder Section */}
@@ -449,5 +517,32 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
     fontWeight: '600',
     textDecorationLine: 'underline',
-  }
+  },
+  mapContainer: {
+    height: 250,
+    width: '100%',
+    borderRadius: RADIUS.xl,
+    overflow: 'hidden',
+    marginBottom: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.medium,
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  userMarkerContainer: {
+    padding: 4,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: COLORS.error,
+  },
+  vetMarkerContainer: {
+    padding: 4,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+  },
 });
