@@ -96,7 +96,7 @@ const Sidebar = ({ onLogout, user }) => {
             <SidebarItem icon={FileText} label="Prescriptions" href="/prescriptions" active={location.pathname === '/prescriptions'} />
             <SidebarItem icon={Stethoscope} label="Clinic Info" href="/clinic" active={location.pathname === '/clinic'} />
             <div className="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Urgent Care</div>
-            <SidebarItem icon={AlertOctagon} label="Emergency SOS" href="/emergency" active={location.pathname === '/emergency'} />
+            {/* <SidebarItem icon={AlertOctagon} label="Emergency SOS" href="/emergency" active={location.pathname === '/emergency'} /> */}
           </>
         )}
 
