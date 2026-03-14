@@ -13,18 +13,26 @@ function App(): React.JSX.Element {
   useEffect(() => {
     if (!hasHydrated) return;
 
-    NotificationService.requestUserPermission().then(async fcmToken => {
-      // If we got a token and user is logged in, sync it with backend!
-      if (fcmToken && isAuthenticated && token) {
-        console.log('[App] Sending FCM Token to backend...');
-        try {
-          await dataService.updateUserProfile({ fcmToken }, token);
-          console.log('[App] FCM Token successfully synced to user profile');
-        } catch (error) {
-          console.error('[App] Failed to sync FCM token:', error);
+    if (isAuthenticated && token) {
+      // Fetch latest profile to ensure data like phone/location is fresh
+      dataService.getUserProfile(token).then((updatedUser: any) => {
+        useAppStore.getState().setUser(updatedUser);
+        console.log('[App] Profile refreshed');
+      }).catch((err: Error) => console.error('[App] Profile refresh failed:', err));
+
+      NotificationService.requestUserPermission().then(async fcmToken => {
+        // If we got a token, sync it with backend!
+        if (fcmToken) {
+          console.log('[App] Sending FCM Token to backend...');
+          try {
+            await dataService.updateUserProfile({ fcmToken }, token);
+            console.log('[App] FCM Token successfully synced to user profile');
+          } catch (error) {
+            console.error('[App] Failed to sync FCM token:', error);
+          }
         }
-      }
-    });
+      });
+    }
 
     const unsubscribeForeground = NotificationService.setupForegroundListener();
     NotificationService.handleBackgroundInteraction();

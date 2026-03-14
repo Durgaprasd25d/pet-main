@@ -76,7 +76,16 @@ export const dataService = {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to update profile');
     }
-    return response.json();
+    const user = await response.json();
+    return { ...user, id: user._id };
+  },
+  getUserProfile: async (token: string): Promise<User> => {
+    const response = await fetch(`${API_URL}/auth/profile`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to fetch profile');
+    const user = await response.json();
+    return { ...user, id: user._id };
   },
 
   // Pets

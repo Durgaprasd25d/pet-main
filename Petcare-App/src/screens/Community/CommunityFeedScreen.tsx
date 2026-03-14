@@ -26,8 +26,6 @@ export const CommunityFeedScreen = ({ navigation }: any) => {
     <ScreenContainer>
       <Header 
         title="Pet Community" 
-        rightIcon="plus-circle" 
-        onRightPress={() => navigation.navigate('CreatePost')} 
         onBackPress={() => navigation.goBack()}
         transparent
       />
