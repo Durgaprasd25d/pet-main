@@ -31,7 +31,7 @@ export const VetListScreen = ({ navigation }: any) => {
 
   return (
     <ScreenContainer>
-      <Header title="Find a Vet" onBackPress={() => navigation.goBack()} rightIcon="map-legend" />
+      <Header title="Find a Vet" onBackPress={() => navigation.goBack()}  />
       
       <View style={styles.searchSection}>
         <Input 
@@ -41,7 +41,7 @@ export const VetListScreen = ({ navigation }: any) => {
           leftIcon="magnify"
           containerStyle={styles.searchInput}
         />
-        <View style={styles.filterRow}>
+        {/* <View style={styles.filterRow}>
           <View style={styles.filterChip}>
             <Text style={styles.filterText}>Nearby</Text>
             <MaterialDesignIcons name="chevron-down" size={14} color={COLORS.primary} />
@@ -54,7 +54,7 @@ export const VetListScreen = ({ navigation }: any) => {
             <Text style={styles.filterText}>Rating</Text>
             <MaterialDesignIcons name="chevron-down" size={14} color={COLORS.primary} />
           </View>
-        </View>
+        </View> */}
       </View>
 
       <ScrollView 

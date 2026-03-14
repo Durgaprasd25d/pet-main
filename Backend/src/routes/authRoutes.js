@@ -10,6 +10,7 @@ const {
   updateUserProfile,
   verifyUser,
   deleteUser,
+  changePassword,
 } = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -22,6 +23,7 @@ router.post("/verify-otp", verifyOTP);
 router.post("/resend-otp", resendOTP);
 router.get("/profile", protect, getUserProfile);
 router.put("/profile", protect, upload.single("avatar"), updateUserProfile);
+router.put("/change-password", protect, changePassword);
 
 router.get("/users", protect, getUsers);
 router.put("/users/:id/verify", protect, verifyUser);

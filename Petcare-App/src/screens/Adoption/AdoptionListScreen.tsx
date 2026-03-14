@@ -19,8 +19,8 @@ export const AdoptionListScreen = ({ route, navigation }: any) => {
   }, [selectedType]);
 
   const filteredPets = adoptions.filter((p: any) => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.breed.toLowerCase().includes(searchQuery.toLowerCase())
+    (p.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) || 
+    (p.breed?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   );
 
   const types = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'];

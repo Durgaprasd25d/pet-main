@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, Switch, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Switch, TouchableOpacity, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+
+import { useAppStore } from '../../store/useAppStore';
 
 export const SettingsScreen = ({ navigation }: any) => {
   const [pushNotif, setPushNotif] = useState(true);
   const [emailNotif, setEmailNotif] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [locationServices, setLocationServices] = useState(true);
+  const { biometricEnabled, setBiometricEnabled } = useAppStore();
 
   const renderSettingToggle = (icon: string, title: string, value: boolean, onValueChange: (val: boolean) => void) => (
     <View style={styles.settingItem}>
@@ -39,6 +42,16 @@ export const SettingsScreen = ({ navigation }: any) => {
     </TouchableOpacity>
   );
 
+  const renderSettingAction = (icon: string, title: string, onPress: () => void) => (
+    <TouchableOpacity style={styles.settingItem} onPress={onPress}>
+      <View style={styles.settingLeft}>
+        <MaterialDesignIcons name={icon as any} size={24} color={COLORS.textLight} style={styles.settingIcon} />
+        <Text style={styles.settingText}>{title}</Text>
+      </View>
+      <MaterialDesignIcons name="chevron-right" size={24} color={COLORS.textLight} />
+    </TouchableOpacity>
+  );
+
   return (
     <ScreenContainer>
       <Header title="Settings" onBackPress={() => navigation.goBack()} />
@@ -61,6 +74,25 @@ export const SettingsScreen = ({ navigation }: any) => {
             {renderSettingToggle('map-marker-outline', 'Location Services', locationServices, setLocationServices)}
             <View style={styles.divider} />
             {renderSettingLink('web', 'Language', 'English (US)')}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Security</Text>
+          <View style={styles.card}>
+            {renderSettingToggle('fingerprint', 'Biometric Login', biometricEnabled, (val) => {
+              if (val) {
+                Alert.alert(
+                  "Enable Biometrics",
+                  "To complete enablement, please log in manually once with your password to save your credentials securely.",
+                  [{ text: "OK", onPress: () => setBiometricEnabled(val) }]
+                );
+              } else {
+                setBiometricEnabled(val);
+              }
+            })}
+            <View style={styles.divider} />
+            {renderSettingAction('lock-outline', 'Change Password', () => navigation.navigate('ChangePassword'))}
           </View>
         </View>
 

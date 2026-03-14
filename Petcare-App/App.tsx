@@ -6,6 +6,7 @@ import { PaperProvider } from 'react-native-paper';
 import { NotificationService } from './src/services/notificationService';
 import { useAppStore } from './src/store/useAppStore';
 import { dataService } from './src/services/dataService';
+import { AppLock } from './src/components/layout/AppLock';
 
 function App(): React.JSX.Element {
   const { user, token, isAuthenticated, hasHydrated } = useAppStore();
@@ -45,10 +46,12 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <PaperProvider>
-        <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-        <RootNavigator />
-      </PaperProvider>
+      <AppLock>
+        <PaperProvider>
+          <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+          <RootNavigator />
+        </PaperProvider>
+      </AppLock>
     </SafeAreaProvider>
   );
 }

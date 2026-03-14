@@ -7,6 +7,7 @@ import { NotificationsScreen } from '../screens/Main/NotificationsScreen';
 import { EditProfileScreen } from '../screens/Main/EditProfileScreen';
 import { SettingsScreen } from '../screens/Main/SettingsScreen';
 import { UserProfileScreen } from '../screens/Main/UserProfileScreen';
+import { ChangePasswordScreen } from '../screens/Main/ChangePasswordScreen';
 
 // Pet Screens
 
@@ -66,6 +67,7 @@ export type AppStackParamList = {
   Notifications: undefined;
   EditProfile: undefined;
   Settings: undefined;
+  ChangePassword: undefined;
   Profile: undefined;
   VetList: undefined;
   VetProfile: { vetId: string };
@@ -115,6 +117,7 @@ export const AppStack = () => {
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="Profile" component={UserProfileScreen} />
       
       <Stack.Screen name="VetList" component={VetListScreen} />

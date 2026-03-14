@@ -5,9 +5,11 @@ import { Header } from '../../components/layout/Header';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../../theme/theme';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
+import { useAppStore } from '../../store/useAppStore';
+
 export const PrivacySecurityScreen = ({ navigation }: any) => {
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-  const [isBiometricEnabled, setIsBiometricEnabled] = useState(true);
+  const { biometricEnabled, setBiometricEnabled } = useAppStore();
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
 
   const handleDeleteAccount = () => {
@@ -65,27 +67,37 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
         
         {renderSection("Security", (
           <>
-            {renderToggle(
+            {/* {renderToggle(
               "shield-lock-outline", 
               "Two-Factor Authentication", 
               "Add an extra layer of security to your account.",
               is2FAEnabled,
               setIs2FAEnabled
-            )}
+            )} */}
             <View style={styles.divider} />
             {renderToggle(
               "fingerprint", 
               "Biometric Login", 
               "Use FaceID or Fingerprint to unlock the app.",
-              isBiometricEnabled,
-              setIsBiometricEnabled
+              biometricEnabled,
+              (val) => {
+                if (val) {
+                  Alert.alert(
+                    "Enable Biometrics",
+                    "To complete enablement, please log in manually once with your password to save your credentials securely.",
+                    [{ text: "OK", onPress: () => setBiometricEnabled(val) }]
+                  );
+                } else {
+                  setBiometricEnabled(val);
+                }
+              }
             )}
             <View style={styles.divider} />
-            {renderLink("key-outline", "Change Password", () => navigation.navigate('ForgotPassword'))}
+            {renderLink("key-outline", "Change Password", () => navigation.navigate('ChangePassword'))}
           </>
         ))}
 
-        {renderSection("Privacy", (
+        {/* {renderSection("Privacy", (
           <>
             {renderToggle(
               "map-marker-outline", 
@@ -99,7 +111,7 @@ export const PrivacySecurityScreen = ({ navigation }: any) => {
             <View style={styles.divider} />
             {renderLink("eye-off-outline", "Block List", () => {})}
           </>
-        ))}
+        ))} */}
 
         <TouchableOpacity 
           style={styles.deleteAccountCard} 

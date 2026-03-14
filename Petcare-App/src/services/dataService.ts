@@ -368,6 +368,36 @@ export const dataService = {
     });
     return response.json();
   },
+  updateProfile: async (profileData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/auth/profile`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(profileData)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update profile');
+    }
+    return response.json();
+  },
+  changePassword: async (passwordData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/auth/change-password`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(passwordData)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to change password');
+    }
+    return response.json();
+  },
   
   // Notifications
   getNotifications: async (token: string): Promise<any[]> => {

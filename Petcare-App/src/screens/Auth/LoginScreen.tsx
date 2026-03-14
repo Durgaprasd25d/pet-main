@@ -7,13 +7,16 @@ import { Button } from '../../components/ui/Button';
 import { COLORS, SPACING, SIZES, RADIUS } from '../../theme/theme';
 import { useAppStore } from '../../store/useAppStore';
 import { dataService } from '../../services/dataService';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import ReactNativeBiometrics from 'react-native-biometrics';
+import * as Keychain from 'react-native-keychain';
 
 export const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setAuth } = useAppStore();
+  const { setAuth, biometricEnabled } = useAppStore();
 
   const handleLogin = async () => {
     if (!email || !password) return;
@@ -30,6 +33,19 @@ export const LoginScreen = ({ navigation }: any) => {
           phone: data.phone,
           location: data.location
         } as any, data.token);
+
+        // If biometric is enabled, save credentials to keychain
+        if (biometricEnabled) {
+          try {
+            await Keychain.setGenericPassword(email, password, { 
+              service: 'petcare_auth_v1',
+              accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+              accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED
+            });
+          } catch (error) {
+            console.error('Keychain error:', error);
+          }
+        }
       } else if (data.email && data.isVerified === false) {
         Alert.alert('Verification Required', 'Please verify your account');
         navigation.navigate('OTPVerification', { email: data.email });
@@ -40,6 +56,60 @@ export const LoginScreen = ({ navigation }: any) => {
     } catch (error) {
       console.error('Login error details:', error);
       Alert.alert('Network Error', 'Could not connect to the server. Please check your internet and if the server is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBiometricLogin = async () => {
+    const rnBiometrics = new ReactNativeBiometrics();
+    try {
+      const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+      
+      if (!available) {
+        Alert.alert('Not Available', 'Biometric authentication is not available on this device.');
+        return;
+      }
+
+      const credentials = await Keychain.getGenericPassword({ service: 'petcare_auth_v1' });
+      if (!credentials) {
+        Alert.alert('No Credentials', 'Please log in manually first to enable biometric login.');
+        return;
+      }
+
+      // Format biometryType for display
+      const displayType = biometryType === 'TouchID' ? 'Touch ID' : 
+                          biometryType === 'FaceID' ? 'Face ID' : 
+                          'Biometrics';
+
+      const { success } = await rnBiometrics.simplePrompt({ 
+        promptMessage: `Sign in with ${displayType}`,
+        cancelButtonText: 'Cancel'
+      });
+
+      if (success) {
+        setLoading(true);
+        const data = await dataService.login({ 
+          email: credentials.username, 
+          password: credentials.password 
+        });
+        
+        if (data.token) {
+          setAuth({
+            id: data._id,
+            name: data.name,
+            email: data.email,
+            avatar: data.avatar,
+            phone: data.phone,
+            location: data.location
+          } as any, data.token);
+        } else {
+          Alert.alert('Login Failed', 'Saved credentials are no longer valid. Please log in manually.');
+        }
+      }
+    } catch (error) {
+      console.error('Biometric login error:', error);
+      Alert.alert('Error', 'An error occurred during biometric authentication.');
     } finally {
       setLoading(false);
     }
@@ -102,6 +172,17 @@ export const LoginScreen = ({ navigation }: any) => {
               loading={loading}
               disabled={!email || !password}
             />
+
+            {biometricEnabled && (
+              <TouchableOpacity 
+                style={styles.biometricButton} 
+                onPress={handleBiometricLogin}
+                disabled={loading}
+              >
+                <MaterialDesignIcons name="fingerprint" size={32} color={COLORS.primary} />
+                <Text style={styles.biometricText}>Login with Biometrics</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View style={styles.footerContainer}>
@@ -158,6 +239,23 @@ const styles = StyleSheet.create({
   loginButton: {
     marginTop: SPACING.md,
     height: 56,
+  },
+  biometricButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: SPACING.xl,
+    padding: SPACING.md,
+    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 12,
+  },
+  biometricText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.primary,
   },
   footerContainer: {
     flexDirection: 'row',

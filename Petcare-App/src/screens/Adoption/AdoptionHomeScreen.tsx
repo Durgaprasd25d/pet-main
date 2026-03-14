@@ -35,8 +35,6 @@ export const AdoptionHomeScreen = ({ navigation }: any) => {
       <Header 
         title="Pet Adoption" 
         onBackPress={() => navigation.goBack()} 
-        rightIcon="heart-outline"
-        onRightPress={() => navigation.navigate('AdoptionStatus')}
       />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
@@ -82,9 +80,9 @@ export const AdoptionHomeScreen = ({ navigation }: any) => {
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recently Added</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('AdoptionList')}>
+          {/* <TouchableOpacity onPress={() => navigation.navigate('AdoptionList')}>
             <Text style={styles.seeAll}>See All</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <FlatList 
           data={adoptions.slice(0, 5)}
