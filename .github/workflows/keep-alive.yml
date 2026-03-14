@@ -2,8 +2,8 @@ name: Keep Backend Alive
 
 on:
   schedule:
-    - cron: "*/12 * * * *"   # Runs every 12 minutes
-  workflow_dispatch:          # Allows manual triggering
+    - cron: "*/10 * * * *"   # Runs every 15 minutes (GitHub minimum)
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -12,4 +12,5 @@ jobs:
     steps:
       - name: Ping Render Backend
         run: |
-          curl -f https://pet-main.onrender.com || echo "Ping failed, but that's okay for now"
+          curl -f -i https://pet-main.onrender.com || curl -f -i https://pet-main.onrender.com || exit 0
+        continue-on-error: true
