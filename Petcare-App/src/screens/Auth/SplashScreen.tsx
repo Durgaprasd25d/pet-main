@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { COLORS, SPACING } from '../../theme/theme';
-import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { StyleSheet, Text, Image, View } from 'react-native';
+import { COLORS, SPACING, RADIUS } from '../../theme/theme';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 
 export const SplashScreen = ({ navigation }: any) => {
@@ -15,9 +14,12 @@ export const SplashScreen = ({ navigation }: any) => {
 
   return (
     <ScreenContainer style={styles.container}>
-      <MaterialDesignIcons name="paw" size={100} color={COLORS.surface} />
-      <Text style={styles.title}>PetCare</Text>
-      <Text style={styles.subtitle}>Super App</Text>
+      <Image 
+        source={require('../../assets/images/logo.png')} 
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Text style={styles.title}>Pet Care</Text>
     </ScreenContainer>
   );
 };
@@ -28,15 +30,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  logo: {
+    width: 200,
+    height: 200,
+  },
   title: {
     fontSize: 40,
     fontWeight: 'bold',
     color: COLORS.surface,
-    marginTop: SPACING.md,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: COLORS.surface,
-    opacity: 0.8,
+    marginTop: SPACING.xl,
   },
 });

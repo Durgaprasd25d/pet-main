@@ -55,7 +55,7 @@ export const UserProfileScreen = ({ navigation }: any) => {
   const handleLogout = () => {
     Alert.alert(
       "Log Out",
-      "Are you sure you want to log out of PetCare?",
+      "Are you sure you want to log out of Pet Care?",
       [
         { text: "Cancel", style: "cancel" },
         { text: "Log Out", style: "destructive", onPress: logout }
@@ -208,7 +208,7 @@ export const UserProfileScreen = ({ navigation }: any) => {
               <View style={styles.divider} />
               {/* {renderMenuItem('star-outline', 'Rate the App', () => { }, '#f59e0b')}
               <View style={styles.divider} /> */}
-              {renderMenuItem('information-outline', 'About PetCare', () => navigation.navigate('AboutApp'), COLORS.textLight)}
+              {renderMenuItem('information-outline', 'About Pet Care', () => navigation.navigate('AboutApp'), COLORS.textLight)}
             </View>
           </View>
 

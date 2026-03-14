@@ -13,19 +13,12 @@ export const WelcomeScreen = ({ navigation }: any) => {
     <ScreenContainer withSafeArea={false}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80&w=800' }}
-            style={styles.image}
+        <View style={styles.logoContainer}>
+          <Image 
+            source={require('../../assets/images/logo.png')} 
+            style={styles.welcomeLogo}
+            resizeMode="contain"
           />
-          <View style={styles.overlay} />
-          <View style={styles.logoOverlay}>
-            <Image 
-              source={require('../../assets/images/logo.png')} 
-              style={styles.welcomeLogo}
-              resizeMode="contain"
-            />
-          </View>
         </View>
         
         <View style={[styles.content, { paddingBottom: Math.max(insets.bottom, SPACING.lg) }]}>
@@ -42,7 +35,7 @@ export const WelcomeScreen = ({ navigation }: any) => {
               onSwipeComplete={() => navigation.navigate('Login')}
             />
             <View style={styles.signupPrompt}>
-              <Text style={styles.footerText}>New to PetCare? </Text>
+              <Text style={styles.footerText}>New to Pet Care? </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                 <Text style={styles.signupText}>Sign Up Here</Text>
               </TouchableOpacity>
@@ -59,30 +52,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.primary,
   },
-  imageContainer: {
+  logoContainer: {
     flex: 1.2,
-    width: '100%',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-  },
-  logoOverlay: {
-    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
   },
   welcomeLogo: {
-    width: 200,
-    height: 200,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    borderRadius: RADIUS.xl,
-    padding: SPACING.md,
+    width: 250,
+    height: 250,
   },
   content: {
     flex: 1,

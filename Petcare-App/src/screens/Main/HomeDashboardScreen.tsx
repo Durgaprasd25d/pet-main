@@ -107,7 +107,7 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
         >
           <View style={styles.aiBannerContent}>
             <View style={styles.aiBannerText}>
-              <Text style={styles.aiBannerTitle}>Pet AI Assistant</Text>
+              <Text style={styles.aiBannerTitle}>Pet Care AI Assistant</Text>
               <Text style={styles.aiBannerDesc}>Instant answers for your pet's health & behavior.</Text>
             </View>
             <View style={styles.aiIconContainer}>
