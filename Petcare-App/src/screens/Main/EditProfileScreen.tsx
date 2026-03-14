@@ -20,6 +20,16 @@ export const EditProfileScreen = ({ navigation }: any) => {
   const [location, setLocation] = useState(user?.location || '');
   const [avatar, setAvatar] = useState<any>(user?.avatar ? { uri: user.avatar } : null);
   const [loading, setLoading] = useState(false);
+  
+  // Sync state with store when user data is fetched
+  React.useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setPhone(user.phone || '');
+      setLocation(user.location || '');
+      if (user.avatar) setAvatar({ uri: user.avatar });
+    }
+  }, [user]);
 
   const handlePickImage = async () => {
     const result = await launchImageLibrary({

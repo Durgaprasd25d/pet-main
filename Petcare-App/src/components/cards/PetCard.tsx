@@ -35,7 +35,6 @@ export const PetCard: React.FC<PetCardProps> = ({ pet, onPress, index = 0 }) => 
 
   return (
     <AnimatedPressable
-      entering={FadeInDown.delay(index * 100).duration(600)}
       style={[styles.card, animatedStyle]}
       onPress={onPress}
       onPressIn={handlePressIn}

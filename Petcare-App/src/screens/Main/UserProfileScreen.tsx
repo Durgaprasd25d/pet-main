@@ -55,7 +55,7 @@ export const UserProfileScreen = ({ navigation }: any) => {
   const handleLogout = () => {
     Alert.alert(
       "Log Out",
-      "Are you sure you want to log out of PetCare?",
+      "Are you sure you want to log out of Pet Care?",
       [
         { text: "Cancel", style: "cancel" },
         { text: "Log Out", style: "destructive", onPress: logout }
@@ -129,6 +129,12 @@ export const UserProfileScreen = ({ navigation }: any) => {
                 </View>
                 <Text style={styles.name}>{user?.name || 'Pet Owner'}</Text>
                 <Text style={styles.email}>{user?.email || 'owner@example.com'}</Text>
+                {user?.phone ? (
+                  <View style={styles.phoneBadge}>
+                    <MaterialDesignIcons name="phone" size={14} color="rgba(255,255,255,0.9)" />
+                    <Text style={styles.phoneText}>{user.phone}</Text>
+                  </View>
+                ) : null}
               </View>
             </View>
           </LinearGradient>
@@ -217,7 +223,7 @@ export const UserProfileScreen = ({ navigation }: any) => {
               <View style={styles.divider} />
               {/* {renderMenuItem('star-outline', 'Rate the App', () => { }, '#f59e0b')}
               <View style={styles.divider} /> */}
-              {renderMenuItem('information-outline', 'About PetCare', () => navigation.navigate('AboutApp'), COLORS.textLight)}
+              {renderMenuItem('information-outline', 'About Pet Care', () => navigation.navigate('AboutApp'), COLORS.textLight)}
             </View>
           </View>
 
@@ -321,8 +327,23 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 14,
     color: 'rgba(255,255,255,0.85)',
-    marginBottom: SPACING.md,
+    marginBottom: 4,
     fontWeight: '500',
+  },
+  phoneBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 6,
+    marginBottom: SPACING.md,
+  },
+  phoneText: {
+    fontSize: 13,
+    color: '#fff',
+    fontWeight: '600',
   },
   editProfileGlassBtn: {
     position: 'absolute',

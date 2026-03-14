@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, Text, ScrollView, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { PetCard } from '../../components/cards/PetCard';
 import { AppointmentCard } from '../../components/cards/AppointmentCard';
@@ -17,20 +18,27 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
   const { pets, fetchPets, loading: petsLoading } = usePetStore();
   const { appointments, fetchAppointments, loading: apptsLoading } = useAppointmentStore();
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!token) return;
+    console.log('[HomeDashboard] Refreshing data...');
     await Promise.all([
       fetchPets(token),
       fetchAppointments(token)
     ]);
-  };
+  }, [token, fetchPets, fetchAppointments]);
 
   useEffect(() => {
     loadData();
-  }, [token]);
+  }, [loadData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   const refreshing = petsLoading || apptsLoading;
-  
+
   // Filter for display
   const myPets = pets.slice(0, 4);
   const myAppointments = appointments.filter(a => a.status === 'scheduled').slice(0, 2);
@@ -38,7 +46,7 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
 
   return (
     <ScreenContainer>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} colors={[COLORS.primary]} />}
         showsVerticalScrollIndicator={false}
@@ -46,25 +54,19 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
       >
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <TouchableOpacity 
-              style={styles.miniLogo} 
-              onPress={() => navigation.navigate('Profile')}
-            >
-              <MaterialDesignIcons name="account-circle" size={32} color={COLORS.primary} />
-            </TouchableOpacity>
             <View>
               <Text style={styles.greeting}>Hello, {user?.name ? user.name.split(' ')[0] : 'there'}</Text>
               <Text style={styles.subtitle}>Your pets are doing great!</Text>
             </View>
           </View>
-          {/* <View style={styles.headerRight}>
-            <TouchableOpacity 
-              style={styles.headerIconBtn}
-              onPress={() => navigation.navigate('Notifications')}
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              style={styles.miniLogo}
+              onPress={() => navigation.navigate('Profile')}
             >
-              <MaterialDesignIcons name="bell-outline" size={26} color={COLORS.text} />
+              <MaterialDesignIcons name="account-circle" size={36} color={COLORS.primary} />
             </TouchableOpacity>
-          </View> */}
+          </View>
         </View>
 
         <View style={styles.quickActions}>
@@ -100,24 +102,6 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
           </TouchableOpacity> */}
         </View>
 
-        <TouchableOpacity 
-          style={styles.aiBanner} 
-          onPress={() => navigation.navigate('PetAIChat')}
-          activeOpacity={0.9}
-        >
-          <View style={styles.aiBannerContent}>
-            <View style={styles.aiBannerText}>
-              <Text style={styles.aiBannerTitle}>Pet AI Assistant</Text>
-              <Text style={styles.aiBannerDesc}>Instant answers for your pet's health & behavior.</Text>
-            </View>
-            <View style={styles.aiIconContainer}>
-              <MaterialDesignIcons name="robot" size={32} color="#fff" />
-            </View>
-          </View>
-          <View style={styles.aiBannerBadge}>
-            <Text style={styles.aiBadgeText}>BETA</Text>
-          </View>
-        </TouchableOpacity>
 
         {/* <View style={styles.rewardsCard}>
           <View style={styles.rewardsInfo}>
@@ -136,19 +120,23 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>My Family</Text>
+            <Text style={styles.sectionTitle}>My Family ({pets.length})</Text>
             <TouchableOpacity onPress={() => navigation.navigate('PetsTab')}>
               <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
           </View>
           {myPets.length > 0 ? (
             myPets.map((pet, index) => (
-              <PetCard 
-                key={pet.id} 
-                pet={pet} 
-                index={index}
-                onPress={() => navigation.navigate('PetProfile', { petId: pet.id })} 
-              />
+              <React.Fragment key={pet.id || index}>
+                <PetCard
+                  pet={pet}
+                  index={index}
+                  onPress={() => navigation.navigate('PetsTab', {
+                    screen: 'PetProfile',
+                    params: { petId: pet.id }
+                  })}
+                />
+              </React.Fragment>
             ))
           ) : (
             <View style={styles.emptyState}>
@@ -169,12 +157,12 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
             myAppointments.map((appt, index) => {
               const pet = pets.find(p => p.id === appt.petId);
               return (
-                <AppointmentCard 
-                  key={appt.id} 
-                  appointment={appt} 
+                <AppointmentCard
+                  key={appt.id}
+                  appointment={appt}
                   petName={pet?.name}
                   index={index}
-                  onPress={() => navigation.navigate('AppointmentDetails', { appointmentId: appt.id })} 
+                  onPress={() => navigation.navigate('AppointmentDetails', { appointmentId: appt.id })}
                 />
               );
             })
@@ -188,14 +176,16 @@ export const HomeDashboardScreen = ({ navigation }: any) => {
       </ScrollView>
 
       {/* Floating Buttons */}
-      <TouchableOpacity 
-        style={styles.floatingAI} 
-        onPress={() => navigation.navigate('PetAIChat')}
-        activeOpacity={0.8}
-      >
-        <MaterialDesignIcons name="robot" size={28} color="#fff" />
-        <Text style={styles.floatingAIText}>AI Assistant</Text>
-      </TouchableOpacity>
+      <View style={styles.floatingContainer}>
+        <TouchableOpacity
+          style={styles.floatingAI}
+          onPress={() => navigation.navigate('PetAIChat')}
+          activeOpacity={0.8}
+        >
+          <MaterialDesignIcons name="dog" size={28} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.floatingAIText}>Pet Assistant</Text>
+      </View>
 
       {/* Persistent SOS Floating Button */}
       {/* 
@@ -480,28 +470,39 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   */
-  floatingAI: {
+  floatingContainer: {
     position: 'absolute',
-    bottom: SPACING.lg,
-    right: SPACING.lg,
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    bottom: SPACING.xl,
+    right: SPACING.xl,
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  floatingAI: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...SHADOWS.large,
     shadowColor: COLORS.primary,
     elevation: 8,
-    zIndex: 100,
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.2)',
   },
   floatingAIText: {
-    color: '#fff',
-    fontSize: 10,
+    color: COLORS.primary,
+    fontSize: 9,
     fontWeight: '900',
-    marginTop: -2,
+    marginTop: 6,
     textAlign: 'center',
+    textTransform: 'uppercase',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.primary + '20',
+    overflow: 'hidden',
   },
 });
