@@ -210,7 +210,7 @@ exports.updateUserProfile = async (req, res) => {
       user.name = req.body.name || user.name;
       user.phone = req.body.phone || user.phone;
       user.location = req.body.location || user.location;
-      
+
       if (req.body.fcmToken) {
         user.fcmToken = req.body.fcmToken;
       }
@@ -283,6 +283,43 @@ exports.getUsers = async (req, res) => {
   try {
     const users = await User.find({}).select("-password");
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Verify a user (admin)
+// @route   PUT /api/auth/users/:id/verify
+// @access  Private/Admin
+exports.verifyUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    user.isVerified = !user.isVerified;
+    if (user.isVerified) {
+      user.otp = undefined;
+      user.otpExpires = undefined;
+    }
+    await user.save();
+    res.json({
+      message: user.isVerified
+        ? "User verified successfully"
+        : "User unverified",
+      isVerified: user.isVerified,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Delete a user (admin)
+// @route   DELETE /api/auth/users/:id
+// @access  Private/Admin
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -193,3 +193,62 @@ exports.getShelterPets = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Update an adoption pet listing
+// @route   PUT /api/adoptions/pets/:id
+// @access  Private (NGO/Admin)
+exports.updateAdoptionPet = async (req, res) => {
+  try {
+    const pet = await AdoptionPet.findById(req.params.id);
+    if (!pet) return res.status(404).json({ message: "Pet not found" });
+
+    const fields = [
+      "name",
+      "type",
+      "breed",
+      "age",
+      "gender",
+      "description",
+      "healthStatus",
+      "vaccinationStatus",
+      "personality",
+      "location",
+      "status",
+    ];
+    fields.forEach((f) => {
+      if (req.body[f] !== undefined) pet[f] = req.body[f];
+    });
+
+    if (req.file) {
+      const imageUrl = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { resource_type: "auto", folder: "adoption_pets" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          },
+        );
+        uploadStream.end(req.file.buffer);
+      });
+      pet.image = imageUrl;
+    }
+
+    const updated = await pet.save();
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Delete an adoption pet listing
+// @route   DELETE /api/adoptions/pets/:id
+// @access  Private (NGO/Admin)
+exports.deleteAdoptionPet = async (req, res) => {
+  try {
+    const pet = await AdoptionPet.findByIdAndDelete(req.params.id);
+    if (!pet) return res.status(404).json({ message: "Pet not found" });
+    res.json({ message: "Pet deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

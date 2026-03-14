@@ -12,6 +12,8 @@ const {
   getAdoptionRequests,
   updateRequestStatus,
   getShelterPets,
+  updateAdoptionPet,
+  deleteAdoptionPet,
 } = require("../controllers/adoptionController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -21,6 +23,8 @@ router
   .get(getAdoptionPets)
   .post(protect, upload.single("image"), createAdoptionPet);
 router.get("/pets/:id", getAdoptionPetById);
+router.put("/pets/:id", protect, upload.single("image"), updateAdoptionPet);
+router.delete("/pets/:id", protect, deleteAdoptionPet);
 router.get("/shelter/pets", protect, getShelterPets);
 
 // Adoption requests

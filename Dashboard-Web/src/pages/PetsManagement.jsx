@@ -181,7 +181,7 @@ const PetsManagement = () => {
                 <th className="px-8 py-5">Classification</th>
                 <th className="px-8 py-5">Verified Owner</th>
                 <th className="px-8 py-5">Account Status</th>
-                <th className="px-8 py-5 text-right">Actions</th>
+                {/* <th className="px-8 py-5 text-right">Actions</th> */}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -221,20 +221,20 @@ const PetsManagement = () => {
                   </td>
                   <td className="px-8 py-5 text-right">
                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
+                      {/* <button 
                         onClick={(e) => { e.stopPropagation(); handleViewDetails(pet); }}
                         className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white hover:shadow-lg rounded-xl transition-all border border-transparent hover:border-slate-100"
                       >
                         <ExternalLink size={18} />
-                      </button>
-                      {role === 'admin' && (
+                      </button> */}
+                      {/* {role === 'admin' && (
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleDelete(pet._id); }}
                           className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-white hover:shadow-lg rounded-xl transition-all border border-transparent hover:border-slate-100"
                         >
                           <Trash2 size={18} />
                         </button>
-                      )}
+                      )} */}
                     </div>
                   </td>
                 </tr>

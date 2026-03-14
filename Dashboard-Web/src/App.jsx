@@ -139,42 +139,58 @@ const Sidebar = ({ onLogout, user }) => {
 
 
 
-const Topbar = ({ user, onLogout }) => (
-  <div className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 fixed top-0 right-0 left-64 z-10">
-    <div className="relative w-96">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-      <input 
-        type="text" 
-        placeholder="Search everything..." 
-        className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-      />
+const LogoutConfirmModal = ({ onConfirm, onCancel }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
+    <div className="relative bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm mx-4 flex flex-col items-center gap-5">
+      <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
+        <LogOut size={28} className="text-red-500" />
+      </div>
+      <div className="text-center">
+        <h3 className="text-lg font-black text-slate-900 mb-1">Sign Out?</h3>
+        <p className="text-sm text-slate-500">Are you sure you want to log out of your account?</p>
+      </div>
+      <div className="flex gap-3 w-full">
+        <button
+          onClick={onCancel}
+          className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onConfirm}
+          className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-all shadow-md shadow-red-500/20"
+        >
+          Yes, Sign Out
+        </button>
+      </div>
     </div>
+  </div>
+);
 
-    <div className="flex items-center gap-4">
-      <button className="p-2 text-slate-500 hover:bg-slate-50 rounded-full relative">
-        <Bell size={20} />
-        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-      </button>
-      <div className="h-8 w-px bg-slate-200 mx-2"></div>
+const Topbar = ({ user, onLogoutRequest }) => {
+  const initials = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
+  return (
+    <div className="h-16 bg-white border-b border-slate-200 flex items-center justify-end px-8 fixed top-0 right-0 left-64 z-10">
       <div className="flex items-center gap-3">
         <div className="text-right hidden sm:block">
           <p className="text-sm font-semibold text-slate-900">{user?.name || 'User'}</p>
           <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">{user?.role || 'admin'}</p>
         </div>
-        <div className="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 overflow-hidden">
-          {user?.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : null}
+        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-black text-base border-2 border-primary/20 shadow-sm">
+          {initials}
         </div>
-        <button 
-          onClick={onLogout}
-          className="ml-2 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+        <button
+          onClick={onLogoutRequest}
+          className="ml-1 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
           title="Sign Out"
         >
           <LogOut size={20} className="group-hover:scale-110 transition-transform" />
         </button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const DashboardHome = () => {
   const [stats, setStats] = useState({ totalPets: 0, appointments: 0, activeUsers: 856, newReports: 12 });
@@ -214,7 +230,7 @@ const DashboardHome = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
         {[
           { label: 'Total Pets', value: stats.totalPets, icon: Dog, color: 'text-blue-600', bg: 'bg-blue-600/10' },
-          { label: 'Appointments', value: stats.appointments, icon: Calendar, color: 'text-purple-600', bg: 'bg-purple-600/10' },
+          { label: 'Appointments', value: stats.totalAppointments, icon: Calendar, color: 'text-purple-600', bg: 'bg-purple-600/10' },
           { label: 'Active Users', value: stats.activeUsers, icon: UserIcon, color: 'text-emerald-600', bg: 'bg-emerald-600/10' },
           { label: 'New Reports', value: stats.newReports, icon: Bell, color: 'text-rose-600', bg: 'bg-rose-600/10' },
         ].map((stat, i) => (
@@ -237,7 +253,7 @@ const DashboardHome = () => {
             <h2 className="font-black text-xl text-slate-900 tracking-tight">Recent Appointments</h2>
             <p className="text-slate-400 text-sm font-medium mt-1">Pending and recently completed visits.</p>
           </div>
-          <button className="bg-primary/10 text-primary px-5 py-2.5 rounded-xl text-sm font-black hover:bg-primary hover:text-white transition-all duration-300">View History</button>
+
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -301,6 +317,7 @@ const ProtectedRoute = ({ children, allowedRoles, user }) => {
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
 
   const handleLoginSuccess = () => {
@@ -309,7 +326,10 @@ const App = () => {
     navigate('/');
   };
 
+  const handleLogoutRequest = () => setShowLogoutModal(true);
+
   const handleLogout = () => {
+    setShowLogoutModal(false);
     dashboardService.logout();
     setIsAuthenticated(false);
     setUser(null);
@@ -328,8 +348,14 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Sidebar onLogout={handleLogout} user={user} />
-      <Topbar user={user} onLogout={handleLogout} />
+      {showLogoutModal && (
+        <LogoutConfirmModal
+          onConfirm={handleLogout}
+          onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
+      <Sidebar onLogout={handleLogoutRequest} user={user} />
+      <Topbar user={user} onLogoutRequest={handleLogoutRequest} />
       <div className="flex-1">
         <Routes>
           <Route path="/" element={

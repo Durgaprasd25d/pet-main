@@ -95,6 +95,13 @@ export const dashboardService = {
     const response = await api.get("/auth/users"); // Assuming this exists or needs to be added
     return response.data;
   },
+  verifyUser: async (id) => {
+    const response = await api.put(`/auth/users/${id}/verify`);
+    return response.data;
+  },
+  deleteUser: async (id) => {
+    await api.delete(`/auth/users/${id}`);
+  },
 
   // Adoption
   getAdoptions: async () => {
@@ -102,6 +109,14 @@ export const dashboardService = {
     return response.data;
   },
   deleteAdoption: async (id) => {
+    await api.delete(`/adoptions/pets/${id}`);
+  },
+  updateAdoptionPet: async (id, data) => {
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+    const response = await api.put(`/adoptions/pets/${id}`, data, config);
+    return response.data;
+  },
+  deleteAdoptionPet: async (id) => {
     await api.delete(`/adoptions/pets/${id}`);
   },
   getShelterPets: async () => {
